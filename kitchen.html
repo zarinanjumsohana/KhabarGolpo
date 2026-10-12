@@ -28,15 +28,15 @@
       <span class="live"><span class="live-dot"></span>LIVE</span>
     </h1>
     <div class="topbar-actions">
-      <button class="btn" type="button">Enable sound</button>
+      <button class="btn" id="sound-toggle" type="button">Enable sound</button>
       <button class="btn" type="button">Logout</button>
     </div>
   </header>
 
   <!-- Toggle between two views -->
   <div class="tabs">
-    <button class="tab active" type="button">All orders</button>
-    <button class="tab" type="button">By table</button>
+    <button class="tab active" type="button" data-view="all">All orders</button>
+    <button class="tab" type="button" data-view="table">By table</button>
   </div>
 
   <!-- Summary bar, empty for now -->

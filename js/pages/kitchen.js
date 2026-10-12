@@ -1,31 +1,108 @@
 
-import { getActiveOrders, updateStatus } from "../api/kitchen.js";
+import { getActiveOrders, updateStatus, subscribeOrders } from "../api/kitchen.js";
 const ordersArea = document.querySelector(".orders");
 const summaryList = document.querySelector(".summary-list");
+const soundButton = document.querySelector("#sound-toggle");
 
 let activeOrders = [];
+let currentView = "all";
+let knownIds = new Set();
+let soundOn = false;
+let audioCtx = null;
+
 loadOrders();
+listenForNewOrders();
 
 setInterval(updateWaitTimes, 60000);
+soundButton.addEventListener("click", enableSound);
+
+const tabs = document.querySelectorAll(".tab");
+tabs.forEach(function (tab) {
+  tab.addEventListener("click", function () {
+    tabs.forEach(function (t) {
+      t.classList.remove("active");
+    });
+    tab.classList.add("active");
+    currentView = tab.dataset.view;
+    showOrders(activeOrders);
+  });
+});
 
 async function loadOrders() {
   const result = await getActiveOrders();
-
   if (result.error) {
     showMessage("Sorry, we could not load the orders. Please try again.");
     return;
   }
 
   activeOrders = result.data || [];
+  knownIds = new Set(activeOrders.map(function (order) {
+    return order.id;
+  }));
   showOrders(activeOrders);
+}
+
+function listenForNewOrders() {
+  subscribeOrders(function (orders) {
+    const list = orders || [];
+    const fresh = list.filter(function (order) {
+      return !knownIds.has(order.id);
+    });
+
+    if (fresh.length > 0 && knownIds.size > 0 && soundOn) {
+      playBeep();
+    }
+
+    fresh.forEach(function (order) {
+      knownIds.add(order.id);
+    });
+
+    activeOrders = list;
+    showOrders(activeOrders);
+  });
+}
+function enableSound() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume();
+  }
+  soundOn = true;
+  soundButton.textContent = "Sound on";
+  soundButton.disabled = true;
+  playBeep();
+}
+function playBeep() {
+  if (!soundOn || !audioCtx) {
+    return;
+  }
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.value = 880;
+
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.25);
 }
 
 function showOrders(orders) {
   ordersArea.innerHTML = "";
+  ordersArea.classList.remove("orders-grouped");
 
   updateSummary(orders);
   if (!orders || orders.length === 0) {
     showMessage("No active orders");
+    return;
+  }
+
+  if (currentView === "table") {
+    showByTable(orders);
     return;
   }
   orders.forEach(function (order) {
@@ -33,6 +110,54 @@ function showOrders(orders) {
   });
 
   updateWaitTimes();
+}
+function showByTable(orders) {
+  ordersArea.classList.add("orders-grouped");
+  const byTable = {};
+  const others = [];
+
+  orders.forEach(function (order) {
+    if (order.order_type === "dine-in") {
+      const tableNum = order.table_number;
+      if (!byTable[tableNum]) {
+        byTable[tableNum] = [];
+      }
+      byTable[tableNum].push(order);
+    } else {
+      others.push(order);
+    }
+  });
+  const tableNumbers = Object.keys(byTable).sort(function (a, b) {
+    return Number(a) - Number(b);
+  });
+
+  tableNumbers.forEach(function (num) {
+    ordersArea.appendChild(makeGroup("Table " + num, byTable[num]));
+  });
+
+  if (others.length > 0) {
+    ordersArea.appendChild(makeGroup("Pickup and delivery", others));
+  }
+
+  updateWaitTimes();
+}
+function makeGroup(title, orders) {
+  const group = document.createElement("div");
+  group.className = "group";
+
+  const heading = document.createElement("h3");
+  heading.className = "group-title";
+  heading.textContent = title;
+  group.appendChild(heading);
+
+  const cards = document.createElement("div");
+  cards.className = "group-cards";
+  orders.forEach(function (order) {
+    cards.appendChild(buildCard(order));
+  });
+  group.appendChild(cards);
+
+  return group;
 }
 function buildCard(order) {
   const card = document.createElement("article");
@@ -44,10 +169,8 @@ function buildCard(order) {
   steam.setAttribute("aria-hidden", "true");
   steam.innerHTML = "<span></span><span></span><span></span>";
   card.appendChild(steam);
-
   const head = document.createElement("div");
   head.className = "order-head";
-
   const typeBadge = document.createElement("span");
   typeBadge.className = "badge";
   if (order.order_type === "dine-in") {
@@ -96,6 +219,7 @@ function buildCard(order) {
     list.appendChild(li);
   });
   card.appendChild(list);
+
   if (order.note) {
     card.appendChild(makeText("order-note", "Note: " + order.note));
   }
@@ -122,6 +246,7 @@ function buildCard(order) {
 
   return card;
 }
+
 async function changeStatus(order, card) {
   const to = nextStatus(order.status);
   if (!to) {
@@ -129,6 +254,7 @@ async function changeStatus(order, card) {
   }
 
   const result = await updateStatus(order.id, to);
+
   if (result.error) {
     showCardError(card, result.error.message);
     return;
@@ -136,7 +262,6 @@ async function changeStatus(order, card) {
   order.status = to;
   showOrders(activeOrders);
 }
-
 function nextStatus(status) {
   if (status === "new") {
     return "preparing";
@@ -161,7 +286,6 @@ function buttonText(status) {
   }
   return "";
 }
-
 function typeText(order) {
   if (order.order_type === "dine-in") {
     return "Dine-in Table " + order.table_number;
@@ -177,6 +301,7 @@ function typeText(order) {
 function waitedMinutes(isoText) {
   const start = new Date(isoText).getTime();
   const minutes = Math.floor((Date.now() - start) / 60000);
+
   if (minutes < 0) {
     return 0;
   }
@@ -187,10 +312,13 @@ function updateWaitTimes() {
 
   cards.forEach(function (card) {
     const minutes = waitedMinutes(card.dataset.created);
+
     const text = card.querySelector(".wait-text");
     if (text) {
       text.textContent = "Waiting " + minutes + " min";
     }
+
+    // Highlight the card if it has waited too long.
     if (minutes > 15) {
       card.classList.add("order-late");
     } else {
@@ -204,7 +332,6 @@ function updateSummary(orders) {
   if (!orders || orders.length === 0) {
     return;
   }
-
   const totals = {};
   orders.forEach(function (order) {
     order.items.forEach(function (item) {
@@ -218,7 +345,6 @@ function updateSummary(orders) {
 
   summaryList.textContent = parts.join(", ");
 }
-
 function makeText(className, text) {
   const p = document.createElement("p");
   p.className = className;

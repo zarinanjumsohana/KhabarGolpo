@@ -40,5 +40,5 @@ export async function logout() {
 
 export async function getSession() {
   return mockGetSession()
-  // return mockGetSession()
+  
 }

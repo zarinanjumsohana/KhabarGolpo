@@ -194,6 +194,29 @@
   padding: 0 24px 24px;
 }
 
+/* Grouped "By table" view uses normal blocks instead of one grid */
+.orders.orders-grouped {
+  display: block;
+}
+
+.group {
+  margin-bottom: 24px;
+}
+
+.group-title {
+  font-size: 22px;
+  color: var(--sage);
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.group-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
 /* One order card */
 
 .order-card {
