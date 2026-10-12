@@ -1,9 +1,12 @@
-// Kitchen page — load active orders and show them as cards.
+// Kitchen page — load active orders and move them along the chef flow.
 
-import { getActiveOrders } from "../api/kitchen.js";
+import { getActiveOrders, updateStatus } from "../api/kitchen.js";
 
 // The area where all order cards go.
 const ordersArea = document.querySelector(".orders");
+
+// The orders we are currently showing (kept in memory).
+let activeOrders = [];
 
 // Module scripts run after the page is ready, so we can start right away.
 loadOrders();
@@ -18,7 +21,8 @@ async function loadOrders() {
     return;
   }
 
-  showOrders(result.data);
+  activeOrders = result.data || [];
+  showOrders(activeOrders);
 }
 
 // Show every order as a card.
@@ -49,23 +53,33 @@ function buildCard(order) {
   steam.innerHTML = "<span></span><span></span><span></span>";
   card.appendChild(steam);
 
-  // Head row: type badge and receipt number.
+  // Head row: type badge on the left, status badge and receipt on the right.
   const head = document.createElement("div");
   head.className = "order-head";
 
-  const badge = document.createElement("span");
-  badge.className = "badge";
+  const typeBadge = document.createElement("span");
+  typeBadge.className = "badge";
   if (order.order_type === "dine-in") {
-    badge.className = "badge badge-dinein";
+    typeBadge.className = "badge badge-dinein";
   }
-  badge.textContent = typeText(order);
-  head.appendChild(badge);
+  typeBadge.textContent = typeText(order);
+  head.appendChild(typeBadge);
+
+  const right = document.createElement("div");
+  right.className = "order-head-right";
+
+  // Status badge, colored by the current status.
+  const statusBadge = document.createElement("span");
+  statusBadge.className = "badge status-" + order.status;
+  statusBadge.textContent = order.status;
+  right.appendChild(statusBadge);
 
   const receipt = document.createElement("span");
   receipt.className = "receipt";
   receipt.textContent = order.receipt_number;
-  head.appendChild(receipt);
+  right.appendChild(receipt);
 
+  head.appendChild(right);
   card.appendChild(head);
 
   // For pickup and delivery, show the customer name and pickup time.
@@ -100,7 +114,7 @@ function buildCard(order) {
     card.appendChild(makeText("order-note", "Note: " + order.note));
   }
 
-  // Foot row: placed time and the action button.
+  // Foot row: placed time and the status button.
   const foot = document.createElement("div");
   foot.className = "order-foot";
 
@@ -109,18 +123,72 @@ function buildCard(order) {
   placed.textContent = "Placed " + formatTime(order.created_at);
   foot.appendChild(placed);
 
-  const button = document.createElement("button");
-  button.className = "btn btn-primary";
-  button.type = "button";
-  button.textContent = "Start preparing";
-  foot.appendChild(button);
+  // Only add a button when there is a next step.
+  if (nextStatus(order.status)) {
+    const button = document.createElement("button");
+    button.className = "btn btn-primary";
+    button.type = "button";
+    button.textContent = buttonText(order.status);
+    button.addEventListener("click", function () {
+      changeStatus(order, card);
+    });
+    foot.appendChild(button);
+  }
 
   card.appendChild(foot);
 
   return card;
 }
 
-// Text for the type badge.
+// Move an order to its next status.
+async function changeStatus(order, card) {
+  const to = nextStatus(order.status);
+  if (!to) {
+    return;
+  }
+
+  const result = await updateStatus(order.id, to);
+
+  // If there is an error, show it on this card.
+  if (result.error) {
+    showCardError(card, result.error.message);
+    return;
+  }
+
+  // The mock does not save, so update our own list and show the cards again.
+  order.status = to;
+  showOrders(activeOrders);
+}
+
+// Which status comes next for the chef.
+function nextStatus(status) {
+  if (status === "new") {
+    return "preparing";
+  }
+  if (status === "preparing") {
+    return "ready";
+  }
+  if (status === "ready") {
+    return "preparing";
+  }
+  return null;
+}
+
+// The button text for the current status.
+function buttonText(status) {
+  if (status === "new") {
+    return "Start preparing";
+  }
+  if (status === "preparing") {
+    return "Mark ready";
+  }
+  if (status === "ready") {
+    return "Back to preparing";
+  }
+  return "";
+}
+
+// Text for the order type badge.
 function typeText(order) {
   if (order.order_type === "dine-in") {
     return "Dine-in Table " + order.table_number;
@@ -146,6 +214,16 @@ function makeText(className, text) {
   p.className = className;
   p.textContent = text;
   return p;
+}
+
+// Show an error message on one card.
+function showCardError(card, text) {
+  let box = card.querySelector(".order-error");
+  if (!box) {
+    box = makeText("order-error", "");
+    card.appendChild(box);
+  }
+  box.textContent = text;
 }
 
 // Show one message in the orders area.

@@ -286,6 +286,56 @@
   color: #FFFFFF;
 }
 
+/* Right side of the head: status badge and receipt */
+.order-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Colored status badges */
+.order-head-right .badge {
+  text-transform: capitalize;
+}
+
+.status-new {
+  background-color: var(--amber);
+  color: #FFFFFF;
+}
+
+.status-preparing {
+  background-color: var(--sage);
+  color: #FFFFFF;
+}
+
+.status-ready {
+  background-color: #3F7D5D;
+  color: #FFFFFF;
+}
+
+.status-out_for_delivery {
+  background-color: #4A6FA5;
+  color: #FFFFFF;
+}
+
+.status-completed {
+  background-color: #6E6A63;
+  color: #FFFFFF;
+}
+
+.status-cancelled {
+  background-color: #C0392B;
+  color: #FFFFFF;
+}
+
+/* Error message shown on a card */
+.order-error {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #C0392B;
+}
+
 /* Pulsing dot inside the badge */
 .dot {
   width: 8px;
