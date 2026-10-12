@@ -1,10 +1,5 @@
-// Khabar Golpo — Admin Orders API layer
-// Admin panel functions for order management
-// Auto-switches based on MOCK_MODE in config.js (same pattern as js/api/kitchen.js)
 
 import { SUPABASE_URL, ANON_KEY, MOCK_MODE } from "../config.js"
-
-// ---- Mock implementations (match js/mock/api.js mockAdminOrders shapes) ----
 
 const mockListOrders = (filters = {}) => Promise.resolve({
   data: [{
@@ -102,63 +97,6 @@ const mockMarkTablePaid = (tableNumber) => Promise.resolve({
   error: null
 }
 
-// ---- Real Supabase RPC calls (uncomment when ready) ----
-// const supabase = window.supabase || createClient(SUPABASE_URL, ANON_KEY)
-
-// export async function listOrders(filters = {}) {
-//   if (MOCK_MODE) return mockListOrders(filters)
-//   // const { data, error } = await supabase.rpc('list_orders', { p_filters: filters })
-//   // return { data, error }
-// }
-
-// export async function getOrder(id) {
-//   if (MOCK_MODE) return mockGetOrder(id)
-//   // const { data, error } = await supabase.rpc('get_order_by_id', { p_id: id })
-//   // return { data, error }
-// }
-
-// export async function cancelOrder(id) {
-//   if (MOCK_MODE) return mockCancelOrder(id)
-//   // const { data, error } = await supabase.rpc('cancel_order', { p_order: id })
-//   // return { data, error }
-// }
-
-// export async function markOutForDelivery(id, { delivery_note } = {}) {
-//   if (MOCK_MODE) return mockMarkOutForDelivery(id, { delivery_note })
-//   // const { data, error } = await supabase.rpc('mark_out_for_delivery', { p_order: id, p_delivery_note: delivery_note })
-//   // return { data, error }
-// }
-
-// export async function markDelivered(id) {
-//   if (MOCK_MODE) return mockMarkDelivered(id)
-//   // const { data, error } = await supabase.rpc('mark_delivered', { p_order: id })
-//   // return { data, error }
-// }
-
-// export async function markPickedUp(id) {
-//   if (MOCK_MODE) return mockMarkPickedUp(id)
-//   // const { data, error } = await supabase.rpc('mark_picked_up', { p_order: id })
-//   // return { data, error }
-// }
-
-// export async function markPaid(id) {
-//   if (MOCK_MODE) return mockMarkPaid(id)
-//   // const { data, error } = await supabase.rpc('mark_paid', { p_order: id })
-//   // return { data, error }
-// }
-
-// export async function tableBill(tableNumber) {
-//   if (MOCK_MODE) return mockTableBill(tableNumber)
-//   // const { data, error } = await supabase.rpc('table_bill', { p_table: tableNumber })
-//   // return { data, error }
-// }
-
-// export async function markTablePaid(tableNumber) {
-//   if (MOCK_MODE) return mockMarkTablePaid(tableNumber)
-//   // const { data, error } = await supabase.rpc('mark_table_paid', { p_table: tableNumber })
-//   // return { data, error }
-
-// Mock-first: use mock implementations for immediate functionality
 export async function listOrders(filters = {}) {
   return mockListOrders(filters)
 }
