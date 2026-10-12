@@ -51,8 +51,6 @@ h1, h2, h3 {
 
 /* Solid sage button for the main action */
 .btn-primary {
-  position: relative;
-  overflow: hidden;
   background-color: var(--sage);
   border-color: var(--sage);
   color: #FFFFFF;
@@ -60,25 +58,6 @@ h1, h2, h3 {
 
 .btn-primary:hover {
   background-color: #6B7B5E;
-}
-
-/* Light sweep that runs across the main button */
-.btn-primary::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -120%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  transform: skewX(-20deg);
-  animation: shine 3s infinite;
-}
-
-@keyframes shine {
-  0% { left: -120%; }
-  60% { left: 140%; }
-  100% { left: 140%; }
 }
 
 /* Small badge */

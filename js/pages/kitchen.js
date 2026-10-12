@@ -1,8 +1,10 @@
 
 import { getActiveOrders, updateStatus, subscribeOrders } from "../api/kitchen.js";
+import { getSession, logout } from "../api/auth.js";
 const ordersArea = document.querySelector(".orders");
 const summaryList = document.querySelector(".summary-list");
 const soundButton = document.querySelector("#sound-toggle");
+const logoutButton = document.querySelector("#logout-button");
 
 let activeOrders = [];
 let currentView = "all";
@@ -12,9 +14,15 @@ let audioCtx = null;
 
 loadOrders();
 listenForNewOrders();
+checkLogin();
 
 setInterval(updateWaitTimes, 60000);
 soundButton.addEventListener("click", enableSound);
+
+logoutButton.addEventListener("click", async function () {
+  await logout();
+  window.location.href = "/admin/login.html";
+});
 
 const tabs = document.querySelectorAll(".tab");
 tabs.forEach(function (tab) {
@@ -60,6 +68,12 @@ function listenForNewOrders() {
     activeOrders = list;
     showOrders(activeOrders);
   });
+}
+async function checkLogin() {
+  const session = await getSession();
+  if (!session.data || !session.data.role) {
+    window.location.href = "/admin/login.html";
+  }
 }
 function enableSound() {
   if (!audioCtx) {
@@ -164,11 +178,6 @@ function buildCard(order) {
   card.className = "order-card";
   card.dataset.created = order.created_at;
 
-  const steam = document.createElement("div");
-  steam.className = "steam";
-  steam.setAttribute("aria-hidden", "true");
-  steam.innerHTML = "<span></span><span></span><span></span>";
-  card.appendChild(steam);
   const head = document.createElement("div");
   head.className = "order-head";
   const typeBadge = document.createElement("span");
