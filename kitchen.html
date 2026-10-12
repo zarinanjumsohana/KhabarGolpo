@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen — Khabar Golpo</title>
+
+  <!-- Fonts: Cormorant Garamond for headings, Jost for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/kitchen.css">
+</head>
+<body>
+
+  <!-- Soft floating color blobs in the background -->
+  <div class="aurora" aria-hidden="true">
+    <span class="blob blob-sage"></span>
+    <span class="blob blob-amber"></span>
+    <span class="blob blob-cream"></span>
+  </div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <h1 class="topbar-title">Kitchen
+      <span class="live"><span class="live-dot"></span>LIVE</span>
+    </h1>
+    <div class="topbar-actions">
+      <button class="btn" type="button">Enable sound</button>
+      <button class="btn" type="button">Logout</button>
+    </div>
+  </header>
+
+  <!-- Toggle between two views -->
+  <div class="tabs">
+    <button class="tab active" type="button">All orders</button>
+    <button class="tab" type="button">By table</button>
+  </div>
+
+  <!-- Summary bar, empty for now -->
+  <section class="summary-bar">
+    <h2>Items to prepare</h2>
+    <div class="summary-list">
+      <!-- items will go here later -->
+    </div>
+  </section>
+
+  <!-- Orders area -->
+  <section class="orders">
+
+    <!-- Sample order card (static, for design only) -->
+    <article class="order-card">
+
+      <!-- Little rising steam wisps to show the food is hot -->
+      <div class="steam" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="order-head">
+        <span class="badge badge-dinein"><span class="dot"></span>Dine-in Table 5</span>
+        <span class="receipt">KG-1042</span>
+      </div>
+
+      <ul class="order-items">
+        <li><span class="qty">2&times;</span>Burger</li>
+        <li><span class="qty">1&times;</span>Fries</li>
+      </ul>
+
+      <p class="order-note">Note: well done</p>
+
+      <div class="order-foot">
+        <span class="wait-text"><span class="wait-dot"></span>Waiting 8 min</span>
+        <button class="btn btn-primary" type="button">Start preparing</button>
+      </div>
+    </article>
+
+  </section>
+
+</body>
+</html>
