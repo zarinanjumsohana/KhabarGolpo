@@ -1,8 +1,4 @@
-/* Khabar Golpo — kitchen page styles.
-   Kitchen is minimal and speed-first (Architecture + README).
-   No decorative animations here, only tiny hover effects. */
 
-/* Soft paper grain over the page (static, no motion) */
 body::before {
   content: "";
   position: fixed;
@@ -16,7 +12,6 @@ body::before {
   background-size: 160px 160px, 220px 220px, 200px 200px;
 }
 
-/* Keyboard / screen-reader skip link, hidden until focused */
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -32,8 +27,6 @@ body::before {
   border-radius: 8px;
   text-decoration: none;
 }
-
-/* ---- Top bar ---- */
 
 .topbar {
   position: sticky;
@@ -65,7 +58,6 @@ body::before {
   font-size: 34px;
 }
 
-/* A small chef's note under the title — gives the page a human touch */
 .chef-note {
   margin: 0;
   font-size: 14px;
@@ -73,7 +65,6 @@ body::before {
   color: #6E6A63;
 }
 
-/* Live tag next to the title */
 .live {
   display: inline-flex;
   align-items: center;
@@ -99,8 +90,6 @@ body::before {
   display: flex;
   gap: 12px;
 }
-
-/* ---- View tabs ---- */
 
 .tabs {
   display: inline-flex;
@@ -131,9 +120,6 @@ body::before {
   background-color: var(--sage);
   color: #FFFFFF;
 }
-
-/* ---- Summary bar ---- */
-
 .summary-bar {
   margin: 20px 24px;
   padding: 16px 20px;
@@ -150,9 +136,6 @@ body::before {
 .summary-list {
   font-weight: 600;
 }
-
-/* ---- Orders area ---- */
-
 .orders {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -160,7 +143,6 @@ body::before {
   padding: 0 24px 24px;
 }
 
-/* Grouped "By table" view uses normal blocks instead of one grid */
 .orders.orders-grouped {
   display: block;
 }
@@ -183,8 +165,6 @@ body::before {
   gap: 22px;
 }
 
-/* ---- One order card, styled like a kitchen ticket ---- */
-
 .order-card {
   position: relative;
   background-color: #FFFFFF;
@@ -197,7 +177,6 @@ body::before {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* Thin accent bar on the left side of the ticket */
 .order-card::before {
   content: "";
   position: absolute;
@@ -208,8 +187,6 @@ body::before {
   border-radius: 0 4px 4px 0;
   background: linear-gradient(var(--sage), var(--amber));
 }
-
-/* Perforated (torn) bottom edge, like a printed ticket */
 .order-card::after {
   content: "";
   position: absolute;
@@ -227,7 +204,6 @@ body::before {
   box-shadow: 0 12px 28px rgba(124, 140, 110, 0.28);
 }
 
-/* Soft red border for orders that waited more than 15 minutes */
 .order-late {
   border-color: #D98B8B;
   outline: 2px solid rgba(217, 91, 91, 0.35);
@@ -257,8 +233,6 @@ body::before {
   align-items: center;
   gap: 8px;
 }
-
-/* Colored status badges */
 .order-head-right .badge {
   text-transform: capitalize;
 }
@@ -298,7 +272,7 @@ body::before {
   color: #6E6A63;
 }
 
-/* Items list */
+
 .order-items {
   list-style: none;
   margin: 0;
@@ -341,7 +315,6 @@ body::before {
   color: #B07D1E;
 }
 
-/* Error message shown on a card */
 .order-error {
   margin: 0;
   font-size: 15px;
@@ -349,7 +322,6 @@ body::before {
   color: #C0392B;
 }
 
-/* ---- Footer ---- */
 
 .kitchen-footer {
   padding: 14px 24px 22px;
@@ -359,7 +331,6 @@ body::before {
   border-top: 1px solid var(--line);
 }
 
-/* ---- Phone layout ---- */
 
 @media (max-width: 600px) {
   .topbar {
@@ -388,7 +359,6 @@ body::before {
   }
 }
 
-/* Respect people who turn off motion */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
