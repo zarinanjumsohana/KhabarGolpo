@@ -5,11 +5,17 @@ import { getActiveOrders, updateStatus } from "../api/kitchen.js";
 // The area where all order cards go.
 const ordersArea = document.querySelector(".orders");
 
+// The summary bar that lists all items to prepare.
+const summaryList = document.querySelector(".summary-list");
+
 // The orders we are currently showing (kept in memory).
 let activeOrders = [];
 
 // Module scripts run after the page is ready, so we can start right away.
 loadOrders();
+
+// Refresh the waiting times every minute (no page reload).
+setInterval(updateWaitTimes, 60000);
 
 // Load the orders and show them.
 async function loadOrders() {
@@ -29,6 +35,9 @@ async function loadOrders() {
 function showOrders(orders) {
   ordersArea.innerHTML = "";
 
+  // Refresh the "Items to prepare" bar for the new list.
+  updateSummary(orders);
+
   // Nothing to show yet.
   if (!orders || orders.length === 0) {
     showMessage("No active orders");
@@ -39,12 +48,18 @@ function showOrders(orders) {
   orders.forEach(function (order) {
     ordersArea.appendChild(buildCard(order));
   });
+
+  // Set the waiting times right away.
+  updateWaitTimes();
 }
 
 // Build a single order card.
 function buildCard(order) {
   const card = document.createElement("article");
   card.className = "order-card";
+
+  // Remember when the order was placed, so we can update the waiting time.
+  card.dataset.created = order.created_at;
 
   // Little steam wisps at the top of the card.
   const steam = document.createElement("div");
@@ -114,13 +129,13 @@ function buildCard(order) {
     card.appendChild(makeText("order-note", "Note: " + order.note));
   }
 
-  // Foot row: placed time and the status button.
+  // Foot row: waiting time and the status button.
   const foot = document.createElement("div");
   foot.className = "order-foot";
 
   const placed = document.createElement("span");
   placed.className = "wait-text";
-  placed.textContent = "Placed " + formatTime(order.created_at);
+  placed.textContent = "Waiting " + waitedMinutes(order.created_at) + " min";
   foot.appendChild(placed);
 
   // Only add a button when there is a next step.
@@ -202,10 +217,61 @@ function typeText(order) {
   return order.order_type;
 }
 
-// Format the placed time like "8:35 PM".
-function formatTime(isoText) {
-  const date = new Date(isoText);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+// How many minutes have passed since the order was placed.
+function waitedMinutes(isoText) {
+  const start = new Date(isoText).getTime();
+  const minutes = Math.floor((Date.now() - start) / 60000);
+  if (minutes < 0) {
+    return 0;
+  }
+  return minutes;
+}
+
+// Update the waiting time on each card, without rebuilding the cards.
+function updateWaitTimes() {
+  const cards = document.querySelectorAll(".order-card");
+
+  cards.forEach(function (card) {
+    const minutes = waitedMinutes(card.dataset.created);
+
+    // Update the waiting time text.
+    const text = card.querySelector(".wait-text");
+    if (text) {
+      text.textContent = "Waiting " + minutes + " min";
+    }
+
+    // Highlight the card if it has waited too long.
+    if (minutes > 15) {
+      card.classList.add("order-late");
+    } else {
+      card.classList.remove("order-late");
+    }
+  });
+}
+
+// Fill the summary bar with the total quantity of each item.
+function updateSummary(orders) {
+  summaryList.innerHTML = "";
+
+  if (!orders || orders.length === 0) {
+    return;
+  }
+
+  // Add up the quantity of every item name.
+  const totals = {};
+  orders.forEach(function (order) {
+    order.items.forEach(function (item) {
+      totals[item.name] = (totals[item.name] || 0) + item.qty;
+    });
+  });
+
+  // Build a text like "Burger x7, Fries x12".
+  const parts = [];
+  Object.keys(totals).forEach(function (name) {
+    parts.push(name + " x" + totals[name]);
+  });
+
+  summaryList.textContent = parts.join(", ");
 }
 
 // Make a simple paragraph with a class and some text.

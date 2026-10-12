@@ -227,6 +227,17 @@
   box-shadow: 0 18px 40px rgba(124, 140, 110, 0.35);
 }
 
+/* Soft red border for orders that waited more than 15 minutes */
+.order-late {
+  border-color: #D98B8B;
+  outline: 2px solid rgba(217, 91, 91, 0.35);
+  outline-offset: 2px;
+}
+
+.order-late .wait-text {
+  color: #C0392B;
+}
+
 /* Gentle glow that comes and goes (no rotation) */
 @keyframes breathe {
   0%, 100% { box-shadow: 0 4px 14px rgba(124, 140, 110, 0.18); }
