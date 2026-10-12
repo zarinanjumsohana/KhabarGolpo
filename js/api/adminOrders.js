@@ -95,7 +95,7 @@ const mockTableBill = (tableNumber) => Promise.resolve({
 const mockMarkTablePaid = (tableNumber) => Promise.resolve({
   data: { paid_count: 1, combined_total: 545.00 },
   error: null
-}
+})
 
 export async function listOrders(filters = {}) {
   return mockListOrders(filters)
