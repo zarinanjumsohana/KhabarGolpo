@@ -153,12 +153,6 @@ const mockMarkTablePaid = (tableNumber) => Promise.resolve({
 // //   // return { data, error }
 // //}
 
-// // export async function markTablePaid(tableNumber) {
-// //   if (MOCK_MODE) return mockMarkTablePaid(tableNumber)
-// //   // const { data, error } = await supabase.rpc('mark_table_paid', { p_table: tableNumber })
-// //   // return { data, error }
-// //}
-
 // Mock-first: use mock implementations for immediate functionality
 export async function listOrders(filters = {}) {
   return mockListOrders(filters)
