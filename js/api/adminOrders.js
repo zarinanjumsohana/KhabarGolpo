@@ -109,13 +109,13 @@ const mockMarkTablePaid = (tableNumber) => Promise.resolve({
 // //   if (MOCK_MODE) return mockListOrders(filters)
 // //   // const { data, error } = await supabase.rpc('list_orders', { p_filters: filters })
 // //   // return { data, error }
-// // }
+// //}
 
 // // export async function getOrder(id) {
 // //   if (MOCK_MODE) return mockGetOrder(id)
 // //   // const { data, error } = await supabase.rpc('get_order_by_id', { p_id: id })
 // //   // return { data, error }
-// // }
+// //}
 
 // // export async function cancelOrder(id) {
 // //   if (MOCK_MODE) return mockCancelOrder(id)
@@ -127,7 +127,7 @@ const mockMarkTablePaid = (tableNumber) => Promise.resolve({
 // //   if (MOCK_MODE) return mockMarkOutForDelivery(id, { delivery_note })
 // //   // const { data, error } = await supabase.rpc('mark_out_for_delivery', { p_order: id, p_delivery_note: delivery_note })
 // //   // return { data, error }
-// // }
+// //}
 
 // // export async function markDelivered(id) {
 // //   if (MOCK_MODE) return mockMarkDelivered(id)
