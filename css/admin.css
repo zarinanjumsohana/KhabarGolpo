@@ -47,9 +47,10 @@
   position: absolute;
   left: 26px;
   top: 0;
-  bottom: 0;
+  bottom: 90px;
   display: flex;
   align-items: center;
+  justify-content: center;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font-size: 13px;
@@ -80,6 +81,7 @@
   font-weight: 500;
   line-height: 1.08;
   color: #FBFAF7;
+  text-wrap: balance;
 }
 
 .quote-line {
@@ -136,7 +138,7 @@
   position: relative;
   width: 100%;
   max-width: 400px;
-  padding: 44px 40px;
+  padding: 44px 40px 28px;
   animation: card-fade-up 0.4s ease both;
 }
 
