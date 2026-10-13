@@ -20,7 +20,6 @@
   background: radial-gradient(130% 120% at 18% 8%, #8C9A7C 0%, #6C7B5E 52%, #4C5742 100%);
 }
 
-
 .login-visual::before {
   content: "";
   position: absolute;
@@ -276,5 +275,235 @@
 
   .login-btn:hover {
     transform: none;
+  }
+}
+
+
+.admin-body {
+  min-height: 100vh;
+}
+
+/* The checkbox is only used to open the menu on phones */
+.nav-toggle {
+  display: none;
+}
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Left sidebar, fixed on desktop */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 18px;
+  background-color: var(--cream);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+
+/* Menu button hidden until we are on a phone */
+.menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background-color: var(--warm-white);
+  color: var(--charcoal);
+  cursor: pointer;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--charcoal);
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.15s ease;
+}
+
+.nav-link:hover {
+  background-color: var(--warm-white);
+}
+
+.nav-link.active {
+  background-color: var(--sage);
+  color: #FFFFFF;
+}
+
+
+.nav-logout {
+  margin-top: auto;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+
+.admin-main {
+  flex: 1;
+  margin-left: 240px;
+  padding: 32px;
+  animation: admin-fade 0.3s ease both;
+}
+
+.page-title {
+  font-size: 40px;
+  margin-bottom: 24px;
+}
+
+/* Stat cards */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--cream);
+  color: var(--sage);
+}
+
+.stat-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.stat-number {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #8A857C;
+}
+
+/* Empty sections */
+.section {
+  margin-bottom: 24px;
+}
+
+.section h2 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+
+.panel {
+  min-height: 150px;
+}
+
+.panel-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@keyframes admin-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Phones: sidebar becomes a top bar with a menu button */
+@media (max-width: 760px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    width: auto;
+    padding: 12px 16px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    overflow: visible;
+  }
+
+  .menu-button {
+    display: inline-flex;
+  }
+
+  /* Menu is closed until the checkbox is ticked */
+  .sidebar-nav {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .nav-toggle:checked ~ .admin-layout .sidebar-nav {
+    display: flex;
+  }
+
+  .nav-logout {
+    margin-top: 8px;
+  }
+
+  .admin-main {
+    margin-left: 0;
+    padding: 16px;
+    padding-top: 88px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-main {
+    animation: none;
   }
 }

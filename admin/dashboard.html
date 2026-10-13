@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Khabar-Golpo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+  <input class="nav-toggle" type="checkbox" id="nav-toggle" hidden>
+
+  <div class="admin-layout">
+
+    <!-- Sidebar: fixed on the left, top bar on phones -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <a class="brand" href="dashboard.html">Khabar-Golpo</a>
+
+        <!-- Menu button, shown only on phones -->
+        <label class="menu-button" for="nav-toggle" aria-label="Toggle menu">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </label>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-link active" href="dashboard.html">Dashboard</a>
+        <a class="nav-link" href="#">Orders</a>
+        <a class="nav-link" href="#">Menu</a>
+        <a class="nav-link" href="#">Tables</a>
+        <a class="nav-link" href="#">Reservations</a>
+        <a class="nav-link" href="#">Feedback</a>
+        <a class="nav-link" href="#">Gallery</a>
+        <a class="nav-link" href="#">Reports</a>
+        <a class="nav-link" href="#">Settings</a>
+        <a class="nav-link nav-logout" href="login.html">Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main area -->
+    <main class="admin-main">
+      <h1 class="page-title">Dashboard</h1>
+
+      <!-- Stat cards -->
+      <div class="stats">
+
+        <article class="card stat-card">
+          <span class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+              <path d="M3 6h18"></path>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </span>
+          <span class="stat-number">0</span>
+          <span class="stat-label">Today's orders</span>
+        </article>
+
+        <article class="card stat-card">
+          <span class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </span>
+          <span class="stat-number">0</span>
+          <span class="stat-label">Pending orders</span>
+        </article>
+
+        <article class="card stat-card">
+          <span class="stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="12" x="2" y="6" rx="2"></rect>
+              <circle cx="12" cy="12" r="2"></circle>
+              <path d="M6 12h.01M18 12h.01"></path>
+            </svg>
+          </span>
+          <span class="stat-number">৳0</span>
+          <span class="stat-label">Today's sales</span>
+        </article>
+
+      </div>
+
+      <!-- Empty panels, filled later -->
+      <section class="section">
+        <h2>Revenue</h2>
+        <div class="card panel"></div>
+      </section>
+
+      <div class="panel-row">
+        <section class="section">
+          <h2>Top items</h2>
+          <div class="card panel"></div>
+        </section>
+
+        <section class="section">
+          <h2>Orders by type</h2>
+          <div class="card panel"></div>
+        </section>
+      </div>
+
+    </main>
+
+  </div>
+
+</body>
+</html>
