@@ -1,6 +1,7 @@
 
 import { getActiveOrders, updateStatus, subscribeOrders } from "../api/kitchen.js";
-import { getSession, logout } from "../api/auth.js";
+import { logout } from "../api/auth.js";
+import { requireRole } from "../utils/guards.js";
 const ordersArea = document.querySelector(".orders");
 const summaryList = document.querySelector(".summary-list");
 const soundButton = document.querySelector("#sound-toggle");
@@ -12,9 +13,9 @@ let knownIds = new Set();
 let soundOn = false;
 let audioCtx = null;
 
+requireRole(["chef", "admin"]);
 loadOrders();
 listenForNewOrders();
-checkLogin();
 
 setInterval(updateWaitTimes, 60000);
 soundButton.addEventListener("click", enableSound);
@@ -68,12 +69,6 @@ function listenForNewOrders() {
     activeOrders = list;
     showOrders(activeOrders);
   });
-}
-async function checkLogin() {
-  const session = await getSession();
-  if (!session.data || !session.data.role) {
-    window.location.href = "/admin/login.html";
-  }
 }
 function enableSound() {
   if (!audioCtx) {
