@@ -3,13 +3,13 @@ import { logout } from "../api/auth.js";
 import { listOrders } from "../api/adminOrders.js";
 import { formatMoney } from "../utils/format.js";
 
-// Only admins may see the dashboard.
+
 requireRole(["admin"]);
 
 wireLogout();
 loadStats();
 
-// Logout button clears the session and sends the user to login.
+
 function wireLogout() {
   const button = document.querySelector("#logout-button");
   button.addEventListener("click", async function (event) {
@@ -19,7 +19,6 @@ function wireLogout() {
   });
 }
 
-// Load all orders and fill the three stat cards.
 async function loadStats() {
   const result = await listOrders();
 
@@ -28,14 +27,14 @@ async function loadStats() {
     return;
   }
 
-  // The contract gives { rows }, but accept a plain array too.
+  
   const data = result.data || {};
   const rows = Array.isArray(data) ? data : (data.rows || []);
 
   fillCards(rows);
 }
 
-// Count pending orders and total the paid sales.
+
 function fillCards(rows) {
   let pending = 0;
   let sales = 0;
