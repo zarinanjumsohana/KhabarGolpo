@@ -44,13 +44,16 @@
         <a class="nav-link" href="#">Gallery</a>
         <a class="nav-link" href="#">Reports</a>
         <a class="nav-link" href="#">Settings</a>
-        <a class="nav-link nav-logout" href="login.html">Logout</a>
+        <a class="nav-link nav-logout" id="logout-button" href="login.html">Logout</a>
       </nav>
     </aside>
 
     <!-- Main area -->
     <main class="admin-main">
       <h1 class="page-title">Dashboard</h1>
+
+      <!-- Message shown if the stats cannot be loaded -->
+      <p class="card dash-message" id="dash-message" role="status" hidden></p>
 
       <!-- Stat cards -->
       <div class="stats">
@@ -64,7 +67,7 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </span>
-          <span class="stat-number">0</span>
+          <span class="stat-number" id="stat-orders">0</span>
           <span class="stat-label">Today's orders</span>
         </article>
 
@@ -76,7 +79,7 @@
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
           </span>
-          <span class="stat-number">0</span>
+          <span class="stat-number" id="stat-pending">0</span>
           <span class="stat-label">Pending orders</span>
         </article>
 
@@ -89,7 +92,7 @@
               <path d="M6 12h.01M18 12h.01"></path>
             </svg>
           </span>
-          <span class="stat-number">৳0</span>
+          <span class="stat-number" id="stat-sales">৳0</span>
           <span class="stat-label">Today's sales</span>
         </article>
 
@@ -117,5 +120,6 @@
 
   </div>
 
+  <script type="module" src="../js/pages/dashboard.js"></script>
 </body>
 </html>
