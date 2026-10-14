@@ -1,0 +1,1035 @@
+
+:root {
+  --bg: #07090A;
+  --lime: #B6F24A;
+  --saffron: #FFB627;
+  --coral: #FF6B4A;
+  --violet: #A78BFA;
+  --sky: #5BC8E8;
+  --text: #EAF2E3;
+  --muted: #8A9A86;
+
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+
+  --radius: 20px;
+  --gap: 18px;
+}
+
+/* ---- Simple reset ---- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Jost", system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Headings and big numbers use the serif font */
+h1, h2, h3 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* ---- Aurora background blobs (kept light for low-end laptops) ---- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.45;
+}
+
+.blob-lime {
+  background: radial-gradient(circle, var(--lime), transparent 65%);
+  top: -120px;
+  left: -80px;
+}
+
+.blob-saffron {
+  background: radial-gradient(circle, var(--saffron), transparent 65%);
+  top: 40%;
+  right: -140px;
+}
+
+.blob-violet {
+  background: radial-gradient(circle, var(--violet), transparent 65%);
+  bottom: -140px;
+  left: 30%;
+}
+
+/* ---- Glass card look ---- */
+.glass {
+  position: relative;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Thin soft highlight line on top of each glass card */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  border-radius: var(--radius) var(--radius) 0 0;
+  pointer-events: none;
+}
+
+/* ---- Page layout grid ---- */
+.layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: var(--gap);
+  padding: var(--gap);
+  min-height: 100vh;
+  align-items: start;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  padding: 20px 16px;
+  position: sticky;
+  top: var(--gap);
+  height: calc(100vh - (var(--gap) * 2));
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--lime), var(--saffron));
+}
+
+.brand-name {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Menu button hidden on desktop, shown on phones */
+.menu-btn {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(3px);
+}
+
+.nav-link.active {
+  color: var(--text);
+  background: rgba(182, 242, 74, 0.12);
+  border: 1px solid rgba(182, 242, 74, 0.35);
+}
+
+.nav-link.active svg {
+  color: var(--lime);
+}
+
+.nav-link.logout {
+  margin-top: auto;
+  color: var(--coral);
+}
+
+.nav-link.logout:hover {
+  background: rgba(255, 107, 74, 0.12);
+}
+
+/* ===== Main column ===== */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+}
+
+/* ---- Top bar ---- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.greet-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.greet-sub {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--muted);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  width: 160px;
+  min-width: 0;
+}
+
+.search input::placeholder {
+  color: var(--muted);
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-weight: 600;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--violet), var(--coral));
+}
+
+/* ---- Big flow panel ---- */
+.flow {
+  --glow: var(--lime);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 26px 28px;
+}
+
+/* Soft lime glow in the corner of the flow panel */
+.flow::after {
+  content: "";
+  position: absolute;
+  top: -90px;
+  right: 30px;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(182, 242, 74, 0.28), transparent 70%);
+  pointer-events: none;
+}
+
+.flow-text {
+  position: relative;
+}
+
+.flow-title {
+  font-size: 28px;
+}
+
+.flow-sub {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.flow-sub.up { color: var(--lime); }
+.flow-sub.down { color: var(--coral); }
+
+/* Channels on the left, sales ring on the right */
+.flow-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 34px;
+  min-height: 190px;
+}
+
+/* SVG layer that draws the curved connectors */
+.flow-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.flow-channels {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 320px;
+}
+
+/* One channel chip (colour comes from --c set by JS) */
+.channel {
+  --c: var(--lime);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+}
+
+.channel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 12px -1px var(--c);
+  flex-shrink: 0;
+}
+
+.channel-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.channel-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.channel-count {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.channel-amount {
+  margin-left: auto;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--c);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Connector line styles (each path also gets --c from JS) */
+.flow-glow {
+  fill: none;
+  stroke: var(--c, var(--lime));
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.45;
+  filter: blur(4px);
+}
+
+.flow-curve {
+  fill: none;
+  stroke: var(--c, var(--lime));
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  opacity: 0.5;
+}
+
+/* A short dash that travels along the line */
+.flow-pulse {
+  fill: none;
+  stroke: var(--c, var(--lime));
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: var(--pulse) var(--len);
+  animation: flow-pulse 2.6s linear infinite;
+  filter: drop-shadow(0 0 5px var(--c, var(--lime)));
+}
+
+@keyframes flow-pulse {
+  from { stroke-dashoffset: var(--len); }
+  to   { stroke-dashoffset: calc(-1 * var(--pulse)); }
+}
+
+/* Sales ring */
+.flow-ring-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.flow-ring {
+  width: 190px;
+  height: 190px;
+  transform: rotate(-90deg);
+}
+
+.flow-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.10);
+  stroke-width: 14;
+}
+
+/* One arc per channel (colour comes from --c set by JS) */
+.flow-arc {
+  fill: none;
+  stroke: var(--c, var(--lime));
+  stroke-width: 14;
+  stroke-linecap: butt;
+  transition: stroke-dashoffset 0.9s ease;
+}
+
+.flow-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.flow-ring-total {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.flow-ring-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.4px;
+}
+
+.flow-ring-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ---- KPI cards ---- */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap);
+}
+
+.card {
+  padding: 18px 20px;
+  /* Smooth lift and glow on hover */
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* Cards and the flow panel lift a little on hover with a stronger glow */
+.card:hover,
+.flow:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5),
+              0 0 28px -6px var(--glow, rgba(255, 255, 255, 0.25));
+}
+
+/* Each KPI card gets its own accent colour (used for the glow and icon ring) */
+.kpi {
+  overflow: hidden;
+}
+
+.kpi-lime    { --glow: var(--lime); }
+.kpi-saffron { --glow: var(--saffron); }
+.kpi-coral   { --glow: var(--coral); }
+.kpi-violet  { --glow: var(--violet); }
+
+/* Coloured glow on top of each KPI card */
+.kpi::after {
+  content: "";
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow), transparent 70%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Keep card text above the glow */
+.kpi-icon,
+.kpi-value,
+.kpi-label,
+.kpi-delta,
+.flow-text,
+.flow-body {
+  z-index: 1;
+}
+
+/* Round icon circle with a thin accent ring */
+.kpi-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--glow);
+  border: 1px solid var(--glow);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 16px -4px var(--glow);
+}
+
+/* Big serif number */
+.kpi-value {
+  position: relative;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 14px 0 4px;
+}
+
+/* Small muted label */
+.kpi-label {
+  position: relative;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.kpi-delta {
+  position: relative;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.kpi-delta.up { color: var(--lime); }
+.kpi-delta.down { color: var(--coral); }
+.kpi-delta.warn { color: var(--saffron); }
+.kpi-delta.flat { color: var(--muted); }
+
+/* ---- Money: the Taka sign gets its own font and a consistent size ---- */
+.money {
+  white-space: nowrap;
+}
+
+.money-sym {
+  font-family: "Jost", system-ui, sans-serif;
+  font-size: 0.68em;
+  font-weight: 500;
+  margin-right: 0.16em;
+}
+
+.money-num {
+  font-family: inherit;
+}
+
+/* ---- Panels and two-column rows ---- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--gap);
+}
+
+/* Let grid children shrink instead of forcing the page wider */
+.kpi-row > *,
+.two-col > * {
+  min-width: 0;
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.panel-title {
+  font-size: 21px;
+}
+
+.panel-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---- Weekly bar chart (built in JS) ---- */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 190px;
+}
+
+.bar-wrap {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar {
+  width: 100%;
+  max-width: 34px;
+  min-height: 4px;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.06));
+  /* Grow up from the bottom on load */
+  transform-origin: bottom;
+  animation: bar-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Today's bar stands out with lime and a glow */
+.bar.is-today {
+  background: linear-gradient(180deg, var(--lime), rgba(182, 242, 74, 0.25));
+  box-shadow: 0 0 18px -4px var(--lime);
+}
+
+/* Count shown on top of each bar */
+.bar-count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.bar-wrap.is-today .bar-count {
+  color: var(--lime);
+}
+
+.bar-day {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.bar-wrap.is-today .bar-day {
+  color: var(--text);
+}
+
+/* ---- Order status donut (built in JS) ---- */
+.donut-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.donut {
+  width: 150px;
+  height: 150px;
+  /* Gentle glow behind the ring (static, cheap) */
+  filter: drop-shadow(0 0 12px rgba(182, 242, 74, 0.18));
+}
+
+.donut-track {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+/* Coloured ring segment, revealed via stroke-dashoffset */
+.donut-seg {
+  transition: stroke-dashoffset 0.9s ease;
+}
+
+/* Total shown in the middle of the donut */
+.donut-total {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 30px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+.donut-total-label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  fill: var(--muted);
+}
+
+.legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-count {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* ---- Recent orders list ---- */
+.row-list,
+.item-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.row:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--glass-border);
+  transform: translateX(3px);
+}
+
+/* Receipt number */
+.receipt {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Small chip showing the order type */
+.type-chip {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+
+/* Order total, pushed to the right */
+.row-total {
+  margin-left: auto;
+  font-weight: 500;
+}
+
+/* Status chips */
+.status {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status-new       { color: var(--saffron); background: rgba(255, 182, 39, 0.14); }
+.status-preparing { color: var(--violet);  background: rgba(167, 139, 250, 0.14); }
+.status-ready     { color: var(--lime);    background: rgba(182, 242, 74, 0.14); }
+.status-completed { color: var(--muted);   background: rgba(138, 154, 134, 0.16); }
+.status-cancelled { color: var(--coral);   background: rgba(255, 107, 74, 0.14); }
+
+/* ---- Top items list ---- */
+.item-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 7px;
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.item-pct {
+  color: var(--muted);
+}
+
+.track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  /* No clipping so the bar's glow can show */
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* Thin progress bars with a matching glow */
+.fill-lime    { background: linear-gradient(90deg, var(--lime), rgba(182, 242, 74, 0.4));    box-shadow: 0 0 12px -1px var(--lime); }
+.fill-saffron { background: linear-gradient(90deg, var(--saffron), rgba(255, 182, 39, 0.4)); box-shadow: 0 0 12px -1px var(--saffron); }
+.fill-coral   { background: linear-gradient(90deg, var(--coral), rgba(255, 107, 74, 0.4));   box-shadow: 0 0 12px -1px var(--coral); }
+.fill-violet  { background: linear-gradient(90deg, var(--violet), rgba(167, 139, 250, 0.4)); box-shadow: 0 0 12px -1px var(--violet); }
+
+/* ===== Motion ===== */
+/* Sections fade and rise in (JS adds .reveal-in with a 60ms stagger) */
+.reveal-in {
+  animation: rise 0.6s ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Bars grow up from the bottom */
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* Aurora blobs drift slowly */
+.blob {
+  will-change: transform;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+.blob-saffron {
+  animation-duration: 32s;
+  animation-direction: alternate-reverse;
+}
+
+.blob-violet {
+  animation-duration: 29s;
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(40px, -30px, 0) scale(1.12); }
+}
+
+/* Card tilt + glow that follows the mouse (added by JS on desktop only) */
+.card,
+.flow {
+  --mx: 50%;
+  --my: 50%;
+}
+
+.card.is-lit,
+.flow.is-lit {
+  background-image: radial-gradient(220px circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.10), transparent 60%);
+}
+
+/* ===== Responsive: narrow laptops / tablets (<=1024px) ===== */
+@media (max-width: 1024px) {
+  /* KPI cards: 4 across -> 2 across; side-by-side panels stack */
+  .kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  /* Flow panel: stack channels above the ring so nothing overflows */
+  .flow-body {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 22px;
+  }
+
+  .flow-channels {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Curved connectors only make sense side by side, so hide them */
+  .flow-lines {
+    display: none;
+  }
+}
+
+/* ===== Responsive: small tablets / large phones (<=860px) ===== */
+@media (max-width: 860px) {
+  /* Single column: main area fills the width */
+  .layout {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* Sidebar becomes a top bar */
+  .sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  .menu-btn {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Nav stays hidden until a menu button opens it (later step) */
+  .nav {
+    display: none;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar-tools {
+    flex-wrap: wrap;
+  }
+
+  .search {
+    flex: 1;
+  }
+
+  .search input {
+    width: 100%;
+  }
+}
+
+/* ===== Responsive: phones (<=600px) ===== */
+@media (max-width: 600px) {
+  /* Everything in one column */
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  .flow {
+    padding: 20px 16px;
+  }
+
+  .flow-title {
+    font-size: 24px;
+  }
+
+  .flow-ring {
+    width: 160px;
+    height: 160px;
+  }
+
+  /* Keep order rows readable and prevent sideways overflow at 360px */
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row-total {
+    margin-left: auto;
+  }
+}
+
+/* ---- Respect users who reduce motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
