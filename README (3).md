@@ -467,26 +467,7 @@ Browser ──► page guard (convenience only) ──► login token ──► 
 9. Reservations are confirmed by phone.
 10. Limits: quantity 1–20 per line, up to 30 lines per order, note up to 200 characters.
 
-### 6.9 Design System
-
-| Element | Choice |
-|---------|--------|
-| **Mood** | French, white, minimalist, cozy |
-| **Colours** | Warm white or cream, soft beige, one muted accent (sage or dusty gold), charcoal text |
-| **Fonts** | Elegant serif for headings (Cormorant Garamond), clean sans for body (Jost) |
-| **Details** | Thin lines, soft shadows, rounded cards, subtle grain, French headings (*Notre Histoire, Carte, Galerie, Réservation*) |
-| **Motion** | Scroll reveals, smooth scrolling, hero intro, hover lift and tilt, cart slide-in, animated checkmark, page fade |
-| **3D** | Hero object, 3D dish viewer, tilt cards, CSS card flips |
-
-| Page | Effects allowed |
-|------|-----------------|
-| Customer website | All |
-| Order and tracking pages | Light animations only, no 3D |
-| Kitchen and admin | Minimal: speed and clarity first |
-
-**Performance rules:** lazy-load 3D, keep models under 2 MB, show a static image fallback, respect reduced motion, test on a mid-range phone.
-
-### 6.10 Deployment Flow
+### 6.9 Deployment Flow
 
 ```
 Developer branch ──► GitHub pull request ──► Vercel preview link ──► Member-5 tests
