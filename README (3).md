@@ -34,8 +34,6 @@ Khabar Golpo is a complete restaurant website and management system. Customers c
 | Area | Tools |
 |------|-------|
 | Frontend | HTML, CSS, JavaScript |
-| Animation and 3D (customer website only) | GSAP + ScrollTrigger, Lenis, Three.js, model-viewer, vanilla-tilt, Swiper, Lottie |
-| Fonts and icons | Google Fonts (Cormorant Garamond, Jost), Lucide |
 | Database and backend services | Supabase (database, login, realtime, storage) on the free tier |
 | QR codes | QR code image API |
 | Hosting | Vercel |
@@ -105,8 +103,7 @@ There is no custom server. The pages talk to Supabase through one JavaScript API
 | **Reservation** | Name, phone, date, time, guests, note. Validation, spam trap, success message. Saved as *pending* |
 | **Contact** | Address, phone, email, opening hours, map, social links |
 | **Feedback / Review / Queries** | Type (Review, Query, Suggestion), star rating for reviews, message. Approved reviews appear in a slider |
-| **Footer** | Links, hours, copyright |
-| **General** | French white minimalist cozy theme, smooth transitions, loading skeletons, friendly error messages, responsive from 360px, respects "reduce motion" |
+| **General** | loading skeletons, friendly error messages, responsive from 360px, respects "reduce motion" |
 
 ### 4.2 Dine-in Order Page (QR)
 
