@@ -96,17 +96,8 @@ See `Api Contract.md` for full code list.
 /admin/settings          Restaurant info, tax, delivery, hours
 ```
 
-### 4.2 Page Principles
 
-| Page group | Motion / weight | Notes |
-|------------|-----------------|-------|
-| Customer website | Full effects (GSAP, Lenis, Three.js hero lazy-loaded, tilt, Swiper, Lottie) | Static image fallback, `<model-viewer>` for signature dishes, skeleton loaders, `prefers-reduced-motion` respected |
-| Order + tracking | Light animations only, no 3D | Fast on mid-range phones, large tap targets, sticky cart bar, cart drawer |
-| Kitchen + admin | Minimal, speed-first | Polling fallback if Realtime drops, pagination, print CSS for receipts/slips |
-
-Design system: French white minimalist cozy — warm white/cream, soft beige, muted sage/dusty-gold accent, charcoal text, Cormorant Garamond headings + Jost body, thin lines, soft shadows, rounded cards.
-
-### 4.3 Client State
+### 4.2 Client State
 
 - No framework store. Per-page JS state: menu cache, cart (`{ itemId, qty }`), filters, order-type choice.
 - Cart totals on client are **display only**; server recalculates on submit.
