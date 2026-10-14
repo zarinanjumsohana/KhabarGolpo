@@ -16,6 +16,7 @@ let audioCtx = null;
 requireRole(["chef", "admin"]);
 loadOrders();
 listenForNewOrders();
+setupThemeToggle();
 
 setInterval(updateWaitTimes, 60000);
 soundButton.addEventListener("click", enableSound);
@@ -24,6 +25,37 @@ logoutButton.addEventListener("click", async function () {
   await logout();
   window.location.href = "/html/login.html";
 });
+
+// ---- Dark / light theme toggle (shared with the admin dashboard) ----
+function setupThemeToggle() {
+  const button = document.querySelector("#theme-toggle");
+  if (!button) {
+    return;
+  }
+
+  const root = document.documentElement;
+
+  // Keep the switch in sync with the current theme
+  function syncButton() {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    button.setAttribute("aria-checked", isDark ? "true" : "false");
+  }
+  syncButton();
+
+  button.addEventListener("click", function () {
+    const isDark = root.getAttribute("data-theme") === "dark";
+
+    if (isDark) {
+      root.removeAttribute("data-theme");
+      localStorage.setItem("khabar-theme", "light");
+    } else {
+      root.setAttribute("data-theme", "dark");
+      localStorage.setItem("khabar-theme", "dark");
+    }
+
+    syncButton();
+  });
+}
 
 const tabs = document.querySelectorAll(".tab");
 tabs.forEach(function (tab) {

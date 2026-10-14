@@ -8,12 +8,30 @@
   <!-- Fonts: Cormorant Garamond for headings, Jost for body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/kitchen.css">
+
+  <!-- Apply the saved theme before paint so there is no flash -->
+  <script>
+    try {
+      if (localStorage.getItem("khabar-theme") === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    } catch (e) {}
+  </script>
 </head>
 <body>
+
+  <!-- Soft pastel abstract shapes behind everything -->
+  <div class="aurora" aria-hidden="true">
+    <span class="blob blob-emerald"></span>
+    <span class="blob blob-amber"></span>
+    <span class="blob blob-plum"></span>
+    <span class="blob blob-pink"></span>
+    <span class="blob blob-sky"></span>
+  </div>
 
   <!-- Keyboard users can jump straight to the orders -->
   <a class="skip-link" href="#orders">Skip to orders</a>
@@ -28,6 +46,18 @@
       <p class="chef-note">Orders in, food out — served table by table.</p>
     </div>
     <div class="topbar-actions">
+      <button class="theme-toggle" id="theme-toggle" type="button"
+              role="switch" aria-checked="false" aria-label="Toggle dark mode">
+        <span class="theme-toggle-thumb">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+          </svg>
+        </span>
+      </button>
       <button class="btn" id="sound-toggle" type="button">Enable sound</button>
       <button class="btn" id="logout-button" type="button">Logout</button>
     </div>
