@@ -1,19 +1,34 @@
+/* =========================================================
+   Khabar-Golpo — premium glassmorphism light dashboard
+   ========================================================= */
 
 :root {
-  --bg: #07090A;
-  --lime: #B6F24A;
-  --saffron: #FFB627;
-  --coral: #FF6B4A;
-  --violet: #A78BFA;
-  --sky: #5BC8E8;
-  --text: #EAF2E3;
-  --muted: #8A9A86;
+  /* Text */
+  --ink: #0F172A;
+  --text: #1E293B;
+  --muted: #64748B;
 
-  --glass-fill: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  /* Accent colours (names kept so the dashboard JS keeps working) */
+  --lime: #34D399;     /* emerald  -> Dine-in / ready / today */
+  --saffron: #F59E0B;  /* amber    -> Pickup / new */
+  --coral: #FB7185;    /* rose     -> cancelled / down */
+  --violet: #8B5CF6;   /* violet   -> Delivery / preparing */
+  --sky: #38BDF8;      /* sky      -> out for delivery */
 
-  --radius: 20px;
-  --gap: 18px;
+  /* Brand gradient (used for active nav, brand mark, avatar) */
+  --primary: #6366F1;
+  --primary-2: #8B5CF6;
+
+  /* Glass settings */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-bg-strong: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: blur(12px) saturate(160%);
+  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  --gap: 20px;
 }
 
 /* ---- Simple reset ---- */
@@ -23,24 +38,31 @@
   padding: 0;
 }
 
+/* Soft pastel gradient canvas (never a flat white) */
 body {
-  background: var(--bg);
   color: var(--text);
   font-family: "Jost", system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
+  background:
+    radial-gradient(1200px 800px at 8% -5%, #E0E7FF 0%, transparent 55%),
+    radial-gradient(1100px 750px at 95% 5%, #FCE7F3 0%, transparent 52%),
+    radial-gradient(900px 700px at 50% 105%, #CFFAFE 0%, transparent 55%),
+    linear-gradient(135deg, #F8FAFF 0%, #F5F3FF 50%, #F0FDFA 100%);
+  background-attachment: fixed;
 }
 
 /* Headings and big numbers use the serif font */
 h1, h2, h3 {
   font-family: "Cormorant Garamond", serif;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.2px;
+  color: var(--ink);
 }
 
-/* ---- Aurora background blobs (kept light for low-end laptops) ---- */
+/* ---- Floating pastel abstract shapes ---- */
 .aurora {
   position: fixed;
   inset: 0;
@@ -51,57 +73,84 @@ h1, h2, h3 {
 
 .blob {
   position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.blob-lime,
+.blob-emerald {
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, #6EE7B7, transparent 68%);
+  top: -140px;
+  left: -100px;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+.blob-saffron,
+.blob-amber {
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, #FDE68A, transparent 68%);
+  top: 38%;
+  right: -160px;
+  animation: drift 32s ease-in-out infinite alternate-reverse;
+}
+
+.blob-violet,
+.blob-plum {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, #C4B5FD, transparent 68%);
+  bottom: -160px;
+  left: 28%;
+  animation: drift 29s ease-in-out infinite alternate;
+}
+
+.blob-pink {
   width: 380px;
   height: 380px;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.45;
+  background: radial-gradient(circle, #FBCFE8, transparent 68%);
+  top: 18%;
+  left: 42%;
+  animation: drift 35s ease-in-out infinite alternate-reverse;
 }
 
-.blob-lime {
-  background: radial-gradient(circle, var(--lime), transparent 65%);
-  top: -120px;
-  left: -80px;
+.blob-sky {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #A5F3FC, transparent 68%);
+  bottom: 6%;
+  right: 18%;
+  animation: drift 30s ease-in-out infinite alternate;
 }
 
-.blob-saffron {
-  background: radial-gradient(circle, var(--saffron), transparent 65%);
-  top: 40%;
-  right: -140px;
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(46px, -34px, 0) scale(1.12); }
 }
 
-.blob-violet {
-  background: radial-gradient(circle, var(--violet), transparent 65%);
-  bottom: -140px;
-  left: 30%;
-}
-
-/* ---- Glass card look ---- */
+/* ---- Frosted glass surface (the core of the theme) ---- */
 .glass {
   position: relative;
-  background: var(--glass-fill);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
-
-/* Thin soft highlight line on top of each glass card */
-.glass::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-  border-radius: var(--radius) var(--radius) 0 0;
-  pointer-events: none;
+  box-shadow: var(--glass-shadow),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* Smooth theme change */
+  transition: background-color 0.45s ease, border-color 0.45s ease,
+              box-shadow 0.45s ease;
 }
 
 /* ---- Page layout grid ---- */
 .layout {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 260px 1fr;
   gap: var(--gap);
   padding: var(--gap);
   min-height: 100vh;
@@ -116,7 +165,7 @@ h1, h2, h3 {
   height: calc(100vh - (var(--gap) * 2));
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 24px;
 }
 
 .sidebar-top {
@@ -128,23 +177,25 @@ h1, h2, h3 {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  color: var(--bg);
-  background: linear-gradient(135deg, var(--lime), var(--saffron));
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 8px 18px -6px rgba(99, 102, 241, 0.7);
 }
 
 .brand-name {
   font-family: "Cormorant Garamond", serif;
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 700;
+  color: var(--ink);
 }
 
 /* Menu button hidden on desktop, shown on phones */
@@ -152,13 +203,14 @@ h1, h2, h3 {
   display: none;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--glass-border);
-  background: transparent;
+  background: var(--glass-bg-strong);
   color: var(--text);
   cursor: pointer;
 }
 
+/* ---- Nav (bold, roomy, premium) ---- */
 .nav {
   display: flex;
   flex-direction: column;
@@ -167,31 +219,53 @@ h1, h2, h3 {
 }
 
 .nav-link {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  gap: 13px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
-  text-decoration: none;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 15px;
-  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: color 0.25s ease, background 0.25s ease,
+              box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.nav-link svg {
+  width: 20px;
+  height: 20px;
+  opacity: 0.75;
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
 }
 
 .nav-link:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateX(3px);
+  color: var(--ink);
+  background: var(--glass-bg-strong);
+  border-color: var(--glass-border);
+  box-shadow: 0 8px 20px -10px rgba(31, 38, 135, 0.4);
+  transform: translateX(4px);
+}
+
+.nav-link:hover svg {
+  opacity: 1;
+  transform: scale(1.08);
 }
 
 .nav-link.active {
-  color: var(--text);
-  background: rgba(182, 242, 74, 0.12);
-  border: 1px solid rgba(182, 242, 74, 0.35);
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 12px 24px -10px rgba(99, 102, 241, 0.9);
 }
 
 .nav-link.active svg {
-  color: var(--lime);
+  color: #FFFFFF;
+  opacity: 1;
 }
 
 .nav-link.logout {
@@ -200,7 +274,10 @@ h1, h2, h3 {
 }
 
 .nav-link.logout:hover {
-  background: rgba(255, 107, 74, 0.12);
+  color: #E11D48;
+  background: rgba(251, 113, 133, 0.12);
+  border-color: rgba(251, 113, 133, 0.35);
+  box-shadow: 0 8px 20px -12px rgba(251, 113, 133, 0.8);
 }
 
 /* ===== Main column ===== */
@@ -223,8 +300,9 @@ h1, h2, h3 {
 
 .greet-title {
   font-family: "Cormorant Garamond", serif;
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
+  color: var(--ink);
 }
 
 .greet-sub {
@@ -242,13 +320,14 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 14px;
+  padding: 9px 16px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-strong);
   border: 1px solid var(--glass-border);
   color: var(--muted);
   min-width: 0;
   max-width: 100%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .search input {
@@ -273,15 +352,16 @@ h1, h2, h3 {
   height: 40px;
   border-radius: 50%;
   border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-strong);
   color: var(--text);
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
 }
 
 .icon-btn:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--primary);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 24px -12px rgba(99, 102, 241, 0.9);
 }
 
 .avatar {
@@ -290,32 +370,34 @@ h1, h2, h3 {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  font-weight: 600;
-  color: var(--bg);
-  background: linear-gradient(135deg, var(--violet), var(--coral));
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 10px 22px -10px rgba(99, 102, 241, 0.9);
 }
 
 /* ---- Big flow panel ---- */
 .flow {
-  --glow: var(--lime);
+  --glow: var(--primary);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 22px;
-  padding: 26px 28px;
+  padding: 28px 30px;
 }
 
-/* Soft lime glow in the corner of the flow panel */
+/* Soft colour wash in the corner of the flow panel */
 .flow::after {
   content: "";
   position: absolute;
-  top: -90px;
-  right: 30px;
-  width: 240px;
-  height: 240px;
+  top: -110px;
+  right: -40px;
+  width: 320px;
+  height: 320px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(182, 242, 74, 0.28), transparent 70%);
+  background: radial-gradient(circle,
+    rgba(139, 92, 246, 0.28), rgba(56, 189, 248, 0.18) 45%, transparent 72%);
   pointer-events: none;
 }
 
@@ -324,7 +406,7 @@ h1, h2, h3 {
 }
 
 .flow-title {
-  font-size: 28px;
+  font-size: 29px;
 }
 
 .flow-sub {
@@ -333,8 +415,8 @@ h1, h2, h3 {
   margin-top: 4px;
 }
 
-.flow-sub.up { color: var(--lime); }
-.flow-sub.down { color: var(--coral); }
+.flow-sub.up { color: #047857; font-weight: 600; }
+.flow-sub.down { color: #E11D48; font-weight: 600; }
 
 /* Channels on the left, sales ring on the right */
 .flow-body {
@@ -343,7 +425,7 @@ h1, h2, h3 {
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 34px;
-  min-height: 190px;
+  min-height: 200px;
 }
 
 /* SVG layer that draws the curved connectors */
@@ -363,20 +445,32 @@ h1, h2, h3 {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  max-width: 320px;
+  max-width: 330px;
 }
 
-/* One channel chip (colour comes from --c set by JS) */
+/* One channel chip / glass card (colour comes from --c set by JS) */
 .channel {
   --c: var(--lime);
   position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 13px 16px;
   border-radius: 14px;
   border: 1px solid var(--glass-border);
-  background: var(--glass-fill);
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 22px -14px rgba(31, 38, 135, 0.6),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+              border-color 0.25s ease, background-color 0.45s ease;
+}
+
+.channel:hover {
+  transform: translateY(-3px) scale(1.015);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 30px -16px rgba(31, 38, 135, 0.75);
 }
 
 .channel-dot {
@@ -384,7 +478,7 @@ h1, h2, h3 {
   height: 12px;
   border-radius: 50%;
   background: var(--c);
-  box-shadow: 0 0 12px -1px var(--c);
+  box-shadow: 0 0 10px 1px var(--c);
   flex-shrink: 0;
 }
 
@@ -396,7 +490,8 @@ h1, h2, h3 {
 
 .channel-label {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .channel-count {
@@ -407,40 +502,41 @@ h1, h2, h3 {
 .channel-amount {
   margin-left: auto;
   font-family: "Cormorant Garamond", serif;
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
-  color: var(--c);
+  color: var(--ink);
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-/* Connector line styles (each path also gets --c from JS) */
+/* Connector line styles — soft neon glow (each path gets --c from JS) */
 .flow-glow {
   fill: none;
-  stroke: var(--c, var(--lime));
-  stroke-width: 6;
+  stroke: var(--c, var(--primary));
+  stroke-width: 8;
   stroke-linecap: round;
-  opacity: 0.45;
-  filter: blur(4px);
+  opacity: 0.22;
+  filter: blur(6px);
 }
 
 .flow-curve {
   fill: none;
-  stroke: var(--c, var(--lime));
-  stroke-width: 1.5;
+  stroke: var(--c, var(--primary));
+  stroke-width: 2;
   stroke-linecap: round;
-  opacity: 0.5;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 4px var(--c, var(--primary)));
 }
 
 /* A short dash that travels along the line */
 .flow-pulse {
   fill: none;
-  stroke: var(--c, var(--lime));
-  stroke-width: 2.6;
+  stroke: var(--c, var(--primary));
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: var(--pulse) var(--len);
+  filter: drop-shadow(0 0 6px var(--c, var(--primary)));
   animation: flow-pulse 2.6s linear infinite;
-  filter: drop-shadow(0 0 5px var(--c, var(--lime)));
 }
 
 @keyframes flow-pulse {
@@ -460,20 +556,22 @@ h1, h2, h3 {
   width: 190px;
   height: 190px;
   transform: rotate(-90deg);
+  filter: drop-shadow(0 6px 18px rgba(31, 38, 135, 0.18));
 }
 
 .flow-ring-track {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.10);
+  stroke: rgba(148, 163, 184, 0.28);
   stroke-width: 14;
 }
 
 /* One arc per channel (colour comes from --c set by JS) */
 .flow-arc {
   fill: none;
-  stroke: var(--c, var(--lime));
+  stroke: var(--c, var(--primary));
   stroke-width: 14;
   stroke-linecap: butt;
+  filter: drop-shadow(0 0 6px var(--c, var(--primary)));
   transition: stroke-dashoffset 0.9s ease;
 }
 
@@ -490,9 +588,10 @@ h1, h2, h3 {
 
 .flow-ring-total {
   font-family: "Cormorant Garamond", serif;
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
   line-height: 1;
+  color: var(--ink);
 }
 
 .flow-ring-label {
@@ -516,21 +615,22 @@ h1, h2, h3 {
 }
 
 .card {
-  padding: 18px 20px;
-  /* Smooth lift and glow on hover */
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  padding: 20px 22px;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.3s ease, border-color 0.3s ease,
+              background-color 0.45s ease;
 }
 
-/* Cards and the flow panel lift a little on hover with a stronger glow */
+/* Gentle lift + scale on hover */
 .card:hover,
 .flow:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5),
-              0 0 28px -6px var(--glow, rgba(255, 255, 255, 0.25));
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 22px 44px -18px rgba(31, 38, 135, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Each KPI card gets its own accent colour (used for the glow and icon ring) */
+/* Each KPI card gets its own accent colour (icon + glow) */
 .kpi {
   overflow: hidden;
 }
@@ -540,71 +640,70 @@ h1, h2, h3 {
 .kpi-coral   { --glow: var(--coral); }
 .kpi-violet  { --glow: var(--violet); }
 
-/* Coloured glow on top of each KPI card */
+/* Faint colour bloom in the corner of each KPI card */
 .kpi::after {
   content: "";
   position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 130px;
-  height: 130px;
+  top: -70px;
+  right: -40px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--glow), transparent 70%);
-  opacity: 0.35;
+  opacity: 0.22;
   pointer-events: none;
 }
 
-/* Keep card text above the glow */
+/* Keep card text above the bloom */
 .kpi-icon,
 .kpi-value,
 .kpi-label,
 .kpi-delta,
 .flow-text,
 .flow-body {
+  position: relative;
   z-index: 1;
 }
 
-/* Round icon circle with a thin accent ring */
+/* Rounded accent icon tile */
 .kpi-icon {
-  position: relative;
   display: grid;
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 50%;
-  color: var(--glow);
-  border: 1px solid var(--glow);
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 0 16px -4px var(--glow);
+  border-radius: 14px;
+  color: #FFFFFF;
+  background: var(--glow);
+  box-shadow: 0 10px 22px -10px var(--glow),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-/* Big serif number */
+/* Big serif number — bold key metric */
 .kpi-value {
-  position: relative;
   font-family: "Cormorant Garamond", serif;
-  font-size: 36px;
+  font-size: 38px;
   font-weight: 700;
   line-height: 1;
-  margin: 14px 0 4px;
+  margin: 16px 0 4px;
+  color: var(--ink);
 }
 
 /* Small muted label */
 .kpi-label {
-  position: relative;
   color: var(--muted);
   font-size: 14px;
+  font-weight: 500;
 }
 
 .kpi-delta {
-  position: relative;
   font-size: 13px;
-  margin-top: 6px;
+  font-weight: 600;
+  margin-top: 8px;
 }
 
-.kpi-delta.up { color: var(--lime); }
-.kpi-delta.down { color: var(--coral); }
-.kpi-delta.warn { color: var(--saffron); }
+.kpi-delta.up { color: #047857; }
+.kpi-delta.down { color: #E11D48; }
+.kpi-delta.warn { color: #B45309; }
 .kpi-delta.flat { color: var(--muted); }
 
 /* ---- Money: the Taka sign gets its own font and a consistent size ---- */
@@ -615,7 +714,7 @@ h1, h2, h3 {
 .money-sym {
   font-family: "Jost", system-ui, sans-serif;
   font-size: 0.68em;
-  font-weight: 500;
+  font-weight: 600;
   margin-right: 0.16em;
 }
 
@@ -636,20 +735,27 @@ h1, h2, h3 {
   min-width: 0;
 }
 
+.panel {
+  padding: 22px 24px;
+}
+
 .panel-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
 }
 
 .panel-title {
-  font-size: 21px;
+  font-size: 22px;
 }
 
 .panel-note {
   color: var(--muted);
   font-size: 13px;
+  font-weight: 500;
 }
 
 /* ---- Weekly bar chart (built in JS) ---- */
@@ -675,36 +781,37 @@ h1, h2, h3 {
   max-width: 34px;
   min-height: 4px;
   border-radius: 8px 8px 4px 4px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.06));
-  /* Grow up from the bottom on load */
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.8), rgba(148, 163, 184, 0.2));
   transform-origin: bottom;
-  animation: bar-grow 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: bar-grow 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Today's bar stands out with lime and a glow */
+/* Today's bar glows in emerald */
 .bar.is-today {
-  background: linear-gradient(180deg, var(--lime), rgba(182, 242, 74, 0.25));
-  box-shadow: 0 0 18px -4px var(--lime);
+  background: linear-gradient(180deg, var(--lime), rgba(52, 211, 153, 0.35));
+  box-shadow: 0 0 18px -2px var(--lime);
 }
 
 /* Count shown on top of each bar */
 .bar-count {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--muted);
 }
 
 .bar-wrap.is-today .bar-count {
-  color: var(--lime);
+  color: #047857;
 }
 
 .bar-day {
   color: var(--muted);
   font-size: 12px;
+  font-weight: 500;
 }
 
 .bar-wrap.is-today .bar-day {
-  color: var(--text);
+  color: var(--ink);
+  font-weight: 700;
 }
 
 /* ---- Order status donut (built in JS) ---- */
@@ -712,31 +819,31 @@ h1, h2, h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .donut {
-  width: 150px;
-  height: 150px;
-  /* Gentle glow behind the ring (static, cheap) */
-  filter: drop-shadow(0 0 12px rgba(182, 242, 74, 0.18));
+  width: 154px;
+  height: 154px;
+  filter: drop-shadow(0 6px 18px rgba(31, 38, 135, 0.2));
 }
 
 .donut-track {
-  stroke: rgba(255, 255, 255, 0.08);
+  stroke: rgba(148, 163, 184, 0.28);
 }
 
 /* Coloured ring segment, revealed via stroke-dashoffset */
 .donut-seg {
   transition: stroke-dashoffset 0.9s ease;
+  filter: drop-shadow(0 0 4px currentColor);
 }
 
 /* Total shown in the middle of the donut */
 .donut-total {
   font-family: "Cormorant Garamond", serif;
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
-  fill: var(--text);
+  fill: var(--ink);
 }
 
 .donut-total-label {
@@ -760,11 +867,12 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-weight: 500;
 }
 
 .legend-count {
-  color: var(--text);
-  font-weight: 500;
+  color: var(--ink);
+  font-weight: 700;
 }
 
 .dot {
@@ -788,53 +896,58 @@ h1, h2, h3 {
   gap: 10px;
   padding: 12px 14px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid transparent;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: background 0.25s ease, border-color 0.25s ease,
+              transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .row:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--glass-border);
-  transform: translateX(3px);
+  background: var(--glass-bg-strong);
+  border-color: rgba(255, 255, 255, 0.95);
+  transform: translateX(4px);
+  box-shadow: 0 12px 24px -16px rgba(31, 38, 135, 0.7);
 }
 
 /* Receipt number */
 .receipt {
   font-weight: 600;
   letter-spacing: 0.3px;
+  color: var(--ink);
 }
 
 /* Small chip showing the order type */
 .type-chip {
   font-size: 12px;
-  color: var(--muted);
+  color: #475569;
   padding: 3px 10px;
   border-radius: 999px;
-  border: 1px solid var(--glass-border);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.5);
   white-space: nowrap;
 }
 
 /* Order total, pushed to the right */
 .row-total {
   margin-left: auto;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--ink);
 }
 
-/* Status chips */
+/* Status chips (soft translucent colours) */
 .status {
   font-size: 12px;
-  padding: 3px 10px;
+  font-weight: 600;
+  padding: 3px 11px;
   border-radius: 999px;
   white-space: nowrap;
 }
 
-.status-new       { color: var(--saffron); background: rgba(255, 182, 39, 0.14); }
-.status-preparing { color: var(--violet);  background: rgba(167, 139, 250, 0.14); }
-.status-ready     { color: var(--lime);    background: rgba(182, 242, 74, 0.14); }
-.status-completed { color: var(--muted);   background: rgba(138, 154, 134, 0.16); }
-.status-cancelled { color: var(--coral);   background: rgba(255, 107, 74, 0.14); }
+.status-new       { color: #B45309; background: rgba(245, 158, 11, 0.16); }
+.status-preparing { color: #6D28D9; background: rgba(139, 92, 246, 0.16); }
+.status-ready     { color: #047857; background: rgba(52, 211, 153, 0.18); }
+.status-completed { color: #475569; background: rgba(100, 116, 139, 0.14); }
+.status-cancelled { color: #BE123C; background: rgba(251, 113, 133, 0.16); }
 
 /* ---- Top items list ---- */
 .item-top {
@@ -845,18 +958,19 @@ h1, h2, h3 {
 }
 
 .item-name {
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .item-pct {
   color: var(--muted);
+  font-weight: 500;
 }
 
 .track {
-  height: 6px;
+  height: 7px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  /* No clipping so the bar's glow can show */
+  background: rgba(148, 163, 184, 0.22);
 }
 
 .fill {
@@ -865,20 +979,21 @@ h1, h2, h3 {
   border-radius: 999px;
 }
 
-/* Thin progress bars with a matching glow */
-.fill-lime    { background: linear-gradient(90deg, var(--lime), rgba(182, 242, 74, 0.4));    box-shadow: 0 0 12px -1px var(--lime); }
-.fill-saffron { background: linear-gradient(90deg, var(--saffron), rgba(255, 182, 39, 0.4)); box-shadow: 0 0 12px -1px var(--saffron); }
-.fill-coral   { background: linear-gradient(90deg, var(--coral), rgba(255, 107, 74, 0.4));   box-shadow: 0 0 12px -1px var(--coral); }
-.fill-violet  { background: linear-gradient(90deg, var(--violet), rgba(167, 139, 250, 0.4)); box-shadow: 0 0 12px -1px var(--violet); }
+/* Thin glowing progress bars in the accent colours */
+.fill-lime    { background: linear-gradient(90deg, var(--lime), rgba(52, 211, 153, 0.45));    box-shadow: 0 0 10px -1px var(--lime); }
+.fill-saffron { background: linear-gradient(90deg, var(--saffron), rgba(245, 158, 11, 0.45)); box-shadow: 0 0 10px -1px var(--saffron); }
+.fill-coral   { background: linear-gradient(90deg, var(--coral), rgba(251, 113, 133, 0.45));   box-shadow: 0 0 10px -1px var(--coral); }
+.fill-violet  { background: linear-gradient(90deg, var(--violet), rgba(139, 92, 246, 0.45));  box-shadow: 0 0 10px -1px var(--violet); }
 
 /* ===== Motion ===== */
-/* Sections fade and rise in (JS adds .reveal-in with a 60ms stagger) */
+/* Sections fade + slide up on load (JS adds .reveal-in with a 60ms stagger).
+   fill-mode "backwards" so the finished animation never blocks the JS tilt. */
 .reveal-in {
-  animation: rise 0.6s ease both;
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(26px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -888,27 +1003,7 @@ h1, h2, h3 {
   to   { transform: scaleY(1); }
 }
 
-/* Aurora blobs drift slowly */
-.blob {
-  will-change: transform;
-  animation: drift 26s ease-in-out infinite alternate;
-}
-
-.blob-saffron {
-  animation-duration: 32s;
-  animation-direction: alternate-reverse;
-}
-
-.blob-violet {
-  animation-duration: 29s;
-}
-
-@keyframes drift {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to   { transform: translate3d(40px, -30px, 0) scale(1.12); }
-}
-
-/* Card tilt + glow that follows the mouse (added by JS on desktop only) */
+/* Card glow that follows the mouse (added by JS on desktop only) */
 .card,
 .flow {
   --mx: 50%;
@@ -917,13 +1012,13 @@ h1, h2, h3 {
 
 .card.is-lit,
 .flow.is-lit {
-  background-image: radial-gradient(220px circle at var(--mx) var(--my),
-    rgba(255, 255, 255, 0.10), transparent 60%);
+  background-image: radial-gradient(
+    240px circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.75), transparent 60%);
 }
 
 /* ===== Responsive: narrow laptops / tablets (<=1024px) ===== */
 @media (max-width: 1024px) {
-  /* KPI cards: 4 across -> 2 across; side-by-side panels stack */
   .kpi-row {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -952,7 +1047,6 @@ h1, h2, h3 {
 
 /* ===== Responsive: small tablets / large phones (<=860px) ===== */
 @media (max-width: 860px) {
-  /* Single column: main area fills the width */
   .layout {
     grid-template-columns: 1fr;
     padding: 12px;
@@ -998,7 +1092,6 @@ h1, h2, h3 {
 
 /* ===== Responsive: phones (<=600px) ===== */
 @media (max-width: 600px) {
-  /* Everything in one column */
   .kpi-row {
     grid-template-columns: 1fr;
   }
@@ -1016,7 +1109,6 @@ h1, h2, h3 {
     height: 160px;
   }
 
-  /* Keep order rows readable and prevent sideways overflow at 360px */
   .row {
     flex-wrap: wrap;
   }
@@ -1032,4 +1124,160 @@ h1, h2, h3 {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* =========================================================
+   Theme toggle switch (lives in the top bar)
+   ========================================================= */
+.theme-toggle {
+  position: relative;
+  width: 64px;
+  height: 34px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.45s ease, border-color 0.45s ease,
+              box-shadow 0.3s ease;
+}
+
+.theme-toggle:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              0 8px 20px -10px rgba(99, 102, 241, 0.9);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.6);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-toggle-thumb svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Light mode shows the sun; dark mode shows the moon */
+.theme-toggle .icon-moon { display: none; }
+
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+[data-theme="dark"] .theme-toggle-thumb { transform: translateX(30px); }
+
+/* =========================================================
+   Dark theme — only overrides; the light theme is untouched.
+   Activated by setting data-theme="dark" on <html>.
+   ========================================================= */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #F8FAFC;
+  --text: #CBD5E1;
+  --muted: #94A3B8;
+
+  --glass-bg: rgba(30, 41, 59, 0.5);
+  --glass-bg-strong: rgba(30, 41, 59, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Deep night gradient canvas */
+[data-theme="dark"] body {
+  background:
+    radial-gradient(1200px 800px at 8% -5%, #1E293B 0%, transparent 55%),
+    radial-gradient(1100px 750px at 95% 5%, #3B0764 0%, transparent 52%),
+    radial-gradient(900px 700px at 50% 105%, #082F49 0%, transparent 55%),
+    linear-gradient(135deg, #0B1120 0%, #111827 50%, #0B1729 100%);
+  background-attachment: fixed;
+  color: var(--text);
+}
+
+/* Softer top highlight on dark glass */
+[data-theme="dark"] .glass {
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .blob { opacity: 0.35; }
+
+[data-theme="dark"] .search { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+
+[data-theme="dark"] .channel {
+  box-shadow: 0 8px 22px -14px rgba(0, 0, 0, 0.8),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .channel:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .flow:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.8),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .panel-head { border-bottom-color: rgba(255, 255, 255, 0.12); }
+
+[data-theme="dark"] .row {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .row:hover {
+  background: var(--glass-bg-strong);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 12px 24px -16px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme="dark"] .type-chip {
+  color: #CBD5E1;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Brighter, readable status chips on dark */
+[data-theme="dark"] .status-new       { color: #FCD34D; background: rgba(245, 158, 11, 0.18); }
+[data-theme="dark"] .status-preparing { color: #C4B5FD; background: rgba(139, 92, 246, 0.2); }
+[data-theme="dark"] .status-ready     { color: #6EE7B7; background: rgba(52, 211, 153, 0.2); }
+[data-theme="dark"] .status-completed { color: #94A3B8; background: rgba(148, 163, 184, 0.16); }
+[data-theme="dark"] .status-cancelled { color: #FDA4AF; background: rgba(251, 113, 133, 0.2); }
+
+/* Brighter deltas */
+[data-theme="dark"] .kpi-delta.up,
+[data-theme="dark"] .flow-sub.up,
+[data-theme="dark"] .bar-wrap.is-today .bar-count { color: #34D399; }
+
+[data-theme="dark"] .kpi-delta.down,
+[data-theme="dark"] .flow-sub.down { color: #FB7185; }
+[data-theme="dark"] .kpi-delta.warn { color: #FBBF24; }
+
+/* Chart surfaces */
+[data-theme="dark"] .bar {
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.5), rgba(148, 163, 184, 0.12));
+}
+
+[data-theme="dark"] .track { background: rgba(148, 163, 184, 0.18); }
+[data-theme="dark"] .donut-track { stroke: rgba(148, 163, 184, 0.2); }
+[data-theme="dark"] .flow-ring-track { stroke: rgba(148, 163, 184, 0.2); }
+
+/* Mouse-follow glow is subtler on dark */
+[data-theme="dark"] .card.is-lit,
+[data-theme="dark"] .flow.is-lit {
+  background-image: radial-gradient(
+    240px circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.10), transparent 60%);
 }

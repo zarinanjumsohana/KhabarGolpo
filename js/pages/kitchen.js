@@ -22,7 +22,7 @@ soundButton.addEventListener("click", enableSound);
 
 logoutButton.addEventListener("click", async function () {
   await logout();
-  window.location.href = "/admin/login.html";
+  window.location.href = "/html/login.html";
 });
 
 const tabs = document.querySelectorAll(".tab");

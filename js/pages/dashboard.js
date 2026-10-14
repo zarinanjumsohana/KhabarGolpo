@@ -150,7 +150,7 @@ async function ensureAdmin() {
   const { data, error } = await getSession();
   const ok = !error && data && data.role === "admin";
   if (!ok) {
-    window.location.href = "/admin/login.html";
+    window.location.href = "/html/login.html";
     return false;
   }
   return true;
@@ -880,7 +880,7 @@ function setupLogout() {
   link.addEventListener("click", async function (event) {
     event.preventDefault();
     const { error } = await logout();
-    if (!error) window.location.href = "/admin/login.html";
+    if (!error) window.location.href = "/html/login.html";
   });
 }
 
@@ -932,9 +932,39 @@ function setupTilt() {
   });
 }
 
+// ---- Dark / light theme toggle ----
+function setupThemeToggle() {
+  const button = document.getElementById("theme-toggle");
+  if (!button) return;
+
+  const root = document.documentElement;
+
+  // Keep the switch in sync with the current theme
+  function syncButton() {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    button.setAttribute("aria-checked", isDark ? "true" : "false");
+  }
+  syncButton();
+
+  button.addEventListener("click", function () {
+    const isDark = root.getAttribute("data-theme") === "dark";
+
+    if (isDark) {
+      root.removeAttribute("data-theme");
+      localStorage.setItem("khabar-theme", "light");
+    } else {
+      root.setAttribute("data-theme", "dark");
+      localStorage.setItem("khabar-theme", "dark");
+    }
+
+    syncButton();
+  });
+}
+
 // ---- Start the page ----
 async function init() {
   setupLogout();
+  setupThemeToggle();
 
   const allowed = await ensureAdmin();
   if (!allowed) return;

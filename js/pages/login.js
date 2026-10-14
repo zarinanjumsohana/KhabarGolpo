@@ -72,6 +72,6 @@ function redirectByRole(role) {
   if (role === "admin") {
     window.location.href = "dashboard.html";
   } else if (role === "chef") {
-    window.location.href = "../kitchen.html";
+    window.location.href = "kitchen.html";
   }
 }
