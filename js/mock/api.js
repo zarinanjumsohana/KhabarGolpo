@@ -1,6 +1,3 @@
-// Khabar Golpo — Mock API Layer
-// Farhana: import these when MOCK_MODE=true in config.js
-// All functions return data with shapes matching js/api/*.js contract
 
 export const mockAuth = {
   // Login with hardcoded dev accounts (per Testing.md:17)
@@ -30,9 +27,9 @@ export const mockAuth = {
   })
 }
 
-// Mock kitchen data — Farhana's /kitchen panel
+
 export const mockKitchen = {
-  // getActiveOrders: returns order cards for chef
+  
   getActiveOrders: () => Promise.resolve({
     data: [{
       id: "order-1",
@@ -62,16 +59,14 @@ export const mockKitchen = {
     error: null
   }),
 
-  // subscribeOrders: returns unsubscribe function (mock)
+  
   subscribeOrders: (onEvent) => {
-    // Mock: immediately call onEvent with initial data
     onEvent(mockKitchen.getActiveOrders().data)
     return () => {} // mock unsubscribe
   },
 
-  // updateStatus: chef can do new→preparing→ready, ready→preparing
   updateStatus: (orderId, to) => {
-    // Validate transition
+    
     const validTransitions = {
       new: ["preparing"],
       preparing: ["ready", "preparing"], // correction allowed
@@ -87,14 +82,12 @@ export const mockKitchen = {
         error: { code: "BAD_TRANSITION", message: `Cannot move from ${current.status} to ${to}.` }
       })
     }
-    // Mock: return updated status
     return Promise.resolve({
       data: { id: orderId, status: to },
       error: null
     })
   },
 
-  // setAvailability: chef + admin can toggle sold out
   setAvailability: (itemId, isAvailable) => {
     return Promise.resolve({
       data: { id: itemId, is_available: isAvailable },
@@ -103,9 +96,7 @@ export const mockKitchen = {
   }
 }
 
-// Mock admin orders data — Farhana's /admin/* panels
 export const mockAdminOrders = {
-  // listOrders with filters
   listOrders: (filters = {}) => Promise.resolve({
     data: [{
       id: "order-1",
@@ -134,7 +125,6 @@ export const mockAdminOrders = {
     error: null
   }),
 
-  // getOrder: full order + lines + receipt fields
   getOrder: (id) => Promise.resolve({
     data: {
       id: id,
@@ -162,7 +152,6 @@ export const mockAdminOrders = {
     error: null
   }),
 
-  // cancelOrder
   cancelOrder: (id) => {
     // Only unfinished orders can be cancelled
     return Promise.resolve({
@@ -170,40 +159,30 @@ export const mockAdminOrders = {
       error: null
     })
   },
-
-  // markOutForDelivery (delivery only, from ready)
   markOutForDelivery: (id, { delivery_note } = {}) => {
     return Promise.resolve({
       data: { id, status: "out_for_delivery", delivery_note },
       error: null
     })
   },
-
-  // markDelivered
   markDelivered: (id) => {
     return Promise.resolve({
       data: { id, status: "delivered" },
       error: null
     })
   },
-
-  // markPickedUp
   markPickedUp: (id) => {
     return Promise.resolve({
       data: { id, status: "picked_up" },
       error: null
     })
   },
-
-  // markPaid
   markPaid: (id) => {
     return Promise.resolve({
       data: { id, payment_status: "paid", paid_at: new Date().toISOString() },
       error: null
     })
   },
-
-  // tableBill: all unpaid non-cancelled dine-in orders of table
   tableBill: (tableNumber) => {
     return Promise.resolve({
       data: {
@@ -216,8 +195,6 @@ export const mockAdminOrders = {
       error: null
     })
   },
-
-  // markTablePaid
   markTablePaid: (tableNumber) => {
     return Promise.resolve({
       data: { paid_count: 1, combined_total: 545.00 },
@@ -225,8 +202,6 @@ export const mockAdminOrders = {
     })
   }
 }
-
-// Mock admin content data
 export const mockAdminContent = {
   // Settings
   getSettingsFull: () => Promise.resolve({
@@ -281,8 +256,6 @@ export const mockAdminContent = {
     data: { id, deleted: true },
     error: null
   }),
-
-  // Menu items
   listItems: (categoryId = null) => Promise.resolve({
     data: [
       {
@@ -328,7 +301,6 @@ export const mockAdminContent = {
     error: null
   }),
 
-  // Tables
   listTables: () => Promise.resolve({
     data: [
       { table_number: 1, is_active: true, qr_url: "/order?table=1" },
@@ -348,7 +320,6 @@ export const mockAdminContent = {
     error: null
   }),
 
-  // Reservations
   listReservations: (filters = {}) => Promise.resolve({
     data: [
       { id: "res-1", name: "Rahim Uddin", phone: "01712345678", date: "2026-10-15", time: "19:00", guests: 4, status: "pending" }
@@ -361,7 +332,7 @@ export const mockAdminContent = {
     error: null
   }),
 
-  // Feedback
+  
   listFeedback: (unreadOnly = false) => Promise.resolve({
     data: [
       { id: "fb-1", type: "review", name: "Ali", phone: "01712345678", rating: 5, message: "Great food!", is_approved: false, is_read: false }
@@ -383,8 +354,6 @@ export const mockAdminContent = {
     data: { id, deleted: true },
     error: null
   }),
-
-  // Gallery
   listGallery: () => Promise.resolve({
     data: [
       { id: "gal-1", image_url: "https://example.com/image1.jpg", caption: "Plate presentation", sort_order: 0 }
@@ -402,8 +371,6 @@ export const mockAdminContent = {
     error: null
   })
 }
-
-// Export all mock modules
 export default {
   auth: mockAuth,
   kitchen: mockKitchen,

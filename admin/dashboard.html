@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khabar-Golpo · Admin Dashboard</title>
+
+  <!-- Google Fonts: Cormorant Garamond for headings, Jost for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+
+  <!-- Soft aurora blobs behind everything -->
+  <div class="aurora" aria-hidden="true">
+    <span class="blob blob-lime"></span>
+    <span class="blob blob-saffron"></span>
+    <span class="blob blob-violet"></span>
+  </div>
+
+  <div class="layout">
+
+    <!-- ===== Left glass sidebar ===== -->
+    <aside class="sidebar glass">
+      <div class="sidebar-top">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                 stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20V6a2 2 0 0 1 2-2h8l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+              <path d="M8 4v4h6" />
+              <path d="M8 13h8M8 17h5" />
+            </svg>
+          </span>
+          <span class="brand-name">Khabar-Golpo</span>
+        </div>
+
+        <!-- Phone menu button (visual only for now) -->
+        <button class="menu-btn" type="button" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+               stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="nav" aria-label="Main menu">
+        <a class="nav-link active" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="2" />
+            <rect x="14" y="3" width="7" height="7" rx="2" />
+            <rect x="3" y="14" width="7" height="7" rx="2" />
+            <rect x="14" y="14" width="7" height="7" rx="2" />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 7h12l-1 13H7L6 7z" />
+            <path d="M9 7a3 3 0 0 1 6 0" />
+          </svg>
+          <span>Orders</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 0-2 2V5z" />
+            <path d="M8 7h7M8 11h7" />
+          </svg>
+          <span>Menu</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M3 10h18M9 10v10" />
+          </svg>
+          <span>Tables</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="17" rx="2" />
+            <path d="M3 9h18M8 2v4M16 2v4" />
+          </svg>
+          <span>Reservations</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5h16v11H8l-4 3V5z" />
+          </svg>
+          <span>Feedback</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="M21 15l-5-5L5 21" />
+          </svg>
+          <span>Gallery</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+          </svg>
+          <span>Reports</span>
+        </a>
+        <a class="nav-link" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" />
+          </svg>
+          <span>Settings</span>
+        </a>
+        <a class="nav-link logout" href="#">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+            <path d="M10 17l-5-5 5-5M5 12h10" />
+          </svg>
+          <span>Logout</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ===== Main area ===== -->
+    <main class="main">
+
+      <!-- Top bar -->
+      <header class="topbar glass">
+        <div class="greeting">
+          <p class="greet-title">Good evening, Admin</p>
+          <p class="greet-sub">Here is today's story</p>
+        </div>
+
+        <div class="topbar-tools">
+          <label class="search">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4-4" />
+            </svg>
+            <input type="search" placeholder="Search orders, items..." aria-label="Search" />
+          </label>
+
+          <button class="icon-btn" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+              <path d="M10 21a2 2 0 0 0 4 0" />
+            </svg>
+          </button>
+
+          <div class="avatar" aria-label="Admin initials">AD</div>
+        </div>
+      </header>
+
+      <!-- Big flow panel -->
+      <section class="flow glass">
+        <div class="flow-text">
+          <h2 class="flow-title">Today's flow</h2>
+          <p class="flow-sub">Live snapshot of your restaurant rhythm.</p>
+        </div>
+
+        <div class="flow-body">
+          <svg class="flow-lines" aria-hidden="true"></svg>
+
+          <div class="flow-channels">
+            <!-- channel chips are filled by dashboard.js -->
+          </div>
+
+          <div class="flow-ring-wrap">
+            <!-- sales ring is filled by dashboard.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI cards -->
+      <section class="kpi-row">
+        <article class="card glass kpi kpi-lime">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 7h12l-1 13H7L6 7z" />
+              <path d="M9 7a3 3 0 0 1 6 0" />
+            </svg>
+          </span>
+          <p class="kpi-value"></p>
+          <p class="kpi-label">Today's orders</p>
+          <p class="kpi-delta"></p>
+        </article>
+        <article class="card glass kpi kpi-saffron">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+          </span>
+          <p class="kpi-value"></p>
+          <p class="kpi-label">Pending orders</p>
+          <p class="kpi-delta"></p>
+        </article>
+        <article class="card glass kpi kpi-coral">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="6" width="18" height="13" rx="2" />
+              <path d="M3 10h18" />
+              <circle cx="16.5" cy="14.5" r="1.2" />
+            </svg>
+          </span>
+          <p class="kpi-value"></p>
+          <p class="kpi-label">Today's sales</p>
+          <p class="kpi-delta"></p>
+        </article>
+        <article class="card glass kpi kpi-violet">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 17l6-6 4 4 8-8" />
+              <path d="M21 7h-4M21 7v4" />
+            </svg>
+          </span>
+          <p class="kpi-value"></p>
+          <p class="kpi-label">Average order</p>
+          <p class="kpi-delta"></p>
+        </article>
+      </section>
+
+      <!-- Charts row -->
+      <section class="two-col">
+        <article class="card glass panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Orders this week</h3>
+            <span class="panel-note">Mon – Sun</span>
+          </div>
+          <div class="bars" role="img" aria-label="Placeholder bar chart">
+            <div class="bar-wrap"><span class="bar" style="height:52%"></span><span class="bar-day">Mon</span></div>
+            <div class="bar-wrap"><span class="bar" style="height:70%"></span><span class="bar-day">Tue</span></div>
+            <div class="bar-wrap"><span class="bar" style="height:44%"></span><span class="bar-day">Wed</span></div>
+            <div class="bar-wrap"><span class="bar" style="height:86%"></span><span class="bar-day">Thu</span></div>
+            <div class="bar-wrap"><span class="bar" style="height:64%"></span><span class="bar-day">Fri</span></div>
+            <div class="bar-wrap"><span class="bar" style="height:95%"></span><span class="bar-day">Sat</span></div>
+            <div class="bar-wrap"><span class="bar" style="height:60%"></span><span class="bar-day">Sun</span></div>
+          </div>
+        </article>
+
+        <article class="card glass panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Order status</h3>
+            <span class="panel-note">Today</span>
+          </div>
+          <div class="donut-box">
+            <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="Placeholder donut chart">
+              <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="14" />
+              <circle cx="60" cy="60" r="46" fill="none" stroke="var(--lime)" stroke-width="14" stroke-linecap="round" stroke-dasharray="160 289" transform="rotate(-90 60 60)" />
+              <circle cx="60" cy="60" r="46" fill="none" stroke="var(--saffron)" stroke-width="14" stroke-linecap="round" stroke-dasharray="70 379" stroke-dashoffset="-168" transform="rotate(-90 60 60)" />
+              <circle cx="60" cy="60" r="46" fill="none" stroke="var(--coral)" stroke-width="14" stroke-linecap="round" stroke-dasharray="50 399" stroke-dashoffset="-246" transform="rotate(-90 60 60)" />
+            </svg>
+            <ul class="legend">
+              <li><span class="dot" style="background:var(--lime)"></span>Completed</li>
+              <li><span class="dot" style="background:var(--saffron)"></span>Preparing</li>
+              <li><span class="dot" style="background:var(--coral)"></span>Pending</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- Lists row -->
+      <section class="two-col">
+        <article class="card glass panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Recent orders</h3>
+            <span class="panel-note">Last 5</span>
+          </div>
+          <ul class="row-list"></ul>
+        </article>
+
+        <article class="card glass panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Top items</h3>
+            <span class="panel-note">This week</span>
+          </div>
+          <ul class="item-list"></ul>
+        </article>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="../js/pages/dashboard.js"></script>
+</body>
+</html>

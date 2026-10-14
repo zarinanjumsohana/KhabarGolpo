@@ -1,12 +1,7 @@
-// Khabar Golpo — Kitchen API layer
-// Chef (or admin) functions for order status, live orders, availability
-// Auto-switches based on MOCK_MODE in config.js
 
 import { SUPABASE_URL, ANON_KEY, MOCK_MODE } from "../config.js"
 
 const apiPath = "/rest/v1/rpc"
-
-// ---- Mock implementations (match js/mock/api.js shapes) ----
 
 const mockGetActiveOrders = () => Promise.resolve({
   data: [{
@@ -38,9 +33,7 @@ const mockGetActiveOrders = () => Promise.resolve({
 })
 
 const mockSubscribeOrders = (onEvent) => {
-  // Immediately push initial data, then fall back to polling sim
   onEvent(mockGetActiveOrders().data)
-  // Return mock unsubscribe
   return () => {}
 }
 
@@ -72,36 +65,6 @@ const mockSetAvailability = (itemId, isAvailable) => Promise.resolve({
   error: null
 })
 
-// ---- Real Supabase RPC calls (uncomment when ready) ----
-// const supabase = window.supabase || createClient(SUPABASE_URL, ANON_KEY)
-
-// export async function getActiveOrders() {
-//   if (MOCK_MODE) return mockGetActiveOrders()
-//   // const { data, error } = await supabase.rpc('get_active_orders')
-//   // return { data, error }
-// }
-
-// export async function subscribeOrders(onEvent) {
-//   if (MOCK_MODE) return mockSubscribeOrders(onEvent)
-//   // const channel = supabase.channel('orders')
-//   //   .on('INSERT', { event: '* ' }, (payload) => onEvent(payload.new)
-//   //   .on('UPDATE', (payload) => onEvent(payload.new)
-//   //   .subscribe()
-//   // return { unsubscribe: () => supabase.remove(channel) }
-// }
-
-// export async function updateStatus(orderId, to) {
-//   if (MOCK_MODE) return mockUpdateStatus(orderId, to)
-//   // const { data, error } = await supabase.rpc('update_order_status', { p_order: orderId, p_to: to })
-//   // return { data, error }
-// }
-
-// export async function setAvailability(itemId, isAvailable) {
-//   if (MOCK_MODE) return mockSetAvailability(itemId, isAvailable)
-//   // const { data, error } = await supabase.rpc('set_availability', { p_item: itemId, p_avail: isAvailable })
-//   // return { data, error }
-
-// Mock-first: use mock implementations for immediate functionality
 export async function getActiveOrders() {
   return mockGetActiveOrders()
 }

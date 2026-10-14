@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Login — Khabar-Golpo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="login-body">
+  <div class="login-layout">
+
+    <!-- Left  panel -->
+    <aside class="login-visual">
+      <span class="login-spine">Khabar&nbsp;·&nbsp;Golpo</span>
+
+      <div class="login-quote-wrap">
+        <span class="quote-mark">“</span>
+        <h1 class="login-quote">Every dish tells a story</h1>
+        <span class="quote-line"></span>
+      </div>
+
+      <span class="staff-stamp">Staff<br>only</span>
+    </aside>
+
+    <!-- Right side -->
+    <main class="login-side">
+      <section class="card login-card">
+        <p class="card-tag">Khabar-Golpo</p>
+        <h2 class="login-brand">Staff access</h2>
+        <div class="login-rule"></div>
+        <p class="login-sub">Sign in to continue</p>
+
+        <form class="login-form" method="post" autocomplete="off">
+          <label class="field">
+            <span class="field-label">Email</span>
+            <input class="field-input" type="email" name="email" placeholder="you@khabargolpo.com">
+          </label>
+
+          <label class="field">
+            <span class="field-label">Password</span>
+            <input class="field-input" type="password" name="password" placeholder="Your password">
+          </label>
+
+          <button class="btn btn-primary login-btn" type="submit">Log in</button>
+
+          <p class="login-error" role="alert"></p>
+        </form>
+      </section>
+    </main>
+
+  </div>
+  <script type="module" src="../js/pages/login.js"></script>
+</body>
+</html>

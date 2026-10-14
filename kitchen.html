@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitchen — Khabar Golpo</title>
+
+  <!-- Fonts: Cormorant Garamond for headings, Jost for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/kitchen.css">
+</head>
+<body>
+
+  <!-- Keyboard users can jump straight to the orders -->
+  <a class="skip-link" href="#orders">Skip to orders</a>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title-row">
+        <h1 class="topbar-title">Kitchen</h1>
+        <span class="live"><span class="live-dot"></span>Live</span>
+      </div>
+      <p class="chef-note">Orders in, food out — served table by table.</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" id="sound-toggle" type="button">Enable sound</button>
+      <button class="btn" id="logout-button" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- Toggle between two views -->
+    <div class="tabs">
+      <button class="tab active" type="button" data-view="all">All orders</button>
+      <button class="tab" type="button" data-view="table">By table</button>
+    </div>
+
+    <!-- Summary bar: total quantity of each item to prepare -->
+    <section class="summary-bar" aria-label="Items to prepare">
+      <h2>Items to prepare</h2>
+      <div class="summary-list" aria-live="polite"></div>
+    </section>
+
+    <!-- Orders area: cards are added here by js/pages/kitchen.js -->
+    <section class="orders" id="orders" aria-label="Active orders"></section>
+
+  </main>
+
+  <footer class="kitchen-footer">
+    Khabar Golpo kitchen · crafted by Farhana
+  </footer>
+
+  <script type="module" src="js/pages/kitchen.js"></script>
+</body>
+</html>
