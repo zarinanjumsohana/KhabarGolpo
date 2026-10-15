@@ -19,7 +19,7 @@ Out of scope (v1): staff management, waiter alerts, staff performance, online pa
 
 | Area | Choice |
 |------|--------|
-| Frontend | HTML, CSS, vanilla JavaScript |
+| Frontend | HTML, CSS, JavaScript |
 | Animation / 3D (customer site only) | GSAP + ScrollTrigger, Lenis, Three.js, model-viewer, vanilla-tilt, Swiper, Lottie |
 | Fonts / icons | Google Fonts (Cormorant Garamond, Jost), Lucide |
 | Backend services | Supabase Free Tier: Postgres + Auth + Realtime + Storage |
