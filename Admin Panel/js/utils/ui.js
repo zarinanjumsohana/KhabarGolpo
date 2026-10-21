@@ -68,6 +68,7 @@ export function openModal({ title = '', content = '', actions = [], wide = false
   else body.appendChild(content);
   hydrateIcons(overlay);
 
+  let resolve; 
   let resolved = false;
   const close = (value = null) => {
     if (resolved) return;
@@ -87,7 +88,7 @@ export function openModal({ title = '', content = '', actions = [], wide = false
   overlay.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => close(null)));
 
   const promise = new Promise((res) => {
-    const resolve = res;
+     resolve = res;
     const foot = overlay.querySelector('.ui-modal-foot');
     actions.forEach((a) => {
       const btn = document.createElement('button');

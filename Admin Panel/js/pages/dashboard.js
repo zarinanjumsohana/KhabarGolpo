@@ -1,6 +1,7 @@
 // js/pages/dashboard.js — revenue, live queue and analytics overview.
 
-import { requireAdmin } from '../utils/guards.js';
+import { requireAdmin, saveLocalSession, login } from '../utils/guards.js';
+import { isMock } from '../config.js';
 import { initShell, setNavBadge } from './shell.js';
 import { revenueSummary, salesReport } from '../api/reports.js';
 import { listOrders, subscribeOrders } from '../api/adminOrders.js';
@@ -398,6 +399,22 @@ function trendChip(el, now, prev) {
   el.innerHTML = `${icon(dir === 'up' ? 'arrowUp' : dir === 'down' ? 'arrowDown' : 'activity', '')}<span>${pct > 0 ? '+' : ''}${pct}%</span>`;
 }
 
+/* ---------------- auto-sign-in (mock only) ---------------- */
+async function autoSignIn() {
+  if (!isMock()) return null;
+  const DEMO = {
+    'admin@khabargolpo.com': { password: 'admin123', role: 'admin', name: 'Khabar Golpo Admin' },
+  };
+  const email = 'admin@khabargolpo.com';
+  const password = 'admin123';
+  const res = await login({ email, password });
+  if (!res.error && res.data.role === 'admin') {
+    saveLocalSession(res.data);
+    return res.data;
+  }
+  return null;
+}
+
 /* ---------------- load ---------------- */
 async function load() {
   const [sumRes, salesRes, ordersRes] = await Promise.all([
@@ -440,7 +457,14 @@ async function load() {
 }
 
 async function init() {
-  const session = await requireAdmin();
+  let session = await requireAdmin();
+  if (!session) {
+    session = await autoSignIn();
+    if (session) {
+      $('greeting').innerHTML = `${greeting()}, <em>Admin</em>.`;
+      $('pageDesc').textContent = `Live view of ${new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })} — revenue, queue and best sellers.`;
+    }
+  }
   if (!session) return;
 
   $('greeting').innerHTML = `${greeting()}, <em>Admin</em>.`;
