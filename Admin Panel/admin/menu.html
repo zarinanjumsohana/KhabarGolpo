@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="menu">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Content</span>
+        <h1 class="page-title">Menu <em>manager</em></h1>
+        <p hidden class="page-desc">Categories, dishes, prices and photos. Toggling “sold out” greys the item on every customer menu instantly.</p>
+      </div>
+      <div class="head-actions">
+        <div class="sbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="mSearch" type="search" placeholder="Search dishes…" aria-label="Search dishes" /></div>
+        <button class="btn btn-primary btn-sm" id="btnAddItem"><span data-icon="plus"></span><span>Add item</span></button>
+      </div>
+    </div>
+
+    <div class="menu-split">
+      <aside class="cat-rail no-print">
+        <h4>Categories</h4>
+        <div id="catList"></div>
+        <div class="cat-tools">
+          <button class="btn btn-ghost btn-xs btn-block" id="btnAddCat"><span data-icon="plus"></span><span>New category</span></button>
+        </div>
+      </aside>
+
+      <section>
+        <div id="itemsHost">
+          <div class="item-grid">
+            <div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div>
+            <div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="../js/pages/menu.js"></script>
+</body>
+</html>

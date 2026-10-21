@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reservations · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="reservations">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Service</span>
+        <h1 class="page-title">Table <em>reservations</em></h1>
+        <p hidden class="page-desc">Bookings arrive as pending. Call the guest, then confirm or cancel — the customer sees nothing else.</p>
+      </div>
+      <div class="head-actions date-nav">
+        <button class="btn btn-ghost btn-icon btn-sm" id="btnPrev" aria-label="Previous day" data-icon="chevronLeft"></button>
+        <span class="d-label" id="dateLabel">—</span>
+        <button class="btn btn-ghost btn-icon btn-sm" id="btnNext" aria-label="Next day" data-icon="chevronRight"></button>
+        <button class="btn btn-soft btn-sm" id="btnToday">Today</button>
+      </div>
+    </div>
+
+    <section class="panel cal-panel no-print" id="calPanel" aria-label="Reservation calendar">
+      <div class="cal-head">
+        <button class="btn btn-ghost btn-icon btn-sm" id="calPrev" aria-label="Previous month" data-icon="chevronLeft"></button>
+        <h3 id="calTitle">—</h3>
+        <button class="btn btn-ghost btn-icon btn-sm" id="calNext" aria-label="Next month" data-icon="chevronRight"></button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <p class="cal-legend">Darker date = more bookings. A pulsing ring = a booking still waiting for your call. Click a date to jump to its bookings below.</p>
+    </section>
+
+    <div class="filters res-filters no-print">
+      <div class="field">
+        <label for="rDate">Jump to date</label>
+        <input id="rDate" type="date" />
+      </div>
+      <div class="field">
+        <label for="rStatus">Status</label>
+        <select id="rStatus">
+          <option value="">Any status</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="rSearch">Search guest</label>
+        <div class="sbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="rSearch" type="search" placeholder="Name or phone…" /></div>
+      </div>
+      <div class="chips res-scope">
+        <button class="chip on" data-scope="day">This day</button>
+        <button class="chip" data-scope="all">All dates</button>
+      </div>
+    </div>
+
+    <div class="res-grid" id="resGrid"></div>
+  </main>
+
+  <script type="module" src="../js/pages/reservations.js"></script>
+</body>
+</html>

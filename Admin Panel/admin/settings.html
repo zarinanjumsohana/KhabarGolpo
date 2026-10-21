@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="settings">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page page-settings">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Configuration</span>
+        <h1 class="page-title">Restaurant <em>settings</em></h1>
+        <p hidden class="page-desc">Everything here is read by the customer website — hours, fees, tax and the little voice of the brand.</p>
+      </div>
+    </div>
+
+    <form id="setForm" novalidate>
+      <section class="card set-card reveal">
+        <div class="panel-head">
+          <div><h3 class="display" style="font-size:22px">Identity</h3><p class="small muted">Name, voice and logo</p></div>
+          <span class="pill">public</span>
+        </div>
+
+        <div class="logo-row">
+          <div class="logo-box" id="logoBox">
+            <span data-icon="image"></span>
+          </div>
+          <div class="logo-ctrl">
+            <div class="btn-row">
+              <button type="button" class="btn btn-dark btn-sm" id="btnLogo"><span data-icon="upload"></span><span>Upload logo</span></button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnLogoClear"><span data-icon="trash"></span><span>Remove</span></button>
+            </div>
+            <p class="xsmall muted">PNG or SVG · shown in the website header and on receipts.</p>
+          </div>
+          <input type="file" id="logoInput" accept="image/*" class="sr-only" />
+        </div>
+
+        <div class="field-row">
+          <div class="field"><label for="s_name">Restaurant name</label><input id="s_name" name="name" type="text" maxlength="60" /></div>
+          <div class="field"><label for="s_tagline">Tagline</label><input id="s_tagline" name="tagline" type="text" maxlength="80" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="s_phone">Phone</label><input id="s_phone" name="phone" type="tel" /></div>
+          <div class="field"><label for="s_email">Email</label><input id="s_email" name="email" type="email" /></div>
+        </div>
+        <div class="field"><label for="s_address">Address</label><input id="s_address" name="address" type="text" maxlength="140" /></div>
+      </section>
+
+      <section class="card set-card reveal">
+        <div class="panel-head">
+          <div><h3 class="display" style="font-size:22px">Hours</h3><p class="small muted">Displayed on the website footer</p></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="s_hours_week">Weekdays</label><input id="s_hours_week" name="hours_week" type="text" placeholder="11:00 AM – 11:00 PM" /></div>
+          <div class="field"><label for="s_hours_weekend">Weekend</label><input id="s_hours_weekend" name="hours_weekend" type="text" placeholder="11:00 AM – 12:00 AM" /></div>
+          <div class="field"><label for="s_pickup_hours">Pickup window</label><input id="s_pickup_hours" name="pickup_hours" type="text" placeholder="11:00 AM – 10:00 PM" /></div>
+        </div>
+      </section>
+
+      <section class="card set-card reveal">
+        <div class="panel-head">
+          <div><h3 class="display" style="font-size:22px">Commerce</h3><p class="small muted">Ordering modes, fees and minimums</p></div>
+        </div>
+
+        <div class="toggle-grid">
+          <label class="toggle"><input type="checkbox" id="s_pickup_enabled" name="pickup_enabled" /><span class="tk"></span><span class="tl">Pickup orders<b>Guests collect from the counter</b></span></label>
+          <label class="toggle"><input type="checkbox" id="s_delivery_enabled" name="delivery_enabled" /><span class="tk"></span><span class="tl">Delivery orders<b>Courier delivers to the door</b></span></label>
+        </div>
+
+        <div class="field-row">
+          <div class="field"><label for="s_delivery_fee">Delivery fee (৳)</label><input id="s_delivery_fee" name="delivery_fee" type="number" min="0" step="1" /></div>
+          <div class="field"><label for="s_min_delivery_order">Minimum order (৳)</label><input id="s_min_delivery_order" name="min_delivery_order" type="number" min="0" step="1" /></div>
+          <div class="field"><label for="s_prep_time_minutes">Prep time (minutes)</label><input id="s_prep_time_minutes" name="prep_time_minutes" type="number" min="5" step="5" /></div>
+        </div>
+        <div class="field"><label for="s_delivery_note">Delivery note</label><input id="s_delivery_note" name="delivery_note" type="text" maxlength="140" /></div>
+
+        <div class="field-row">
+          <div class="field"><label for="s_tax_rate">Tax rate (%)</label><input id="s_tax_rate" name="tax_rate" type="number" min="0" max="30" step="0.5" /></div>
+          <div class="field"><label for="s_timezone">Timezone</label>
+            <select id="s_timezone" name="timezone">
+              <option value="Asia/Dhaka">Asia/Dhaka (BST)</option>
+              <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+              <option value="UTC">UTC</option>
+            </select>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <div class="save-bar" id="saveBar">
+    <span class="sb-dot"></span>
+    <span class="sb-msg">You have unsaved changes</span>
+    <div class="sb-actions">
+      <button class="btn btn-ghost btn-sm" id="btnDiscard" type="button">Discard</button>
+      <button class="btn btn-primary btn-sm" id="btnSave" type="button"><span data-icon="check"></span><span>Save changes</span></button>
+    </div>
+  </div>
+
+  <script type="module" src="../js/pages/settings.js"></script>
+</body>
+</html>

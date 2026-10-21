@@ -1,0 +1,190 @@
+/* ============================================================
+   animations.css — motion language for the admin panel.
+   Pure CSS + IntersectionObserver (GSAP stays customer-site only).
+   ============================================================ */
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgba(31, 157, 85, 0.55); }
+  70% { box-shadow: 0 0 0 9px rgba(31, 157, 85, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(31, 157, 85, 0); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  30%, 70% { transform: translateX(4px); }
+  50% { transform: translateX(-4px); }
+}
+
+@keyframes pop {
+  0% { transform: scale(0.8); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes blobDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%; }
+  33% { transform: translate3d(18px, -22px, 0) scale(1.06); border-radius: 58% 42% 44% 56% / 44% 58% 42% 56%; }
+  66% { transform: translate3d(-16px, 14px, 0) scale(0.97); border-radius: 42% 58% 52% 48% / 58% 46% 54% 42%; }
+}
+
+@keyframes gradientPan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes barWide {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes donutSweep {
+  from { stroke-dashoffset: var(--circ); }
+}
+
+@keyframes slideInRow {
+  from { opacity: 0; transform: translateX(-14px); background: rgba(240, 165, 0, 0.22); }
+  to { opacity: 1; transform: none; background: transparent; }
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-11deg); }
+  45% { transform: rotate(8deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes tickerUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ------------------------------ utilities ------------------------------ */
+.reveal { opacity: 0; transform: translateY(22px); }
+.reveal.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--ease) var(--d, 0s), transform 0.75s var(--ease) var(--d, 0s);
+}
+
+.staggered > * {
+  animation: fadeUp 0.55s both var(--ease);
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+.page { animation: pageIn 0.5s var(--ease) both; }
+
+.new-row { animation: slideInRow 0.9s var(--ease) both; }
+.pop-in { animation: pop 0.4s var(--spring) both; }
+.floaty { animation: floaty 5s ease-in-out infinite; }
+
+.line-draw {
+  stroke-dasharray: var(--len, 1200);
+  stroke-dashoffset: var(--len, 1200);
+  animation: drawLine 1.6s var(--ease) 0.2s forwards;
+}
+
+.bar-grow { transform-origin: bottom; animation: barGrow 0.9s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+.bar-wide { transform-origin: left; animation: barWide 0.85s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
+
+.mesh-blob {
+  position: absolute;
+  border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
+  filter: blur(46px);
+  opacity: 0.55;
+  animation: blobDrift 16s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.gradient-text {
+  background: var(--grad);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientPan 7s ease infinite;
+}
+
+.glass-shine { position: relative; overflow: hidden; }
+.glass-shine::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -70%;
+  width: 50%;
+  height: 220%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  transform: rotate(18deg);
+  transition: left 0.75s var(--ease);
+  pointer-events: none;
+}
+.glass-shine:hover::after { left: 130%; }
+
+.ring-spin { position: relative; }
+.ring-spin::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, transparent 0 65%, rgba(240, 165, 0, 0.9) 85%, transparent 100%);
+  animation: spin 3.4s linear infinite;
+  z-index: -1;
+}
+
+/* ------------------------------ reduced motion ------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
