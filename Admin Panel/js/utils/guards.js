@@ -56,7 +56,18 @@ export async function login({ email, password }) {
 }
 
 export async function logout() {
-  await apiSignOut();
+  try {
+    await apiSignOut();
+  } catch (e) {
+    /* even if the server sign-out fails, everything below still runs */
+  }
   clearLocalSession();
-  location.href = './login.html';
+  // forget every login this browser still remembers (Supabase keys start with "sb-"),
+  // so no page can sign the user back in automatically
+  Object.keys(localStorage)
+    .filter((k) => k.startsWith('sb-') || k.startsWith('kg.'))
+    .forEach((k) => localStorage.removeItem(k));
+  sessionStorage.clear();
+  // go to the hero page (a page with no auto-login), and replace history so Back cannot return to the dashboard
+  location.replace('../../customer/index.html');
 }
