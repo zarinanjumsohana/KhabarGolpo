@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orders · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="orders">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Operations</span>
+        <h1 class="page-title">All <em>orders</em></h1>
+        <p hidden class="page-desc">Dine-in, pickup and delivery in one feed. Tap a card for the full story and its actions.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-ghost btn-sm" id="btnClear"><span data-icon="x"></span><span>Clear filters</span></button>
+        <button class="btn btn-dark btn-sm" id="btnRefresh"><span data-icon="refresh"></span><span>Refresh</span></button>
+      </div>
+    </div>
+
+    <div class="type-tabs no-print" id="typeTabs" role="tablist" aria-label="Filter by order type">
+      <button class="ttab on" data-type="">All orders</button>
+      <button class="ttab" data-type="dine_in">Dine-in</button>
+      <button class="ttab" data-type="pickup">Pickup</button>
+      <button class="ttab" data-type="delivery">Delivery</button>
+    </div>
+    <p class="filter-note no-print" id="filterNote">Pick a type above, or use Status, Payment, Table and Date below. The list updates as soon as you choose.</p>
+
+    <div class="filters ord-filters no-print">
+      <div class="field grow">
+        <label for="fq">Search</label>
+        <div class="sbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="fq" type="search" placeholder="Receipt, name, table…" /></div>
+      </div>
+      <div class="field">
+        <label for="ftype">Order type</label>
+        <select id="ftype">
+          <option value="">All types</option>
+          <option value="dine_in">Dine-in</option>
+          <option value="pickup">Pickup</option>
+          <option value="delivery">Delivery</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fstatus">Status</label>
+        <select id="fstatus">
+          <option value="">Any status</option>
+          <option value="new">New</option>
+          <option value="preparing">Preparing</option>
+          <option value="ready">Ready</option>
+          <option value="out_for_delivery">Out for delivery</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fpay">Payment</label>
+        <select id="fpay">
+          <option value="">Any payment</option>
+          <option value="paid">Paid</option>
+          <option value="unpaid">Unpaid</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="ftable">Table</label>
+        <select id="ftable"><option value="">All tables</option></select>
+      </div>
+      <div class="field">
+        <label for="ffrom">From</label>
+        <input id="ffrom" type="date" />
+      </div>
+      <div class="field">
+        <label for="fto">To</label>
+        <input id="fto" type="date" />
+      </div>
+    </div>
+
+    <div class="chips no-print" id="quickChips" style="margin-bottom:18px">
+      <button class="chip on" data-quick="">All</button>
+      <button class="chip" data-quick="new">New</button>
+      <button class="chip" data-quick="preparing">Preparing</button>
+      <button class="chip" data-quick="ready">Ready</button>
+      <button class="chip" data-quick="out_for_delivery">Out for delivery</button>
+      <button class="chip" data-quick="completed">Completed</button>
+      <button class="chip" data-quick="cancelled">Cancelled</button>
+    </div>
+
+    <div class="orders-list" id="list"></div>
+
+    <div class="card pager no-print" id="pager" style="margin-top:18px;display:none">
+      <span class="pager-info" id="pagerInfo"></span>
+      <div class="pager-btns" id="pagerBtns"></div>
+    </div>
+  </main>
+
+  <script type="module" src="../js/pages/orders.js"></script>
+</body>
+</html>

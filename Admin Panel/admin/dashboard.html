@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="dashboard">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Overview</span>
+        <h1 class="page-title" id="greeting">Good day</h1>
+        <p hidden class="page-desc" id="pageDesc">Here is what Khabar Golpo has been up to.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-ghost btn-sm" id="btnRefresh"><span data-icon="refresh"></span><span>Refresh</span></button>
+        <a class="btn btn-primary btn-sm" href="./orders.html"><span data-icon="orders"></span><span>All orders</span></a>
+      </div>
+    </div>
+
+    <section class="panel flow-panel reveal">
+      <div class="panel-head">
+        <div class="ph-wrap">
+          <span class="ph-ic" data-icon="orders"></span>
+          <div><h3>Order value today</h3><p>Orders that are not cancelled, grouped by type</p></div>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="flow-chips" id="flowChips"></div>
+        <svg class="flow-curves" id="flowSvg" viewBox="0 0 400 256" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="flow-ring-wrap">
+          <div class="flow-ring" id="flowRing"><b id="flowTotal">৳ 0</b><span>order value today</span><em id="flowOrders">0 orders</em></div>
+          <p class="flow-delta" id="flowDelta"></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="kpis" id="kpis">
+      <article class="stat tilt" style="--i:0">
+        <div class="stat-top"><span class="stat-label">This week (Mon to Sun)</span></div>
+        <div class="stat-val" id="pWeek">৳ 0</div>
+        <div class="stat-foot"><span class="stat-sub" id="pWeekSub"></span></div>
+      </article>
+      <article class="stat tilt" style="--i:1">
+        <div class="stat-top"><span class="stat-label">This month</span></div>
+        <div class="stat-val" id="pMonth">৳ 0</div>
+        <div class="stat-foot"><span class="stat-sub" id="pMonthSub"></span></div>
+      </article>
+      <article class="stat tilt" style="--i:2">
+        <div class="stat-top"><span class="stat-label">This year</span></div>
+        <div class="stat-val" id="pYear">৳ 0</div>
+        <div class="stat-foot"><span class="stat-sub" id="pYearSub"></span></div>
+      </article>
+      <article class="stat tilt" style="--i:3">
+        <div class="stat-top"><span class="stat-label">Best seller</span><span class="ph-ic" data-icon="star"></span></div>
+        <div class="stat-val" id="pBest">৳ 0</div>
+        <div class="stat-foot"><span class="stat-sub" id="pBestSub"></span></div>
+      </article>
+    </div>
+
+    <div class="dash-grid">
+      <section class="panel reveal">
+        <div class="panel-head">
+          <div class="ph-wrap">
+            <span class="ph-ic" data-icon="activity"></span>
+            <div><h3>Revenue · last 14 days</h3><p>Paid, non-cancelled orders</p></div>
+          </div>
+          <a class="link-btn" href="./reports.html">Full reports <span data-icon="arrowRight"></span></a>
+        </div>
+        <div class="chart-stage" id="revChart">
+          <div class="center-pad" style="padding:40px"><div class="spinner"></div></div>
+        </div>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-head">
+          <div class="ph-wrap">
+            <span class="ph-ic" data-icon="chartPie"></span>
+            <div><h3>Order status · today</h3><p>Orders placed today, by current status</p></div>
+          </div>
+        </div>
+        <div class="panel-body" id="statusDonut">
+          <div class="center-pad" style="padding:40px"><div class="spinner"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="dash-grid">
+      <section class="panel reveal">
+        <div class="panel-head">
+          <div class="ph-wrap">
+            <span class="ph-ic" data-icon="star"></span>
+            <div><h3>Top selling items</h3><p>By quantity, last 7 days</p></div>
+          </div>
+        </div>
+        <div class="panel-body" id="topItems"></div>
+      </section>
+
+      <section class="panel reveal">
+        <div class="panel-head">
+          <div class="ph-wrap">
+            <span class="ph-ic" data-icon="flame"></span>
+            <div><h3>Live queue</h3><p>Newest first. Scroll for more.</p></div>
+          </div>
+          <span class="pill pill-live"><span class="dot-live"></span> Realtime</span>
+        </div>
+        <div class="panel-body scroll-list" id="recentList">
+          <div class="center-pad" style="padding:40px"><div class="spinner"></div></div>
+        </div>
+        <a class="link-btn" style="margin:0 22px 16px" href="./orders.html">View all orders <span data-icon="arrowRight"></span></a>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="../js/pages/dashboard.js"></script>
+</body>
+</html>

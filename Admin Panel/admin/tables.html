@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tables &amp; QR · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="tables">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Floor</span>
+        <h1 class="page-title">Tables &amp; <em>QR codes</em></h1>
+        <p hidden class="page-desc">Each table gets its own link — <b>your-site/order?table=N</b> — drawn as a QR you can print. Freeze the domain before printing!</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-ghost btn-sm" id="btnPrintAll"><span data-icon="printer"></span><span>Print all QR codes</span></button>
+        <span class="print-note">Freeze the domain before printing QR codes.</span>
+        <button class="btn btn-primary btn-sm" id="btnAddTable"><span data-icon="plus"></span><span>Add table</span></button>
+      </div>
+    </div>
+
+    <div class="table-grid" id="tableGrid">
+      <div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div>
+      <div class="sk sk-card"></div><div class="sk sk-card"></div><div class="sk sk-card"></div>
+    </div>
+
+    <div class="qr-sheet" id="qrSheet"></div>
+  </main>
+
+  <script type="module" src="../js/pages/tables.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reports · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="reports">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Insight</span>
+        <h1 class="page-title">Sales <em>reports</em></h1>
+        <p hidden class="page-desc">Revenue counts only paid, non-cancelled orders — grouped in the restaurant's time zone.</p>
+      </div>
+      <div class="head-actions">
+        <div class="seg" id="groupSeg">
+          <button class="on" data-group="daily">Daily</button>
+          <button data-group="weekly">Weekly</button>
+          <button data-group="monthly">Monthly</button>
+          <button data-group="yearly">Yearly</button>
+          <span class="seg-ind" id="segInd"></span>
+        </div>
+        <button class="btn btn-dark btn-sm" id="btnCsv"><span data-icon="download"></span><span>Export CSV</span></button>
+      </div>
+    </div>
+
+    <div class="rep-kpis" id="repKpis">
+      <article class="stat"><div class="stat-top"><span class="stat-label">Paid revenue</span><span class="stat-ic" data-icon="wallet"></span></div><div class="stat-val" id="rRevenue">৳ 0</div><div class="stat-sub" id="rRevenueSub">—</div></article>
+      <article class="stat"><div class="stat-top"><span class="stat-label">Orders</span><span class="stat-ic" data-icon="orders"></span></div><div class="stat-val" id="rOrders">0</div><div class="stat-sub" id="rOrdersSub">—</div></article>
+      <article class="stat"><div class="stat-top"><span class="stat-label">Average ticket</span><span class="stat-ic" data-icon="trending"></span></div><div class="stat-val" id="rAvg">৳ 0</div><div class="stat-sub">per paid order</div></article>
+      <article class="stat"><div class="stat-top"><span class="stat-label">Delivery fees</span><span class="stat-ic" data-icon="truck"></span></div><div class="stat-val" id="rFees">৳ 0</div><div class="stat-sub">collected separately</div></article>
+    </div>
+
+    <div class="chart-card reveal" style="margin-top:20px">
+      <div class="panel-head" style="padding:0 0 8px">
+        <div><h3 class="display" style="font-size:22px">Revenue per period</h3><p class="small muted" id="chartHint">Paid orders in this range</p></div>
+        <span class="pill" id="rangePill">—</span>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div class="rep-split">
+      <section class="chart-card reveal">
+        <div class="panel-head" style="padding:0 0 14px">
+          <div><h3 class="display" style="font-size:22px">Sales by order type</h3><p class="small muted">Paid revenue split · delivery fees shown apart</p></div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut" id="donut"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </section>
+
+      <section class="chart-card reveal">
+        <div class="panel-head" style="padding:0 0 14px">
+          <div><h3 class="display" style="font-size:22px">Best sellers</h3><p class="small muted">Quantity sold in this range</p></div>
+        </div>
+        <div id="topList"></div>
+      </section>
+    </div>
+
+    <div class="section-label">Period detail</div>
+    <div class="card table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>Period</th><th class="ta-r">Orders</th><th class="ta-r">Paid revenue</th><th class="ta-r">Delivery fees</th><th class="ta-r">Tax collected</th></tr>
+        </thead>
+        <tbody id="rowsBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module" src="../js/pages/reports.js"></script>
+</body>
+</html>
