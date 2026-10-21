@@ -233,6 +233,10 @@ export async function checkTable(n) {
   return mockCheckTable(n)
 }
 
+export async function getMenuForTable() {
+  return mockGetMenu()
+}
+
 export async function createReservation(data) {
   return mockCreateReservation(data)
 }

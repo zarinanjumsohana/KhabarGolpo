@@ -78,7 +78,7 @@ QR link (built client-side, not stored): `https://<site>/order?table=<table_numb
 | order_type | text | NOT NULL, CHECK IN ('dine-in','pickup','delivery') |
 | table_id | uuid NULL | FK → tables.id, NULL unless dine-in; must point to active table |
 | customer_name | text NULL | Required for pickup/delivery, 1–80 chars |
-| customer_phone | text NULL | Required for pickup/delivery, regex `^01[3-9]\d{8}$` (BD) — adjust per locale |
+| customer_phone | text NULL | Required for pickup/delivery, regex `^(\+8801|01)[3-9]\d{8}$` (BD / international) — adjust per locale |
 | delivery_address | text NULL | Required for delivery, 5–300 chars |
 | address_note | text NULL | Landmark/note, ≤200 chars |
 | pickup_time | text NULL | Optional free-text / time for pickup |

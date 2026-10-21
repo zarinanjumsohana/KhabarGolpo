@@ -11,7 +11,7 @@ const mockGetSettingsFull = () => Promise.resolve({
     id: 1,
     restaurant_name: "Khabar Golpo",
     tagline: "Authentic Bengali Flavors",
-    address: "Dhaka, Bangladesh",
+    address: "Rajshahi, Bangladesh",
     phone: "01712345678",
     email: "info@khabargolpo.test",
     hours: "12:00 PM - 11:00 PM",
@@ -107,7 +107,14 @@ const mockListTables = () => Promise.resolve({
   data: [
     { table_number: 1, is_active: true, qr_url: "/order?table=1" },
     { table_number: 2, is_active: true, qr_url: "/order?table=2" },
-    { table_number: 5, is_active: true, qr_url: "/order?table=5" }
+    { table_number: 3, is_active: true, qr_url: "/order?table=3" },
+    { table_number: 4, is_active: true, qr_url: "/order?table=4" },
+    { table_number: 5, is_active: true, qr_url: "/order?table=5" },
+    { table_number: 6, is_active: true, qr_url: "/order?table=6" },
+    { table_number: 7, is_active: true, qr_url: "/order?table=7" },
+    { table_number: 8, is_active: true, qr_url: "/order?table=8" },
+    { table_number: 9, is_active: true, qr_url: "/order?table=9" },
+    { table_number: 10, is_active: true, qr_url: "/order?table=10" }
   ],
   error: null
 })

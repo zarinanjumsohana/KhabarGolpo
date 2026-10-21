@@ -59,7 +59,7 @@ Every `SECURITY DEFINER` function starts with:
 
 | Layer | Rule |
 |-------|------|
-| DB CHECKs | qty 1–20, ≤30 lines, note ≤200, names 1–80, message ≤1000, price >0, guests 1–50, rating 1–5, phone regex `^01[3-9]\d{8}$` |
+| DB CHECKs | qty 1–20, ≤30 lines, note ≤200, names 1–80, message ≤1000, price >0, guests 1–50, rating 1–5, phone regex `^(\+8801|01)[3-9]\d{8}$` (BD / international) |
 | Public forms | Required-field + format checks, max lengths, reservation date ≥ today |
 | Spam | Hidden honeypot field (must stay empty), rate limit N orders/hour per phone (RPC counts recent `orders` by phone), reservation/feedback throttling |
 | Type toggles | RPC refuses `pickup`/`delivery` when `settings.*_enabled = false`; client hides option |
