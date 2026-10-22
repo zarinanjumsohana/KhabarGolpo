@@ -6,15 +6,38 @@ import { SUPABASE_URL, ANON_KEY, MOCK_MODE } from "../config.js"
 
 // ---- Mock implementations (match js/mock/api.js mockOrdering shapes) ----
 
-const mockPlaceDineInOrder = (data) => Promise.resolve({
-  data: {
-    id: `order-${Date.now()}`,
-    receipt_number: `KG-${String(Date.now()).slice(-4)}`,
-    total: 545.00,
-    tracking_url: "/track?id=order-uuid"
-  },
-  error: null
-})
+// Rate limiting: max 3 dine-in orders per phone per 5 minutes (simple in‑memory guard)
+const dineInRateLimit = {
+  counts: new Map(), // phone -> [{ts: number, count: number}]
+  allow: (phone) => {
+    const now = Date.now();
+    const entries = dineInRateLimit.counts.get(phone) || [];
+    const recent = entries.filter(e => now - e.ts < 5 * 60 * 1000);
+    if (recent.length >= 3) return false;
+    recent.push({ ts: now, count: (recent.at(-1)?.count ?? 0) + 1 });
+    dineInRateLimit.counts.set(phone, recent);
+    return true;
+  }
+};
+
+const mockPlaceDineInOrder = (data) => {
+  if (!dineInRateLimit.allow(data.phone)) {
+    return Promise.resolve({
+      data: null,
+      error: { code: "RATE_LIMITED", message: "Too many dine‑in orders for this phone number. Try again later." }
+    });
+  }
+  return Promise.resolve({
+    data: {
+      id: `order-${Date.now()}`,
+      receipt_number: `KG-${String(Date.now()).slice(-4)}`,
+      table_number: data.table_number,
+      total: 545.00,
+      tracking_url: "/track?id=" + `order-${Date.now()}`
+    },
+    error: null
+  });
+}
 
 const mockPlaceOnlineOrder = (data) => Promise.resolve({
   data: {
@@ -31,8 +54,8 @@ const mockPlaceOnlineOrder = (data) => Promise.resolve({
 
 const mockTrackOrder = (data) => Promise.resolve({
   data: {
-    id: `order-uuid`,
-    receipt_number: "KG-1042",
+    id: data.id, // use ?id=<uuid> only
+    receipt_number: data.id, // for backward compat, mirror id
     order_type: "dine-in",
     status: "preparing",
     items: [{ name: "Burger", qty: 2 }],
@@ -78,5 +101,9 @@ export async function placeOnlineOrder(data) {
 }
 
 export async function trackOrder(data) {
-  return mockTrackOrder(data)
+  // Accept either {id: "<uuid>"} or {receipt_number: "KG-..."} but prioritize id.
+  // Security: a receipt alone is not sufficient for anon – use the order UUID.
+  const id = data.id || data.receipt_number
+  if (!id) return Promise.resolve({ data: null, error: { code: "MISSING_ID", message: "trackOrder requires an order id or receipt_number." } })
+  return mockTrackOrder({ id })
 }
