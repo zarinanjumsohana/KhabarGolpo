@@ -62,6 +62,9 @@ function renderCats() {
 
 function catModal(cat = null) {
   let saving = false;
+  let imageUrl = cat?.image_url || '';
+  let pendingFile = null;
+
   const m = openModal({
     title: cat ? 'Edit category' : 'New category',
     content: `
@@ -73,6 +76,23 @@ function catModal(cat = null) {
       <div class="field" style="margin-top:14px">
         <label for="catOrder">Sort order</label>
         <input id="catOrder" type="number" min="1" value="${cat?.sort_order ?? cats.length + 1}" />
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label for="catDesc">Description</label>
+        <textarea id="catDesc" maxlength="180" placeholder="A short line about this category, shown on the website.">${esc(cat?.description || '')}</textarea>
+        <span class="hint">Max 180 characters.</span>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label>Photo</label>
+        <div class="logo-drop">
+          <div class="logo-preview" id="catPreview">${imageUrl ? `<img src="${esc(imageUrl)}" alt="" />` : esc((cat?.name || 'C')[0].toUpperCase())}</div>
+          <div style="display:grid;gap:8px;flex:1">
+            <label class="btn btn-soft btn-sm" style="width:max-content" for="catFile">${icon('upload')}<span>Upload photo</span></label>
+            <input id="catFile" type="file" accept="image/*" class="sr-only" />
+            <span class="hint">JPG or PNG · up to 500 KB for now.</span>
+          </div>
+        </div>
+        <span class="err" id="eCatFile" style="display:none"></span>
       </div>`,
     actions: [
       ...(cat ? [{ label: 'Delete', className: 'btn-danger', icon: 'trash', value: 'delete' }] : []),
@@ -90,7 +110,23 @@ function catModal(cat = null) {
             return false;
           }
           buttonLoading(btn, true);
-          const payload = { name, sort_order: Number($('catOrder').value) || cats.length + 1 };
+          if (pendingFile) {
+            const up = await uploadImage(pendingFile);
+            if (up.error) {
+              buttonLoading(btn, false);
+              const ef = $('eCatFile');
+              ef.style.display = 'block';
+              ef.textContent = up.error.message;
+              return false;
+            }
+            imageUrl = up.data;
+          }
+          const payload = {
+            name,
+            sort_order: Number($('catOrder').value) || cats.length + 1,
+            description: $('catDesc').value.trim(),
+            image_url: imageUrl,
+          };
           const res = cat ? await updateCategory(cat.id, payload) : await createCategory(payload);
           buttonLoading(btn, false);
           if (res.error) {
@@ -103,6 +139,25 @@ function catModal(cat = null) {
         },
       },
     ],
+  });
+
+  $('catFile').addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const ef = $('eCatFile');
+    if (file.size > 500 * 1024) {
+      ef.style.display = 'block';
+      ef.textContent = 'Keep category photos under 500 KB for now.';
+      pendingFile = null;
+      return;
+    }
+    ef.style.display = 'none';
+    pendingFile = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      $('catPreview').innerHTML = `<img src="${reader.result}" alt="" />`;
+    };
+    reader.readAsDataURL(file);
   });
 
   m.result.then(async (val) => {
@@ -125,6 +180,27 @@ function catModal(cat = null) {
     await load();
   });
 }
+
+  m.result.then(async (val) => {
+    if (val === 'delete' && cat) {
+      const yes = await confirmDialog({
+        title: `Delete “${cat.name}”?`,
+        message: 'Categories with dishes cannot be deleted — move the dishes first.',
+        danger: true,
+        confirmText: 'Delete',
+      });
+      if (yes) {
+        const res = await deleteCategory(cat.id);
+        res.error
+          ? toast({ type: 'error', title: 'Cannot delete', message: res.error.message })
+          : toast({ type: 'success', title: 'Category deleted' });
+      }
+    } else if (val === 'save' && saving) {
+      toast({ type: 'success', title: cat ? 'Category updated' : 'Category created' });
+    }
+    await load();
+  });
+
 
 /* ------------------------------ items ------------------------------ */
 function itemCard(it) {

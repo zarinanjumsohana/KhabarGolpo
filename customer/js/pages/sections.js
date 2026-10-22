@@ -52,7 +52,13 @@
   KG.getGallery().then(({ data }) => {
     const grid = $('#galGrid');
     grid.textContent = '';
-    (data || []).forEach(g => {
+    if (!data || !data.length) {
+      const note = make('p', 'muted', 'Photos added in the admin panel will appear here.');
+      note.style.gridColumn = '1 / -1';
+      grid.append(note);
+      return;
+    }
+    data.forEach((g) => {
       const b = make('button', 'gal-item');
       b.type = 'button';
       b.setAttribute('aria-label', 'Open photo: ' + g.caption);

@@ -2,6 +2,7 @@
 // Every function returns the standard shape: { data, error: null | { code, message } }.
 // Mirrors js/api/* exactly so MOCK_MODE can be switched off without touching pages.
 
+import { reloadStore } from '../../../js/shared/store.js';
 import { CONFIG } from '../config.js';
 import * as db from './mockData.js';
 
@@ -9,6 +10,7 @@ const delay = (ms) => new Promise((r) => setTimeout(r, ms ?? 160 + Math.random()
 const clone = (v) => JSON.parse(JSON.stringify(v));
 const ok = async (data, ms) => {
   await delay(ms);
+  db.persist(); // keep the shared store in step with every admin change
   return { data: clone(data), error: null };
 };
 const fail = (code, message) => ({ data: null, error: { code, message } });
@@ -155,11 +157,18 @@ export const Mock = {
     async listCategories() {
       return ok(db.categories.slice().sort((a, b) => a.sort_order - b.sort_order));
     },
-    async createCategory({ name }) {
-      if (!String(name || '').trim()) return fail('VALIDATION', 'Category name is required.');
-      if (db.categories.some((c) => c.name.toLowerCase() === name.trim().toLowerCase()))
+    async createCategory(payload = {}) {
+      const name = String(payload.name || '').trim();
+      if (!name) return fail('VALIDATION', 'Category name is required.');
+      if (db.categories.some((c) => c.name.toLowerCase() === name.toLowerCase()))
         return fail('DUPLICATE', 'A category with that name already exists.');
-      const cat = { id: `cat_${Date.now()}`, name: name.trim(), sort_order: db.categories.length + 1 };
+      const cat = {
+        id: `cat_${Date.now()}`,
+        name,
+        sort_order: Number(payload.sort_order) || db.categories.length + 1,
+        description: String(payload.description || '').trim().slice(0, 180),
+        image_url: payload.image_url || '',
+      };
       db.categories.push(cat);
       return ok(cat);
     },
@@ -374,76 +383,41 @@ function validateItem(p) {
   return null;
 }
 
-/* ------------------------- realtime simulator ------------------------- */
+/* ------------------------- realtime (from the shared store) ------------------------- */
 const handlers = new Set();
+const lastStatus = new Map();
+let primed = false;
 let ticker = null;
 
-function randomNewOrder() {
-  const seq = db.orders.reduce((a, o) => Math.max(a, Number(String(o.receipt).replace('KG-', '')) || 0), 1000) + 1;
-  const items = [];
-  const used = new Set();
-  const n = 1 + Math.floor(Math.random() * 3);
-  while (items.length < n) {
-    const it = db.menu_items[Math.floor(Math.random() * db.menu_items.length)];
-    if (used.has(it.id) || !it.is_available) continue;
-    used.add(it.id);
-    const qty = 1 + Math.floor(Math.random() * 2);
-    items.push({ item_id: it.id, name: it.name, price: it.price, qty, line_total: it.price * qty });
+/* Looks at the shared store every few seconds. New orders and status changes go to the admin's pages. */
+function syncOrders() {
+  const fresh = reloadStore().orders || [];
+  let changed = false;
+  fresh.forEach((o) => {
+    const prev = lastStatus.get(o.id);
+    if (prev === undefined) {
+      if (primed) handlers.forEach((h) => h({ type: 'INSERT', new: clone(o) }));
+      changed = true;
+    } else if (prev !== o.status) {
+      handlers.forEach((h) => h({ type: 'UPDATE', new: clone(o) }));
+      changed = true;
+    }
+    lastStatus.set(o.id, o.status);
+  });
+  if (changed || !primed) {
+    const sorted = fresh.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    db.orders.splice(0, db.orders.length, ...clone(sorted));
   }
-  const r = Math.random();
-  const type = r < 0.45 ? 'dine_in' : r < 0.72 ? 'pickup' : 'delivery';
-  const active = db.tables.filter((t) => t.is_active);
-  const tbl = active[Math.floor(Math.random() * active.length)];
-  const names = ['Guest Walk-in', 'Online Customer', 'New Diner'];
-  const subtotal = items.reduce((a, i) => a + i.line_total, 0);
-  const tax = Math.round((subtotal * db.settings.tax_rate) / 100);
-  const delivery_fee = type === 'delivery' ? db.settings.delivery_fee : 0;
-  const order = {
-    id: `ord_${Date.now()}`,
-    receipt: `KG-${seq}`,
-    order_type: type,
-    table_id: type === 'dine_in' ? tbl.id : null,
-    table_number: type === 'dine_in' ? tbl.table_number : null,
-    customer_name: type === 'dine_in' ? null : names[Math.floor(Math.random() * names.length)],
-    phone: type === 'dine_in' ? null : `01${3 + Math.floor(Math.random() * 7)}${Math.floor(10000000 + Math.random() * 89999999)}`,
-    address: type === 'delivery' ? 'House 21, Road 9, Dhanmondi, Dhaka' : null,
-    address_note: type === 'delivery' ? 'Call at the gate' : null,
-    pickup_time: null,
-    note: '',
-    status: 'new',
-    payment_status: 'unpaid',
-    subtotal,
-    tax,
-    delivery_fee,
-    total: subtotal + tax + delivery_fee,
-    delivery_agency_note: null,
-    items,
-    created_at: new Date().toISOString(),
-    paid_at: null,
-  };
-  db.orders.unshift(order);
-  return order;
-}
-
-function tick() {
-  if (!handlers.size) return;
-  const roll = Math.random();
-  if (roll < 0.7) {
-    const order = randomNewOrder();
-    handlers.forEach((h) => h({ type: 'INSERT', new: order }));
-  } else {
-    const active = db.orders.filter((o) => ['new', 'preparing', 'ready'].includes(o.status));
-    if (!active.length) return;
-    const target = active[Math.floor(Math.random() * active.length)];
-    target.status = target.status === 'new' ? 'preparing' : 'ready';
-    handlers.forEach((h) => h({ type: 'UPDATE', new: clone(target), old: null }));
-  }
+  primed = true;
 }
 
 export const mockRealtime = {
   subscribe(cb) {
     handlers.add(cb);
-    if (!ticker) ticker = setInterval(tick, CONFIG.ORDER_REALTIME_MS || 45000);
+    if (!ticker) {
+      syncOrders();
+      ticker = setInterval(syncOrders, 6000);
+    }
     return () => {
       handlers.delete(cb);
       if (!handlers.size && ticker) {
@@ -452,8 +426,8 @@ export const mockRealtime = {
       }
     };
   },
-  /** force an immediate event (used by demo controls) */
+  /** force an immediate check (used by demo controls) */
   poke() {
-    tick();
+    syncOrders();
   },
 };

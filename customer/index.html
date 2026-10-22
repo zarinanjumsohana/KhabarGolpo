@@ -7,10 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Instrument+Serif:ital@0;1&family=Noto+Serif+Bengali:wght@600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
 <link rel="stylesheet" href="css/hero.css">
 <link rel="stylesheet" href="css/ambient.css">
+<link rel="stylesheet" href="css/menu.css">
 <link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/shop.css">
 </head>
 <body>
 
@@ -20,7 +21,7 @@
 </div>
 <canvas class="fx" id="fx" aria-hidden="true"></canvas>
 
-<!-- TOP BAR: brand, nav box (hero only), login button -->
+<!-- TOP BAR: brand, nav box (hero only), login button (or cart button over the menu), cart button -->
 <header class="topbar" id="topbar">
   <a class="brand" href="#top" aria-label="KhabarGolpo, back to top">
     <!-- placeholder logo mark: replace with your logo -->
@@ -34,13 +35,14 @@
   <nav class="nav-pill" aria-label="Main">
     <ul class="links">
       <li><a href="#story">Our Story</a></li>
+      <li><a href="#menu">Menu</a></li>
       <li><a href="#gallery">Galerie</a></li>
       <li><a href="#reservation">Reservation</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
-  <!-- LOGIN: three short lines, separate from the nav -->
+  <!-- LOGIN: three short lines. Hidden while the menu is on screen (the cart button takes its place) -->
   <div class="menu-wrap">
     <button class="menu-btn glass" id="menuBtn" type="button" aria-expanded="false" aria-controls="loginPanel" aria-label="Admin and chef login">
       <span></span><span></span><span></span>
@@ -60,6 +62,15 @@
       </form>
     </div>
   </div>
+
+  <!-- CART: top right. Replaces the login button while the menu is on screen (see utils/cart.js) -->
+  <a class="cart-btn" href="cart.html" aria-label="Open your cart">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z"/>
+      <path d="M9 8a3 3 0 0 1 6 0"/>
+    </svg>
+    <span class="cart-count" hidden>0</span>
+  </a>
 </header>
 
 <main id="top">
@@ -87,6 +98,21 @@
       <p class="kicker" data-reveal>Our story</p>
       <h2 class="sec-title" id="storyTitle" data-reveal>Made with care</h2>
       <div class="glass story-card" id="storyBody" data-reveal></div>
+    </div>
+  </section>
+
+  <!-- 3. MENU: one row per category. Clicking a row opens that category's dishes. -->
+  <section class="mn" id="menu" aria-labelledby="mnTitle">
+    <div class="mn-track" id="mnTrack">
+      <div class="mn-stage" id="mnStage">
+        <header class="mn-head">
+          <p class="mn-discover">Discover</p>
+          <h2 id="mnTitle">Our Menu</h2>
+        </header>
+
+        <div class="mn-units" id="mnUnits"></div>
+        <nav class="mn-dots" id="mnDots" aria-label="Menu categories"></nav>
+      </div>
     </div>
   </section>
 
@@ -220,9 +246,12 @@
   <img id="lbImg" alt="">
 </dialog>
 
+<!-- Order of scripts: data first, then the cart helper, then the pages -->
 <script src="js/mock/content.js"></script>
+<script src="js/utils/cart.js"></script>
 <script src="js/pages/hero.js"></script>
 <script src="js/utils/ambient.js"></script>
+<script src="js/pages/menu.js"></script>
 <script src="js/pages/sections.js"></script>
 </body>
 </html>
