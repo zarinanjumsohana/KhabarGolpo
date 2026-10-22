@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Receipts &amp; Bills · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="receipt">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head no-print">
+      <div>
+        <span hidden class="kicker">Billing</span>
+        <h1 class="page-title">Receipts &amp; <em>table bills</em></h1>
+        <p hidden class="page-desc">Every order gets a receipt. For a table that ordered several times, print one combined bill and close it in a single tap.</p>
+      </div>
+      <div class="head-actions">
+        <div class="seg" id="modeSeg">
+          <button class="on" data-mode="single">Single receipt</button>
+          <button data-mode="table">Combined table bill</button>
+          <span class="seg-ind" id="segInd"></span>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btnPrint"><span data-icon="printer"></span><span>Print</span></button>
+      </div>
+    </div>
+
+    <div class="split-2">
+      <aside class="picker no-print">
+        <div class="picker-head">
+          <div class="field" id="wrapSearch">
+            <label for="rSearch">Find an order</label>
+            <div class="sbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="rSearch" type="search" placeholder="Receipt number, name, table…" /></div>
+          </div>
+          <div class="type-tabs" id="rTypeTabs">
+            <button class="ttab on" data-rtype="dine_in">Dine-in</button>
+            <button class="ttab" data-rtype="pickup">Pickup</button>
+            <button class="ttab" data-rtype="delivery">Delivery</button>
+          </div>
+          <div class="chips" id="tableChips" style="display:none"></div>
+        </div>
+        <div class="picker-list" id="pickerList"></div>
+      </aside>
+
+      <section class="paper-stage" id="stage">
+        <div class="center-pad"><div class="spinner"></div></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="../js/pages/receipt.js"></script>
+</body>
+</html>

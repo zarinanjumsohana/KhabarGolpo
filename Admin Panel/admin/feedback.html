@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feedback · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="feedback">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Voices</span>
+        <h1 class="page-title">Feedback &amp; <em>reviews</em></h1>
+        <p hidden class="page-desc">Reviews appear on the website only after you approve them. Queries and suggestions stay private to this panel.</p>
+      </div>
+      <div class="head-actions">
+        <button class="chip" id="chipUnread"><span data-icon="bell"></span> Unread only</button>
+        <div class="seg" id="typeSeg">
+          <button class="on" data-type="">All</button>
+          <button data-type="review">Reviews</button>
+          <button data-type="query">Queries</button>
+          <button data-type="suggestion">Suggestions</button>
+          <span class="seg-ind" id="segInd"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-grid" id="fbGrid"></div>
+  </main>
+
+  <script type="module" src="../js/pages/feedback.js"></script>
+</body>
+</html>

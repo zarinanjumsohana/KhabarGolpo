@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Login · Khabar Golpo</title>
+  <meta name="description" content="Sign in to the Khabar Golpo admin panel." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body class="login-page">
+  <div class="login">
+    <button class="tt-btn login-tt" id="themeToggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">
+      <span class="tt-sun" data-icon="sun"></span>
+      <span class="tt-moon" data-icon="moon"></span>
+    </button>
+    <section class="login-art">
+      <span class="mesh-blob a"></span>
+      <span class="mesh-blob b"></span>
+
+      <div class="login-brand">
+        <div class="brand-mark">K</div>
+        <div>
+          <div class="brand-name">Khabar Golpo</div>
+          <div class="brand-sub">Admin Panel</div>
+        </div>
+      </div>
+
+      <div class="login-mid">
+        <span class="kicker" style="color: var(--brand-2)">Welcome back</span>
+        <h1>The kitchen is<br /><em>waiting</em> for you.</h1>
+        <blockquote class="login-quote" id="quote">
+          “Every dish tells a story — your job is to keep the pages turning.”
+          <cite>Khabar Golpo</cite>
+        </blockquote>
+      </div>
+
+      <div class="login-feats">
+        <span><span data-icon="wifi"></span> Live orders</span>
+        <span><span data-icon="receipt"></span> Instant receipts</span>
+        <span><span data-icon="chart"></span> Real-time revenue</span>
+      </div>
+    </section>
+
+    <section class="login-form">
+      <form class="login-card" id="loginForm" novalidate>
+        <div>
+          <span class="kicker">Secure sign in</span>
+          <h2>Admin login</h2>
+        </div>
+        <p>Only restaurant administrators can open this panel. Kitchen staff belong in the <b>/kitchen</b> panel.</p>
+
+        <div class="login-form-fields">
+          <div class="field" id="fEmail">
+            <label for="email">Email address</label>
+            <div class="input-icon">
+              <span data-icon="mail"></span>
+              <input id="email" name="email" type="email" autocomplete="username" placeholder="admin@khabargolpo.com" />
+            </div>
+            <span class="err" id="eEmail"></span>
+          </div>
+
+          <div class="field" id="fPassword">
+            <label for="password">Password</label>
+            <div class="input-icon">
+              <span data-icon="lock"></span>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" style="padding-right: 52px" />
+              <button type="button" class="pw-toggle" id="pwToggle" aria-label="Show password" data-icon="eye"></button>
+            </div>
+            <span class="err" id="ePassword"></span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="btnSubmit" type="submit">
+          <span>Enter the panel</span>
+          <span data-icon="arrowRight"></span>
+        </button>
+
+        <div class="demo-box" id="demoBox">
+          <div class="row"><span>Demo admin</span><code data-fill="admin@khabargolpo.com">admin@khabargolpo.com</code></div>
+          <div class="row"><span>Password</span><code data-fill="admin123">admin123</code></div>
+          <div class="row" style="opacity:.7"><span>Demo chef (blocked here)</span><code data-fill="chef@khabargolpo.com">chef@khabargolpo.com</code></div>
+        </div>
+
+      </form>
+    </section>
+  </div>
+
+  <script type="module" src="../js/pages/login.js"></script>
+</body>
+</html>

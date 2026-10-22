@@ -1,0 +1,11 @@
+/* Ambient layer: floral frame behind the page, moving particles above it */
+
+/* the frame: covers the whole screen on desktop; on phones the whole frame is shown, never cropped */
+.ambient{position:fixed;inset:0;z-index:0;background:#000;pointer-events:none;overflow:hidden}
+.ambient img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;user-select:none;-webkit-user-drag:none}
+@media (min-width:768px){
+  .ambient img{object-fit:cover}
+}
+
+/* butterflies and petals: drawn on one canvas, above the page but below the top bar */
+.fx{position:fixed;inset:0;width:100%;height:100%;z-index:20;pointer-events:none}
