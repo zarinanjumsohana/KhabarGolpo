@@ -131,7 +131,6 @@
   var notifPanel = document.querySelector('[data-notif-panel]');
   var notifList = document.querySelector('[data-notif-list]');
   var notifBadge = document.querySelector('[data-notif-count]');
-  var notifFoot = document.querySelector('[data-notif-foot]');
   var readAlerts = {};
   var currentAlerts = [];
 
@@ -177,6 +176,118 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.6V12l3 1.8" /></svg>';
   }
 
+  function formatClock(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var suffix = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+    return (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + suffix;
+  }
+
+  function getAlertTime(order) {
+    var meta = order.querySelector('.elapsed-meta');
+    var match = meta ? /(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(meta.textContent) : null;
+    var now = new Date();
+    if (!match) return formatClock(now);
+
+    var hours = parseInt(match[1], 10) % 12;
+    if (match[3].toUpperCase() === 'PM') hours += 12;
+
+    var placed = new Date(now.getTime());
+    placed.setHours(hours, parseInt(match[2], 10), 0, 0);
+    if (placed.getTime() > now.getTime() + 3600000) placed.setDate(placed.getDate() - 1);
+
+    return formatClock(new Date(placed.getTime() + alertMinutes * 60000));
+  }
+
+  var toastHost = null;
+  var announcedAlerts = {};
+
+  function ensureToastHost() {
+    if (!toastHost) {
+      toastHost = document.createElement('div');
+      toastHost.className = 'toast-host';
+      toastHost.setAttribute('aria-live', 'polite');
+      toastHost.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(toastHost);
+    }
+    return toastHost;
+  }
+
+  function dismissToast(el) {
+    if (!el || el.classList.contains('is-out')) return;
+    el.classList.remove('is-in');
+    el.classList.add('is-out');
+    window.setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 460);
+  }
+
+  function showAlertToast(alert) {
+    var host = ensureToastHost();
+    var el = document.createElement('article');
+    el.className = 'k-toast';
+    el.setAttribute('role', 'status');
+
+    var icon = document.createElement('span');
+    icon.className = 'k-toast-ic';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = alertIcon();
+
+    var body = document.createElement('div');
+    body.className = 'k-toast-body';
+
+    var eyebrow = document.createElement('span');
+    eyebrow.className = 'k-toast-eyebrow';
+    eyebrow.textContent = 'Delayed order';
+
+    var title = document.createElement('strong');
+    title.className = 'k-toast-title';
+    title.textContent = alert.title;
+
+    var message = document.createElement('span');
+    message.className = 'k-toast-msg';
+    message.textContent = alert.text;
+
+    var time = document.createElement('span');
+    time.className = 'k-toast-time';
+    time.textContent = 'Updated at ' + alert.at;
+
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'k-toast-x';
+    close.setAttribute('aria-label', 'Dismiss alert');
+    close.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" /></svg>';
+    close.addEventListener('click', function () { dismissToast(el); });
+
+    body.appendChild(eyebrow);
+    body.appendChild(title);
+    if (alert.text) body.appendChild(message);
+    body.appendChild(time);
+    el.appendChild(icon);
+    el.appendChild(body);
+    el.appendChild(close);
+    host.appendChild(el);
+
+    requestAnimationFrame(function () { el.classList.add('is-in'); });
+    window.setTimeout(function () { dismissToast(el); }, 6500);
+  }
+
+  function announceAlerts(alerts) {
+    var fresh = [];
+    for (var i = 0; i < alerts.length; i += 1) {
+      if (announcedAlerts[alerts[i].id]) continue;
+      announcedAlerts[alerts[i].id] = true;
+      fresh.push(alerts[i]);
+    }
+    for (var f = 0; f < fresh.length; f += 1) {
+      (function (alert, index) {
+        window.setTimeout(function () { showAlertToast(alert); }, 450 + index * 750);
+      }(fresh[f], f));
+    }
+  }
+
   function makeAlertItem(alert) {
     var item = document.createElement('li');
     item.className = 'notif-item' + (alert.read ? '' : ' is-unread');
@@ -199,7 +310,7 @@
 
     var time = document.createElement('span');
     time.className = 'notif-time';
-    time.textContent = 'Updated just now';
+    time.textContent = 'Updated at ' + alert.at;
 
     body.appendChild(title);
     body.appendChild(text);
@@ -233,6 +344,23 @@
     if (!hasBoard) {
       var staticUnread = notifList.querySelectorAll('.notif-item.is-unread').length;
       setNotifBadge(staticUnread);
+
+      var staticAlerts = [];
+      var staticItems = notifList.querySelectorAll('.notif-item');
+      for (var s = 0; s < staticItems.length; s += 1) {
+        var sTitle = staticItems[s].querySelector('.notif-title');
+        if (!sTitle) continue;
+        var sText = staticItems[s].querySelector('.notif-text');
+        var sTime = staticItems[s].querySelector('.notif-time');
+        var sIdMatch = /Order\s+([A-Z0-9-]+)/i.exec(sTitle.textContent);
+        staticAlerts.push({
+          id: sIdMatch ? sIdMatch[1] : 'static-' + s,
+          title: sTitle.textContent.trim(),
+          text: sText ? sText.textContent.trim() : '',
+          at: sTime ? sTime.textContent.replace(/^Updated at\s*/i, '').trim() : formatClock(new Date())
+        });
+      }
+      announceAlerts(staticAlerts);
       return;
     }
 
@@ -256,6 +384,7 @@
         minutes: minutes,
         title: 'Order ' + id + ' has passed ' + alertMinutes + ' minutes',
         text: stateLabel + ' \u00b7 ' + minutes + ' min elapsed' + (meta ? ' \u00b7 ' + meta : ''),
+        at: getAlertTime(order),
         read: !!readAlerts[id]
       });
     }
@@ -275,10 +404,7 @@
       if (!alerts[c].read) unreadCount += 1;
     }
     setNotifBadge(unreadCount);
-
-    if (notifFoot) {
-      notifFoot.textContent = 'Only delayed orders are shown here. Alert window: ' + alertMinutes + ' min.';
-    }
+    announceAlerts(alerts);
   }
 
   /* ------------------------------ order board ------------------------------ */
