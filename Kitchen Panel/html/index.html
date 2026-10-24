@@ -14,7 +14,7 @@
 </head>
 <body>
   <div class="shell">
-    <aside class="sidebar" id="kitchenSidebar">
+    <aside class="sidebar">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -33,59 +33,23 @@
       <nav class="nav-group" aria-label="Kitchen sections">
         <p class="nav-label">Service</p>
         <ul class="nav">
-          <li class="nav-cluster">
-            <a class="nav-link nav-parent is-active" href="index.html" data-page-link="dashboard" aria-current="page">
+          <li>
+            <a class="nav-link is-active" href="index.html" aria-current="page">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3.5" y="4" width="17" height="16" rx="2.5" />
                 <path d="M8 9h8M8 13h8M8 17h5" />
               </svg>
-              <span class="nav-main">
-                <span class="nav-text">Kitchen Dashboard</span>
-                <span class="nav-count" data-nav-active>7</span>
-              </span>
+              <span>Kitchen Dashboard</span>
+              <span class="nav-count">7</span>
             </a>
-            <ul class="nav-sub" aria-label="Order status filters">
-              <li>
-                <a class="nav-link nav-filter" href="index.html#orders" data-status-filter="waiting" aria-current="false">
-                  <span class="nav-status-dot is-pending" aria-hidden="true"></span>
-                  <span class="nav-main">
-                    <span class="nav-text">Pending</span>
-                    <span class="nav-count tnum" data-status-count="waiting">2</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a class="nav-link nav-filter" href="index.html#orders" data-status-filter="preparing" aria-current="false">
-                  <span class="nav-status-dot is-preparing" aria-hidden="true"></span>
-                  <span class="nav-main">
-                    <span class="nav-text">Preparing</span>
-                    <span class="nav-count tnum" data-status-count="preparing">5</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a class="nav-link" href="completed.html">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="8.5" />
-                    <path d="m8.6 12.2 2.4 2.4 4.4-4.9" />
-                  </svg>
-                  <span class="nav-main">
-                    <span class="nav-text">Completed</span>
-                  </span>
-                </a>
-              </li>
-            </ul>
           </li>
           <li>
-            <a class="nav-link" href="index.html#menu" data-page-link="menu">
+            <a class="nav-link" href="completed.html">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 4.5h14v15H5z" />
-                <path d="M8.5 8h7M8.5 11.5h7M8.5 15h4.5" />
+                <circle cx="12" cy="12" r="8.5" />
+                <path d="m8.6 12.2 2.4 2.4 4.4-4.9" />
               </svg>
-              <span class="nav-main">
-                <span class="nav-text">Menu &amp; Sold Out</span>
-                <span class="nav-count" data-menu-nav-count>17</span>
-              </span>
+              <span>Completed</span>
             </a>
           </li>
         </ul>
@@ -102,11 +66,11 @@
           <dl class="metrics">
             <div class="metric">
               <dt>Active orders</dt>
-              <dd class="tnum" data-metric-active>7</dd>
+              <dd class="tnum">7</dd>
             </div>
             <div class="metric">
-              <dt>Delayed orders</dt>
-              <dd class="tnum is-warn" data-metric-late>3</dd>
+              <dt>Over 20 min</dt>
+              <dd class="tnum is-warn">2</dd>
             </div>
             <div class="metric">
               <dt>Avg prep</dt>
@@ -114,43 +78,20 @@
             </div>
           </dl>
         </div>
-
-        <div class="side-utils">
-          <button class="side-util" type="button" data-alert-settings>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="3.2" />
-              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" />
-            </svg>
-            <span class="util-main">
-              <span class="util-text">Kitchen Alert Settings</span>
-              <span class="util-value" data-alert-value>15 min</span>
-            </span>
-          </button>
-
-          <a class="nav-link is-logout" href="login.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M14.5 4.5H18A1.5 1.5 0 0 1 19.5 6v12A1.5 1.5 0 0 1 18 19.5h-3.5" />
-              <path d="M10 8.5 6.5 12 10 15.5" />
-              <path d="M6.5 12H15" />
-            </svg>
-            <span class="nav-main">
-              <span class="nav-text">Logout</span>
-            </span>
-          </a>
-        </div>
+        <a class="nav-link is-logout" href="login.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.5 4.5H18A1.5 1.5 0 0 1 19.5 6v12A1.5 1.5 0 0 1 18 19.5h-3.5" />
+            <path d="M10 8.5 6.5 12 10 15.5" />
+            <path d="M6.5 12H15" />
+          </svg>
+          <span>Logout</span>
+        </a>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
-          <button class="icon-btn sidebar-toggle" type="button" data-sidebar-toggle aria-controls="kitchenSidebar" aria-expanded="true" aria-label="Hide sidebar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
-              <path d="M9 4.5v15" />
-              <path d="m14.5 9-3 3 3 3" />
-            </svg>
-          </button>
           <span class="status-badge">
             <span class="dot" aria-hidden="true"></span>
             Kitchen open
@@ -175,19 +116,19 @@
               </svg>
             </button>
             <div class="notif-wrap">
-              <button class="icon-btn" type="button" data-notif-toggle aria-expanded="false" aria-controls="notifPanel" aria-label="Notifications, 2 unread">
+              <button class="icon-btn" type="button" data-notif-toggle aria-expanded="false" aria-controls="notifPanel" aria-label="Notifications, 3 unread">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M18 8.6a6 6 0 1 0-12 0c0 4.9-2 6.4-2 6.4h16s-2-1.5-2-6.4Z" />
                   <path d="M13.7 18.4a2 2 0 0 1-3.4 0" />
                 </svg>
-                <span class="bell-badge" data-notif-count>2</span>
+                <span class="bell-badge" data-notif-count>3</span>
               </button>
               <div class="notif-panel" id="notifPanel" data-notif-panel hidden>
                 <div class="notif-head">
-                  <span>Delayed order alerts</span>
+                  <span>Notifications</span>
                   <button class="notif-clear" type="button" data-notif-clear>Mark all read</button>
                 </div>
-                <ul class="notif-list" data-notif-list>
+                <ul class="notif-list">
                   <li class="notif-item is-unread">
                     <span class="notif-ic is-warn" aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -196,884 +137,428 @@
                       </svg>
                     </span>
                     <span class="notif-body">
-                      <span class="notif-title">Order KG-1044 has passed 15 minutes</span>
-                      <span class="notif-text">Preparing &middot; 26 min elapsed &middot; Delivery (Imran)</span>
-                      <span class="notif-time">Updated at 07:43 PM</span>
+                      <span class="notif-title">Table 5 has been waiting 12 minutes</span>
+                      <span class="notif-text">KG-1042 is still on the pass and has not been started.</span>
+                      <span class="notif-time">2 min ago</span>
                     </span>
                   </li>
                   <li class="notif-item is-unread">
-                    <span class="notif-ic is-warn" aria-hidden="true">
+                    <span class="notif-ic is-info" aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="8.5" />
-                        <path d="M12 7.6V12l3 1.8" />
+                        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5Z" />
+                        <path d="M12 12v9M12 12 4 7.5M12 12l8-4.5" />
                       </svg>
                     </span>
                     <span class="notif-body">
-                      <span class="notif-title">Order KG-1046 has passed 15 minutes</span>
-                      <span class="notif-text">Preparing &middot; 34 min elapsed &middot; Delivery (Farhana)</span>
-                      <span class="notif-time">Updated at 07:35 PM</span>
+                      <span class="notif-title">Mutton Rezala marked sold out</span>
+                      <span class="notif-text">The customer on KG-1046 needs a substitute before plating.</span>
+                      <span class="notif-time">6 min ago</span>
+                    </span>
+                  </li>
+                  <li class="notif-item is-unread">
+                    <span class="notif-ic is-ok" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 15.5 9 10l3.5 3.5L20 6" />
+                        <path d="M15.5 6H20v4.5" />
+                      </svg>
+                    </span>
+                    <span class="notif-body">
+                      <span class="notif-title">Delivery rider at the counter</span>
+                      <span class="notif-text">KG-1046 is ready for hand-off to the agency.</span>
+                      <span class="notif-time">9 min ago</span>
                     </span>
                   </li>
                 </ul>
+                <p class="notif-foot">Nothing else needs attention right now.</p>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <section class="page" id="page-dashboard" data-page="dashboard">
-        <header class="page-head">
-          <div class="page-head-main">
-            <p class="page-kicker">Kitchen Operations</p>
-            <div class="page-title-row">
-              <h1 class="page-title">Kitchen Dashboard</h1>
-              <div class="seg" role="group" aria-label="Group active orders by">
-                <button class="seg-btn is-active" type="button" data-view-btn="orders" aria-pressed="true" aria-controls="view-orders">By Order</button>
-                <button class="seg-btn" type="button" data-view-btn="items" aria-pressed="false" aria-controls="view-items">By Items</button>
-              </div>
+      <header class="page-head">
+        <div class="page-head-main">
+          <p class="page-kicker">Kitchen Operations</p>
+          <div class="page-title-row">
+            <h1 class="page-title">Kitchen Dashboard</h1>
+            <div class="seg" role="group" aria-label="Group active orders by">
+              <button class="seg-btn is-active" type="button" data-view-btn="orders" aria-pressed="true" aria-controls="view-orders">By Order</button>
+              <button class="seg-btn" type="button" data-view-btn="items" aria-pressed="false" aria-controls="view-items">By Items</button>
             </div>
-          </div>
-        </header>
+          
+      </header>
 
-        <section class="grid" id="view-orders" data-view="orders" aria-label="Active orders">
-          <article class="order" data-order-id="KG-1042" data-order-state="waiting" data-minutes="12">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1042</p>
-                <div class="order-tags">
-                  <span class="tag is-dine">Dine-in &middot; Table 5</span>
-                  <span class="state-chip is-waiting" data-state-chip>Waiting</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">12 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:42 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Chicken Bhuna"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Chicken Bhuna</span></span></li>
-              <li class="order-item" data-item-name="Mutton Rezala"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Mutton Rezala</span></span></li>
-              <li class="order-item" data-item-name="Plain Rice"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Plain Rice</span></span></li>
-              <li class="order-item" data-item-name="Dal Fry"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Dal Fry</span></span></li>
-            </ul>
-            <p class="order-note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="8.5" />
-                <path d="M12 8.2v4.4M12 15.8h.01" />
-              </svg>
-              <span>Less spicy for one plate, no onion in the dal.</span>
-            </p>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Start preparing</button>
-            </footer>
-          </article>
-          <article class="order" data-order-id="KG-1043" data-order-state="preparing" data-minutes="18">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1043</p>
-                <div class="order-tags">
-                  <span class="tag is-pickup">Pickup &middot; Nadia</span>
-                  <span class="state-chip is-preparing" data-state-chip>Preparing</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">18 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:36 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Ilish Macher Jhol"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Ilish Macher Jhol</span></span></li>
-              <li class="order-item" data-item-name="Vegetable Hatchibhaja"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Vegetable Hatchibhaja</span></span></li>
-              <li class="order-item" data-item-name="Butter Naan"><span class="qty tnum">3</span><span class="item-body"><span class="item-name">Butter Naan</span></span></li>
-              <li class="order-item" data-item-name="Cold Drink"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Cold Drink</span></span></li>
-            </ul>
-            <p class="order-note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="8.5" />
-                <path d="M12 8.2v4.4M12 15.8h.01" />
-              </svg>
-              <span>Pickup at 8:30 PM - keep the fish packed separately.</span>
-            </p>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
-            </footer>
-          </article>
-          <article class="order" data-order-id="KG-1044" data-order-state="preparing" data-minutes="26">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1044</p>
-                <div class="order-tags">
-                  <span class="tag is-delivery">Delivery &middot; Imran</span>
-                  <span class="state-chip is-preparing" data-state-chip>Preparing</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">26 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:28 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Special Khichuri"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Special Khichuri</span></span></li>
-              <li class="order-item" data-item-name="Chicken Bhuna"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Chicken Bhuna</span><span class="item-note">Extra gravy, bone removed</span></span></li>
-              <li class="order-item" data-item-name="Salad"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Salad</span></span></li>
-            </ul>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
-            </footer>
-          </article>
-          <article class="order" data-order-id="KG-1045" data-order-state="waiting" data-minutes="8">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1045</p>
-                <div class="order-tags">
-                  <span class="tag is-dine">Dine-in &middot; Table 2</span>
-                  <span class="state-chip is-waiting" data-state-chip>Waiting</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">8 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:46 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Fried Rice"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Fried Rice</span></span></li>
-              <li class="order-item" data-item-name="Chicken Kebab"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Chicken Kebab</span></span></li>
-              <li class="order-item" data-item-name="Fried Egg"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Fried Egg</span></span></li>
-            </ul>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Start preparing</button>
-            </footer>
-          </article>
-          <article class="order" data-order-id="KG-1046" data-order-state="preparing" data-minutes="34">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1046</p>
-                <div class="order-tags">
-                  <span class="tag is-delivery">Delivery &middot; Farhana</span>
-                  <span class="state-chip is-preparing" data-state-chip>Preparing</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">34 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:20 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Mutton Rezala"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Mutton Rezala</span></span></li>
-              <li class="order-item" data-item-name="Plain Rice"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Plain Rice</span></span></li>
-              <li class="order-item" data-item-name="Raita"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Raita</span></span></li>
-            </ul>
-            <p class="order-note">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="8.5" />
-                <path d="M12 8.2v4.4M12 15.8h.01" />
-              </svg>
-              <span>Agency rider waiting at the counter.</span>
-            </p>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
-            </footer>
-          </article>
-          <article class="order" data-order-id="KG-1047" data-order-state="preparing" data-minutes="15">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1047</p>
-                <div class="order-tags">
-                  <span class="tag is-pickup">Pickup &middot; Rahim</span>
-                  <span class="state-chip is-preparing" data-state-chip>Preparing</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">15 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:39 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Special Khichuri"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Special Khichuri</span></span></li>
-              <li class="order-item" data-item-name="Chicken Bhuna"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Chicken Bhuna</span><span class="item-note">One medium, one mild</span></span></li>
-              <li class="order-item" data-item-name="Dal Fry"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Dal Fry</span></span></li>
-              <li class="order-item" data-item-name="Mineral Water"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Mineral Water</span></span></li>
-            </ul>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
-            </footer>
-          </article>
-          <article class="order" data-order-id="KG-1048" data-order-state="ready" data-minutes="21">
-            <header class="order-head">
-              <div>
-                <p class="order-id">KG-1048</p>
-                <div class="order-tags">
-                  <span class="tag is-dine">Dine-in &middot; Table 9</span>
-                  <span class="state-chip is-ready" data-state-chip>Ready</span>
-                </div>
-              </div>
-              <div class="elapsed">
-                <span class="elapsed-time tnum">21 min</span>
-                <span class="elapsed-meta tnum">Placed at 7:33 PM</span>
-              </div>
-            </header>
-            <ul class="order-items">
-              <li class="order-item" data-item-name="Vegetable Jhol"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Vegetable Jhol</span></span></li>
-              <li class="order-item" data-item-name="Butter Naan"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Butter Naan</span></span></li>
-              <li class="order-item" data-item-name="Paneer Bhurji"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Paneer Bhurji</span></span></li>
-            </ul>
-            <footer class="order-foot">
-              <ol class="steps" aria-label="Order progress">
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
-                <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
-              </ol>
-              <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance disabled>Ready for hand-off</button>
-            </footer>
-          </article>
-        </section>
-
-        <section class="matrix-view" id="view-items" data-view="items" hidden aria-label="Consolidated prep list by item">
-          <div class="matrix-head">
+      <section class="grid" id="view-orders" data-view="orders" aria-label="Active orders">
+        <article class="order" data-order-id="KG-1042" data-order-state="waiting">
+          <header class="order-head">
             <div>
-              <h2 class="matrix-title">By Items</h2>
-              <p class="matrix-meta">35 portions &middot; 17 dishes &middot; 7 active orders</p>
+              <p class="order-id">KG-1042</p>
+              <div class="order-tags">
+                <span class="tag is-dine">Dine-in &middot; Table 5</span>
+                <span class="state-chip is-waiting" data-state-chip>Waiting</span>
+              </div>
             </div>
-            <span class="matrix-chip">Pending + Preparing</span>
-          </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">12 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:42 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Chicken Bhuna</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Mutton Rezala</span></span></li>
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Plain Rice</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Dal Fry</span></span></li>
+          </ul>
+          <p class="order-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M12 8.2v4.4M12 15.8h.01" />
+            </svg>
+            <span>Less spicy for one plate, no onion in the dal.</span>
+          </p>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Start preparing</button>
+          </footer>
+        </article>
 
-          <div class="item-matrix">
-            <article class="product-box" data-item-name="Chicken Bhuna">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Chicken Bhuna</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 4">x4</span>
+        <article class="order" data-order-id="KG-1043" data-order-state="preparing">
+          <header class="order-head">
+            <div>
+              <p class="order-id">KG-1043</p>
+              <div class="order-tags">
+                <span class="tag is-pickup">Pickup &middot; Nadia</span>
+                <span class="state-chip is-preparing" data-state-chip>Preparing</span>
               </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 5</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">Less spicy</span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">2. Imran</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">Extra gravy, bone removed</span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">3. Rahim</span><span class="product-order-qty tnum">x2</span></span>
-                  <span class="product-order-note">One medium, one mild</span>
-                </li>
-              </ul>
-            </article>
+            </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">18 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:36 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Ilish Macher Jhol</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Vegetable Hatchibhaja</span></span></li>
+            <li class="order-item"><span class="qty tnum">3</span><span class="item-body"><span class="item-name">Butter Naan</span></span></li>
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Cold Drink</span></span></li>
+          </ul>
+          <p class="order-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M12 8.2v4.4M12 15.8h.01" />
+            </svg>
+            <span>Pickup at 8:30 PM - keep the fish packed separately.</span>
+          </p>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
+          </footer>
+        </article>
 
-            <article class="product-box" data-item-name="Plain Rice">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Plain Rice</h3>
-                  <p class="product-cat">Rice &amp; Breads</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 4">x4</span>
+        <article class="order is-late" data-order-id="KG-1044" data-order-state="preparing">
+          <header class="order-head">
+            <div>
+              <p class="order-id">KG-1044</p>
+              <div class="order-tags">
+                <span class="tag is-delivery">Delivery &middot; Imran</span>
+                <span class="state-chip is-preparing" data-state-chip>Preparing</span>
               </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 5</span><span class="product-order-qty tnum">x2</span></span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">2. Farhana</span><span class="product-order-qty tnum">x2</span></span>
-                </li>
-              </ul>
-            </article>
+            </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">26 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:28 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Special Khichuri</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Chicken Bhuna</span><span class="item-note">Extra gravy, bone removed</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Salad</span></span></li>
+          </ul>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
+          </footer>
+        </article>
 
-            <article class="product-box" data-item-name="Butter Naan">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Butter Naan</h3>
-                  <p class="product-cat">Rice &amp; Breads</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 4">x4</span>
+        <article class="order" data-order-id="KG-1045" data-order-state="waiting">
+          <header class="order-head">
+            <div>
+              <p class="order-id">KG-1045</p>
+              <div class="order-tags">
+                <span class="tag is-dine">Dine-in &middot; Table 2</span>
+                <span class="state-chip is-waiting" data-state-chip>Waiting</span>
               </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Nadia</span><span class="product-order-qty tnum">x3</span></span>
-                  <span class="product-order-note">Serve last, keep warm</span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">2. Table 9</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">Serve last, keep warm</span>
-                </li>
-              </ul>
-            </article>
+            </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">8 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:46 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Fried Rice</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Chicken Kebab</span></span></li>
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Fried Egg</span></span></li>
+          </ul>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Start preparing</button>
+          </footer>
+        </article>
 
-            <article class="product-box" data-item-name="Mutton Rezala">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Mutton Rezala</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 3">x3</span>
+        <article class="order is-late" data-order-id="KG-1046" data-order-state="preparing">
+          <header class="order-head">
+            <div>
+              <p class="order-id">KG-1046</p>
+              <div class="order-tags">
+                <span class="tag is-delivery">Delivery &middot; Farhana</span>
+                <span class="state-chip is-preparing" data-state-chip>Preparing</span>
               </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 5</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">2. Farhana</span><span class="product-order-qty tnum">x2</span></span>
-                  <span class="product-order-note">Extra gravy on both plates</span>
-                </li>
-              </ul>
-            </article>
+            </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">34 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:20 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Mutton Rezala</span></span></li>
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Plain Rice</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Raita</span></span></li>
+          </ul>
+          <p class="order-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M12 8.2v4.4M12 15.8h.01" />
+            </svg>
+            <span>Agency rider waiting at the counter.</span>
+          </p>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
+          </footer>
+        </article>
 
-            <article class="product-box" data-item-name="Dal Fry">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Dal Fry</h3>
-                  <p class="product-cat">Sides</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
+        <article class="order" data-order-id="KG-1047" data-order-state="preparing">
+          <header class="order-head">
+            <div>
+              <p class="order-id">KG-1047</p>
+              <div class="order-tags">
+                <span class="tag is-pickup">Pickup &middot; Rahim</span>
+                <span class="state-chip is-preparing" data-state-chip>Preparing</span>
               </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 5</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">No onion</span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">2. Rahim</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-              </ul>
-            </article>
+            </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">15 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:39 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Special Khichuri</span></span></li>
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Chicken Bhuna</span><span class="item-note">One medium, one mild</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Dal Fry</span></span></li>
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Mineral Water</span></span></li>
+          </ul>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance>Mark as ready</button>
+          </footer>
+        </article>
 
-            <article class="product-box" data-item-name="Ilish Macher Jhol">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Ilish Macher Jhol</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
+        <article class="order" data-order-id="KG-1048" data-order-state="ready">
+          <header class="order-head">
+            <div>
+              <p class="order-id">KG-1048</p>
+              <div class="order-tags">
+                <span class="tag is-dine">Dine-in &middot; Table 9</span>
+                <span class="state-chip is-ready" data-state-chip>Ready</span>
               </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Nadia</span><span class="product-order-qty tnum">x2</span></span>
-                  <span class="product-order-note">Pack the fish separately</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Special Khichuri">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Special Khichuri</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Imran</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">2. Rahim</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">Less chilli</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Cold Drink">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Cold Drink</h3>
-                  <p class="product-cat">Drinks</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Nadia</span><span class="product-order-qty tnum">x2</span></span>
-                  <span class="product-order-note">One without ice</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Fried Egg">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Fried Egg</h3>
-                  <p class="product-cat">Sides</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 2</span><span class="product-order-qty tnum">x2</span></span>
-                  <span class="product-order-note">Sunny side up</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Mineral Water">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Mineral Water</h3>
-                  <p class="product-cat">Drinks</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Rahim</span><span class="product-order-qty tnum">x2</span></span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Vegetable Jhol">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Vegetable Jhol</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 2">x2</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 9</span><span class="product-order-qty tnum">x2</span></span>
-                  <span class="product-order-note">Less oil</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Chicken Kebab">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Chicken Kebab</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 1">x1</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 2</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">Extra chutney</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Fried Rice">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Fried Rice</h3>
-                  <p class="product-cat">Rice &amp; Breads</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 1">x1</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 2</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Paneer Bhurji">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Paneer Bhurji</h3>
-                  <p class="product-cat">Mains</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 1">x1</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Table 9</span><span class="product-order-qty tnum">x1</span></span>
-                  <span class="product-order-note">Less spicy</span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Raita">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Raita</h3>
-                  <p class="product-cat">Sides</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 1">x1</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Farhana</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Salad">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Salad</h3>
-                  <p class="product-cat">Sides</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 1">x1</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Imran</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-              </ul>
-            </article>
-
-            <article class="product-box" data-item-name="Vegetable Hatchibhaja">
-              <div class="product-box-head">
-                <div>
-                  <h3 class="product-name">Vegetable Hatchibhaja</h3>
-                  <p class="product-cat">Sides</p>
-                </div>
-                <span class="product-mult tnum" aria-label="Total quantity 1">x1</span>
-              </div>
-              <ul class="product-orders">
-                <li class="product-order">
-                  <span class="product-order-main"><span class="product-order-name">1. Nadia</span><span class="product-order-qty tnum">x1</span></span>
-                </li>
-              </ul>
-            </article>
-          </div>
-        </section>
-
-        <p class="sr-only" aria-live="polite" data-live></p>
+            </div>
+            <div class="elapsed">
+              <span class="elapsed-time tnum">21 min</span>
+              <span class="elapsed-meta tnum">Placed at 7:33 PM</span>
+            </div>
+          </header>
+          <ul class="order-items">
+            <li class="order-item"><span class="qty tnum">2</span><span class="item-body"><span class="item-name">Vegetable Jhol</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Butter Naan</span></span></li>
+            <li class="order-item"><span class="qty tnum">1</span><span class="item-body"><span class="item-name">Paneer Bhurji</span></span></li>
+          </ul>
+          <footer class="order-foot">
+            <ol class="steps" aria-label="Order progress">
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Waiting</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Preparing</li>
+              <li class="step"><span class="step-dot" aria-hidden="true"></span>Ready</li>
+            </ol>
+            <button class="btn btn-primary btn-advance btn-block" type="button" data-order-advance disabled>Ready for hand-off</button>
+          </footer>
+        </article>
       </section>
 
-      <section class="page" id="page-menu" data-page="menu" hidden>
-        <header class="page-head">
-          <div class="page-head-main">
-            <p class="page-kicker">Kitchen Operations</p>
-            <div class="page-title-row">
-              <h1 class="page-title">Menu &amp; Sold Out</h1>
-              <p class="menu-summary">
-                <span class="menu-summary-item"><span class="menu-summary-num tnum" data-menu-available>17</span> available</span>
-                <span class="menu-summary-sep" aria-hidden="true">&middot;</span>
-                <span class="menu-summary-item is-sold"><span class="menu-summary-num tnum" data-menu-soldout>0</span> sold out</span>
-              </p>
+      <p class="sr-only" aria-live="polite" data-live></p>
+
+      <section class="item-view" id="view-items" data-view="items" hidden aria-label="Consolidated prep list">
+        <div class="item-view-head">
+          <h2 class="item-view-title">Prep list</h2>
+          <p class="item-view-meta">35 portions &middot; 17 items &middot; 7 active orders</p>
+        </div>
+        <ul class="item-rows">
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Chicken Bhuna</p>
+              <p class="item-src">Table 5 &times;1 &middot; Delivery (Imran) &times;1 &middot; Pickup (Rahim) &times;2</p>
+              <p class="item-prep-note">Imran: extra gravy, bone removed. Rahim: one medium, one mild.</p>
             </div>
-            <p class="page-desc">Mark an item sold out the moment it runs out. The sold-out flag appears instantly across live orders and the prep matrix.</p>
-          </div>
-        </header>
-
-        <section class="menu-group" aria-labelledby="menu-mains">
-          <div class="menu-group-head">
-            <h2 class="menu-group-title" id="menu-mains">Mains</h2>
-            <p class="menu-group-meta">7 items</p>
-          </div>
-          <div class="menu-grid">
-            <article class="menu-card" data-menu-card="Chicken Bhuna">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Chicken Bhuna</h3>
-                  <p class="menu-meta">Mains &middot; 4 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Chicken Bhuna" aria-label="Mark Chicken Bhuna as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Mutton Rezala">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Mutton Rezala</h3>
-                  <p class="menu-meta">Mains &middot; 3 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Mutton Rezala" aria-label="Mark Mutton Rezala as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Ilish Macher Jhol">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Ilish Macher Jhol</h3>
-                  <p class="menu-meta">Mains &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Ilish Macher Jhol" aria-label="Mark Ilish Macher Jhol as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Special Khichuri">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Special Khichuri</h3>
-                  <p class="menu-meta">Mains &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Special Khichuri" aria-label="Mark Special Khichuri as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Vegetable Jhol">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Vegetable Jhol</h3>
-                  <p class="menu-meta">Mains &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Vegetable Jhol" aria-label="Mark Vegetable Jhol as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Paneer Bhurji">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Paneer Bhurji</h3>
-                  <p class="menu-meta">Mains &middot; 1 portion in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Paneer Bhurji" aria-label="Mark Paneer Bhurji as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Chicken Kebab">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Chicken Kebab</h3>
-                  <p class="menu-meta">Mains &middot; 1 portion in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Chicken Kebab" aria-label="Mark Chicken Kebab as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section class="menu-group" aria-labelledby="menu-rice">
-          <div class="menu-group-head">
-            <h2 class="menu-group-title" id="menu-rice">Rice &amp; Breads</h2>
-            <p class="menu-group-meta">3 items</p>
-          </div>
-          <div class="menu-grid">
-            <article class="menu-card" data-menu-card="Plain Rice">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Plain Rice</h3>
-                  <p class="menu-meta">Rice &amp; Breads &middot; 4 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Plain Rice" aria-label="Mark Plain Rice as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Butter Naan">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Butter Naan</h3>
-                  <p class="menu-meta">Rice &amp; Breads &middot; 4 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Butter Naan" aria-label="Mark Butter Naan as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Fried Rice">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Fried Rice</h3>
-                  <p class="menu-meta">Rice &amp; Breads &middot; 1 portion in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Fried Rice" aria-label="Mark Fried Rice as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section class="menu-group" aria-labelledby="menu-sides">
-          <div class="menu-group-head">
-            <h2 class="menu-group-title" id="menu-sides">Sides</h2>
-            <p class="menu-group-meta">5 items</p>
-          </div>
-          <div class="menu-grid">
-            <article class="menu-card" data-menu-card="Dal Fry">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Dal Fry</h3>
-                  <p class="menu-meta">Sides &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Dal Fry" aria-label="Mark Dal Fry as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Vegetable Hatchibhaja">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Vegetable Hatchibhaja</h3>
-                  <p class="menu-meta">Sides &middot; 1 portion in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Vegetable Hatchibhaja" aria-label="Mark Vegetable Hatchibhaja as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Fried Egg">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Fried Egg</h3>
-                  <p class="menu-meta">Sides &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Fried Egg" aria-label="Mark Fried Egg as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Raita">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Raita</h3>
-                  <p class="menu-meta">Sides &middot; 1 portion in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Raita" aria-label="Mark Raita as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Salad">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Salad</h3>
-                  <p class="menu-meta">Sides &middot; 1 portion in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Salad" aria-label="Mark Salad as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section class="menu-group" aria-labelledby="menu-drinks">
-          <div class="menu-group-head">
-            <h2 class="menu-group-title" id="menu-drinks">Drinks</h2>
-            <p class="menu-group-meta">2 items</p>
-          </div>
-          <div class="menu-grid">
-            <article class="menu-card" data-menu-card="Cold Drink">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Cold Drink</h3>
-                  <p class="menu-meta">Drinks &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Cold Drink" aria-label="Mark Cold Drink as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-
-            <article class="menu-card" data-menu-card="Mineral Water">
-              <div class="menu-card-top">
-                <div class="menu-card-id">
-                  <h3 class="menu-name">Mineral Water</h3>
-                  <p class="menu-meta">Drinks &middot; 2 portions in prep</p>
-                </div>
-                <button class="switch" type="button" role="switch" aria-checked="false" data-soldout-toggle="Mineral Water" aria-label="Mark Mineral Water as sold out">
-                  <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-                  <span class="switch-label" data-soldout-label>Available</span>
-                </button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <p class="sr-only" aria-live="polite" data-menu-live></p>
+            <div class="item-count"><span class="item-num tnum">4</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Plain Rice</p>
+              <p class="item-src">Table 5 &times;2 &middot; Delivery (Farhana) &times;2</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">4</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Butter Naan</p>
+              <p class="item-src">Pickup (Nadia) &times;3 &middot; Table 9 &times;1</p>
+              <p class="item-prep-note">Serve last, keep warm.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">4</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Mutton Rezala</p>
+              <p class="item-src">Table 5 &times;1 &middot; Delivery (Farhana) &times;2</p>
+              <p class="item-prep-note">Farhana: extra gravy on both plates.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">3</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Dal Fry</p>
+              <p class="item-src">Table 5 &times;1 &middot; Pickup (Rahim) &times;1</p>
+              <p class="item-prep-note">Table 5: no onion.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Ilish Macher Jhol</p>
+              <p class="item-src">Pickup (Nadia) &times;2</p>
+              <p class="item-prep-note">Pack the fish separately for pickup.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Special Khichuri</p>
+              <p class="item-src">Delivery (Imran) &times;1 &middot; Pickup (Rahim) &times;1</p>
+              <p class="item-prep-note">Rahim: less chilli.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Cold Drink</p>
+              <p class="item-src">Pickup (Nadia) &times;2</p>
+              <p class="item-prep-note">One without ice.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Fried Egg</p>
+              <p class="item-src">Table 2 &times;2</p>
+              <p class="item-prep-note">Sunny side up.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Mineral Water</p>
+              <p class="item-src">Pickup (Rahim) &times;2</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Vegetable Jhol</p>
+              <p class="item-src">Table 9 &times;2</p>
+              <p class="item-prep-note">Less oil.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">2</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Chicken Kebab</p>
+              <p class="item-src">Table 2 &times;1</p>
+              <p class="item-prep-note">Extra chutney.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">1</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Fried Rice</p>
+              <p class="item-src">Table 2 &times;1</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">1</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Paneer Bhurji</p>
+              <p class="item-src">Table 9 &times;1</p>
+              <p class="item-prep-note">Less spicy.</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">1</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Raita</p>
+              <p class="item-src">Delivery (Farhana) &times;1</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">1</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Salad</p>
+              <p class="item-src">Delivery (Imran) &times;1</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">1</span><span class="item-unit">To prepare</span></div>
+          </li>
+          <li class="item-row">
+            <div class="item-main">
+              <p class="item-title">Vegetable Hatchibhaja</p>
+              <p class="item-src">Pickup (Nadia) &times;1</p>
+            </div>
+            <div class="item-count"><span class="item-num tnum">1</span><span class="item-unit">To prepare</span></div>
+          </li>
+        </ul>
       </section>
     </main>
   </div>
-
-  <div class="modal" data-alert-modal hidden>
-    <div class="modal-backdrop" data-alert-close></div>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="alertSettingsTitle">
-      <div class="modal-head">
-        <div>
-          <p class="modal-kicker">Kitchen utility</p>
-          <h2 class="modal-title" id="alertSettingsTitle">Kitchen Alert Settings</h2>
-        </div>
-        <button class="icon-btn" type="button" data-alert-close aria-label="Close alert settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M7 7l10 10M17 7 7 17" />
-          </svg>
-        </button>
-      </div>
-      <p class="modal-desc">Set how long an active order can run before the kitchen is alerted. Only delayed orders appear in notifications.</p>
-      <form data-alert-form>
-        <div class="field">
-          <label for="alertMinutes">Delay threshold</label>
-          <div class="field-control">
-            <input id="alertMinutes" name="minutes" type="number" min="1" max="120" step="1" inputmode="numeric" data-alert-input />
-            <span class="field-suffix">minutes</span>
-          </div>
-        </div>
-        <div class="preset-row" aria-label="Quick alert intervals">
-          <button class="preset" type="button" data-preset="10">10 min</button>
-          <button class="preset" type="button" data-preset="15">15 min</button>
-          <button class="preset" type="button" data-preset="20">20 min</button>
-          <button class="preset" type="button" data-preset="30">30 min</button>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-ghost" type="button" data-alert-close>Cancel</button>
-          <button class="btn btn-primary" type="submit">Save interval</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <script src="../js/kitchen.js" defer></script>
 </body>
 </html>
