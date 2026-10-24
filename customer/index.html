@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KhabarGolpo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Instrument+Serif:ital@0;1&family=Noto+Serif+Bengali:wght@600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/hero.css">
+<link rel="stylesheet" href="css/ambient.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/shop.css">
+</head>
+<body>
+
+<!-- AMBIENT: floral frame behind the pages, then the moving layer on top -->
+<div class="ambient" aria-hidden="true">
+  <img src="assets/images/background/floral-frame.png" alt="">
+</div>
+<canvas class="fx" id="fx" aria-hidden="true"></canvas>
+
+<!-- TOP BAR: brand, nav box (hero only), login button (or cart button over the menu), cart button -->
+<header class="topbar" id="topbar">
+  <a class="brand" href="#top" aria-label="KhabarGolpo, back to top">
+    <!-- placeholder logo mark: replace with your logo -->
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="14.5"/>
+      <path d="M16 8c3 3.5 3 7 0 10-3-3-3-6.5 0-10zM9.5 13.5c3.5 0 6 2 6.5 5.5-3.5 0-6-2-6.5-5.5zM22.5 13.5c-.5 3.5-3 5.5-6.5 5.5.5-3.5 3-5.5 6.5-5.5z"/>
+    </svg>
+    <span class="brand-name">KhabarGolpo</span>
+  </a>
+
+  <nav class="nav-pill" aria-label="Main">
+    <ul class="links">
+      <li><a href="#story">Our Story</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#gallery">Galerie</a></li>
+      <li><a href="#reservation">Reservation</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- LOGIN: three short lines. Hidden while the menu is on screen (the cart button takes its place) -->
+  <div class="menu-wrap">
+    <button class="menu-btn glass" id="menuBtn" type="button" aria-expanded="false" aria-controls="loginPanel" aria-label="Admin and chef login">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="login-panel glass" id="loginPanel" role="dialog" aria-label="Admin and chef login" aria-hidden="true" inert>
+      <h2>Admin / Chef login</h2>
+      <form id="loginForm" novalidate>
+        <label>Email
+          <input type="email" name="email" autocomplete="username" required>
+        </label>
+        <label>Password
+          <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <button class="cta" type="submit">Log in</button>
+        <p class="login-note" id="loginNote" role="alert"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- CART: top right. Replaces the login button while the menu is on screen (see utils/cart.js) -->
+  <a class="cart-btn" href="cart.html" aria-label="Open your cart">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z"/>
+      <path d="M9 8a3 3 0 0 1 6 0"/>
+    </svg>
+    <span class="cart-count" hidden>0</span>
+  </a>
+</header>
+
+<main id="top">
+
+  <!-- 1. HERO -->
+  <section class="hero" id="hero">
+    <div class="scene-wrap" id="sceneWrap">
+      <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto"
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260819_212700_3bb9329b-5c50-4257-a09b-ca85cf3654a3.mp4"></video>
+      <a class="door" id="door" href="#story" aria-label="Enter: scroll to our story"></a>
+    </div>
+
+    <div class="hero-fg">
+      <h1 class="fg-item" style="--d:400ms">Every Bite Tells a Story</h1>
+      <p class="lp-sub fg-item" style="--d:600ms">Grab A Seat &amp; Let Every Flavor Tell a Tale!</p>
+      <div class="fg-item" style="--d:800ms">
+        <a class="cta" href="#reservation">Reserve a table</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. OUR STORY -->
+  <section class="sec story" id="story" aria-labelledby="storyTitle">
+    <div class="sec-wrap">
+      <p class="kicker" data-reveal>Our story</p>
+      <h2 class="sec-title" id="storyTitle" data-reveal>Made with care</h2>
+      <div class="glass story-card" id="storyBody" data-reveal></div>
+    </div>
+  </section>
+
+  <!-- 3. MENU: one row per category. Clicking a row opens that category's dishes. -->
+  <section class="mn" id="menu" aria-labelledby="mnTitle">
+    <div class="mn-track" id="mnTrack">
+      <div class="mn-stage" id="mnStage">
+        <header class="mn-head">
+          <p class="mn-discover">Discover</p>
+          <h2 id="mnTitle">Our Menu</h2>
+        </header>
+
+        <div class="mn-units" id="mnUnits"></div>
+        <nav class="mn-dots" id="mnDots" aria-label="Menu categories"></nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. GALLERY -->
+  <section class="sec gallery" id="gallery" aria-labelledby="galTitle">
+    <div class="sec-wrap">
+      <p class="kicker" data-reveal>Galerie</p>
+      <h2 class="sec-title" id="galTitle" data-reveal>Inside KhabarGolpo</h2>
+      <div class="gal-grid" id="galGrid" data-reveal></div>
+    </div>
+  </section>
+
+  <!-- 5. RESERVATION: calendar, then the button, then the form -->
+  <section class="sec reserve" id="reservation" aria-labelledby="resTitle">
+    <div class="sec-wrap narrow">
+      <p class="kicker" data-reveal>Reservation</p>
+      <h2 class="sec-title" id="resTitle" data-reveal>Book a table</h2>
+
+      <div class="glass cal-card" data-reveal>
+        <div class="cal-head">
+          <button class="cal-nav" id="calPrev" type="button" aria-label="Previous month">‹</button>
+          <h3 id="calTitle"></h3>
+          <button class="cal-nav" id="calNext" type="button" aria-label="Next month">›</button>
+        </div>
+        <div class="cal-week" aria-hidden="true">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div class="cal-days" id="calDays"></div>
+      </div>
+
+      <p class="res-hint" id="resHint">Choose a date to continue.</p>
+      <button class="cta res-btn" id="resBtn" type="button" disabled>Reserve a table</button>
+
+      <form class="glass res-form" id="resForm" hidden novalidate>
+        <h3>Reserve on your name</h3>
+        <p class="picked"></p>
+        <input type="hidden" name="date">
+        <div class="row2">
+          <label>Name for the booking
+            <input name="name" maxlength="80" autocomplete="name" required>
+          </label>
+          <label>Phone
+            <input name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="01XXXXXXXXX" required>
+          </label>
+        </div>
+        <div class="row2">
+          <label>Time
+            <select name="time" id="resTime" required></select>
+          </label>
+          <label>Guests
+            <select name="guests" id="resGuests">
+              <option value="1">1 guest</option>
+              <option value="2" selected>2 guests</option>
+              <option value="3">3 guests</option>
+              <option value="4">4 guests</option>
+              <option value="5">5 guests</option>
+              <option value="6">6 guests</option>
+              <option value="7">7 guests</option>
+              <option value="8">8 guests</option>
+              <option value="9">9 guests</option>
+              <option value="10">10 guests</option>
+              <option value="11">11 guests</option>
+              <option value="12">12 guests</option>
+            </select>
+          </label>
+        </div>
+        <label>Note (optional)
+          <textarea name="note" rows="3" maxlength="300"></textarea>
+        </label>
+        <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="err" id="resErr" role="alert"></p>
+        <div class="form-actions">
+          <button class="cta" id="resSubmit" type="submit">Confirm reservation</button>
+          <button class="ghost" id="resCancel" type="button">Cancel</button>
+        </div>
+        <p class="ok-msg" id="resOk" role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 6. CONTACT -->
+  <section class="sec contact" id="contact" aria-labelledby="conTitle">
+    <div class="sec-wrap">
+      <p class="kicker" data-reveal>Contact</p>
+      <h2 class="sec-title" id="conTitle" data-reveal>Visit, call or write to us</h2>
+      <div class="contact-grid">
+        <div class="glass card" data-reveal>
+          <dl class="contact-list" id="conList"></dl>
+        </div>
+
+        <form class="glass card" id="fbForm" data-reveal novalidate>
+          <h3 class="sec-title" style="font-size:34px;margin-bottom:20px">Send us a message</h3>
+          <div class="row2">
+            <label>Your name
+              <input name="name" maxlength="80" autocomplete="name" required>
+            </label>
+            <label>Type
+              <select name="type">
+                <option value="review">Review</option>
+                <option value="query">Question</option>
+                <option value="suggestion">Suggestion</option>
+              </select>
+            </label>
+          </div>
+          <label>Phone (optional)
+            <input name="phone" type="tel" inputmode="tel" maxlength="20">
+          </label>
+          <div id="ratingWrap">
+            <p style="font-size:14px;color:rgba(255,255,255,.8);margin-bottom:6px">Rating</p>
+            <div class="stars" id="stars"></div>
+          </div>
+          <label>Message
+            <textarea name="message" rows="4" maxlength="1000" required></textarea>
+          </label>
+          <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <p class="err" id="fbErr" role="alert"></p>
+          <button class="cta" type="submit">Send</button>
+          <p class="ok-msg" id="fbOk" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot"><span id="year"></span> KhabarGolpo · খাবার গল্প</footer>
+
+<!-- gallery lightbox -->
+<dialog class="lightbox" id="lightbox" aria-label="Photo">
+  <button class="lb-close" id="lbClose" type="button" aria-label="Close photo">×</button>
+  <img id="lbImg" alt="">
+</dialog>
+
+<!-- Order of scripts: data first, then the cart helper, then the pages -->
+<script src="js/mock/content.js"></script>
+<script src="js/utils/cart.js"></script>
+<script src="js/pages/hero.js"></script>
+<script src="js/utils/ambient.js"></script>
+<script src="js/pages/menu.js"></script>
+<script src="js/pages/sections.js"></script>
+</body>
+</html>

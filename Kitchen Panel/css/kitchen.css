@@ -191,7 +191,7 @@ body.is-sidebar-collapsed .shell {
   -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
   border-right: 1px solid var(--hairline);
   box-shadow: var(--shadow-sm);
-}
+} 
 
 .sidebar::-webkit-scrollbar {
   display: none;

@@ -1,7 +1,10 @@
 // js/mock/mockData.js — deterministic seed data + report math.
 // Shape mirrors the real Postgres tables so the swap to Supabase is a config flip.
 
+import { getStore, saveStore } from '../../../js/shared/store.js';
+
 /* ------------------------------ seeded rng ------------------------------ */
+
 function mulberry32(a) {
   return function () {
     a |= 0;
@@ -568,4 +571,21 @@ export function tableBill(tableId) {
 export function nextReceipt() {
   const max = orders.reduce((a, o) => Math.max(a, Number(String(o.receipt).replace('KG-', '')) || 0), 1000);
   return `KG-${max + 1}`;
+}
+
+/* ----------------------- shared store (admin + customer) ----------------------- */
+const copy = (v) => JSON.parse(JSON.stringify(v));
+const shared = getStore();
+
+categories.splice(0, categories.length, ...copy(shared.categories));
+menu_items.splice(0, menu_items.length, ...copy(shared.menu_items));
+gallery_images.splice(0, gallery_images.length, ...copy(shared.gallery_images));
+orders.splice(0, orders.length, ...copy(shared.orders));
+reservations.splice(0, reservations.length, ...copy(shared.reservations));
+feedback.splice(0, feedback.length, ...copy(shared.feedback));
+Object.assign(settings, copy(shared.settings));
+
+/* Saves the admin's current lists to the shared store. index.js calls this after every change. */
+export function persist() {
+  saveStore({ categories, menu_items, gallery_images, orders, reservations, feedback, settings });
 }
