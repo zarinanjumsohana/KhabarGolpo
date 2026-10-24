@@ -69,5 +69,5 @@ export async function logout() {
     .forEach((k) => localStorage.removeItem(k));
   sessionStorage.clear();
   // go to the hero page (a page with no auto-login), and replace history so Back cannot return to the dashboard
-    location.replace('./login.html');
+  location.replace('../../customer/index.html');
 }
