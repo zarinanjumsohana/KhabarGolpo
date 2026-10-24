@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Completed &middot; Khabar Golpo Kitchen</title>
+  <meta name="description" content="Completed order history for the Khabar Golpo kitchen team." />
+  <meta name="theme-color" content="#f2f3f2" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/kitchen.css" />
+  <script>(function(){try{var s=localStorage.getItem('kg.kitchen.theme');if(s!=='dark'&&s!=='light'){s=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',s);document.documentElement.style.colorScheme=s;}catch(e){document.documentElement.setAttribute('data-theme','light');document.documentElement.style.colorScheme='light';}})();</script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 11h18" />
+            <path d="M3.5 11a8.5 8.5 0 0 0 17 0" />
+            <path d="M9.2 7.6c0-1.1 1.1-1.3 1.1-2.4" />
+            <path d="M13.7 7.6c0-1.1 1.1-1.3 1.1-2.4" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Khabar Golpo</span>
+          <span class="brand-sub">Kitchen Display</span>
+        </span>
+      </div>
+
+      <nav class="nav-group" aria-label="Kitchen sections">
+        <p class="nav-label">Service</p>
+        <ul class="nav">
+          <li>
+            <a class="nav-link" href="index.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="4" width="17" height="16" rx="2.5" />
+                <path d="M8 9h8M8 13h8M8 17h5" />
+              </svg>
+              <span>Kitchen Dashboard</span>
+              <span class="nav-count">7</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link is-active" href="completed.html" aria-current="page">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="8.5" />
+                <path d="m8.6 12.2 2.4 2.4 4.4-4.9" />
+              </svg>
+              <span>Completed</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="side-foot">
+        <div class="side-service">
+          <div class="service-top">
+            <p class="service-label">Shift</p>
+            <span class="service-live"><span class="dot" aria-hidden="true"></span>Open</span>
+          </div>
+          <p class="service-shift">Dinner &middot; 6:00 PM - 11:00 PM</p>
+          <p class="service-chef">Chef R. Islam on shift</p>
+          <dl class="metrics">
+            <div class="metric">
+              <dt>Completed</dt>
+              <dd class="tnum">12</dd>
+            </div>
+            <div class="metric">
+              <dt>Avg prep</dt>
+              <dd class="tnum">17 min</dd>
+            </div>
+            <div class="metric">
+              <dt>Unpaid</dt>
+              <dd class="tnum is-warn">1</dd>
+            </div>
+          </dl>
+        </div>
+        <a class="nav-link is-logout" href="login.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.5 4.5H18A1.5 1.5 0 0 1 19.5 6v12A1.5 1.5 0 0 1 18 19.5h-3.5" />
+            <path d="M10 8.5 6.5 12 10 15.5" />
+            <path d="M6.5 12H15" />
+          </svg>
+          <span>Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="status-badge is-neutral">
+            <span class="dot" aria-hidden="true"></span>
+            Dinner service
+          </span>
+        </div>
+        <div class="topbar-right">
+          <span class="pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M12 7.6V12l3 1.8" />
+            </svg>
+            Wednesday, 22 October
+          </span>
+          <div class="head-tools">
+            <button class="icon-btn tt-btn" type="button" data-theme-toggle aria-label="Switch to dark theme" aria-pressed="false">
+              <svg class="tt-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" />
+              </svg>
+              <svg class="tt-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.3 14.4A8.5 8.5 0 1 1 9.6 3.7a6.6 6.6 0 0 0 10.7 10.7Z" />
+              </svg>
+            </button>
+            <div class="notif-wrap">
+              <button class="icon-btn" type="button" data-notif-toggle aria-expanded="false" aria-controls="notifPanel" aria-label="Notifications, 3 unread">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M18 8.6a6 6 0 1 0-12 0c0 4.9-2 6.4-2 6.4h16s-2-1.5-2-6.4Z" />
+                  <path d="M13.7 18.4a2 2 0 0 1-3.4 0" />
+                </svg>
+                <span class="bell-badge" data-notif-count>3</span>
+              </button>
+              <div class="notif-panel" id="notifPanel" data-notif-panel hidden>
+                <div class="notif-head">
+                  <span>Notifications</span>
+                  <button class="notif-clear" type="button" data-notif-clear>Mark all read</button>
+                </div>
+                <ul class="notif-list">
+                  <li class="notif-item is-unread">
+                    <span class="notif-ic is-warn" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="8.5" />
+                        <path d="M12 7.6V12l3 1.8" />
+                      </svg>
+                    </span>
+                    <span class="notif-body">
+                      <span class="notif-title">Shift handover in 30 minutes</span>
+                      <span class="notif-text">Clear the pass and note the running items before the dinner rush.</span>
+                      <span class="notif-time">4 min ago</span>
+                    </span>
+                  </li>
+                  <li class="notif-item is-unread">
+                    <span class="notif-ic is-info" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5Z" />
+                        <path d="M12 12v9M12 12 4 7.5M12 12l8-4.5" />
+                      </svg>
+                    </span>
+                    <span class="notif-body">
+                      <span class="notif-title">12 orders closed so far tonight</span>
+                      <span class="notif-text">Average prep time is 17 minutes for this shift.</span>
+                      <span class="notif-time">11 min ago</span>
+                    </span>
+                  </li>
+                  <li class="notif-item is-unread">
+                    <span class="notif-ic is-ok" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 15.5 9 10l3.5 3.5L20 6" />
+                        <path d="M15.5 6H20v4.5" />
+                      </svg>
+                    </span>
+                    <span class="notif-body">
+                      <span class="notif-title">Counter confirmed the cash handover</span>
+                      <span class="notif-text">KG-1041 is paid and closed.</span>
+                      <span class="notif-time">18 min ago</span>
+                    </span>
+                  </li>
+                </ul>
+                <p class="notif-foot">Nothing else needs attention right now.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header class="page-head">
+        <div class="page-head-main">
+          <p class="page-kicker">Kitchen Operations</p>
+          <h1 class="page-title">Completed</h1>
+          <p class="page-desc">Orders already handed over. Kept for the rest of the shift so the pass can be checked against the counter.</p>
+        </div>
+      </header>
+
+      <section class="done-list" aria-label="Completed orders">
+        <div class="done-row">
+          <span class="done-id">KG-1041</span>
+          <span class="done-meta">Dine-in &middot; Table 3</span>
+          <span class="done-items">1 &times; Chicken Bhuna &middot; 2 &times; Plain Rice &middot; 1 &times; Dal Fry</span>
+          <span class="done-time tnum">14 min</span>
+          <span class="done-state">Paid</span>
+        </div>
+        <div class="done-row">
+          <span class="done-id">KG-1040</span>
+          <span class="done-meta">Pickup &middot; Sadia</span>
+          <span class="done-items">2 &times; Special Khichuri &middot; 1 &times; Chicken Kebab</span>
+          <span class="done-time tnum">21 min</span>
+          <span class="done-state">Paid</span>
+        </div>
+        <div class="done-row">
+          <span class="done-id">KG-1039</span>
+          <span class="done-meta">Delivery &middot; Tanvir</span>
+          <span class="done-items">1 &times; Mutton Rezala &middot; 2 &times; Plain Rice &middot; 1 &times; Raita</span>
+          <span class="done-time tnum">26 min</span>
+          <span class="done-state is-unpaid">Unpaid</span>
+        </div>
+        <div class="done-row">
+          <span class="done-id">KG-1038</span>
+          <span class="done-meta">Dine-in &middot; Table 7</span>
+          <span class="done-items">3 &times; Fried Rice &middot; 2 &times; Fried Egg</span>
+          <span class="done-time tnum">11 min</span>
+          <span class="done-state">Paid</span>
+        </div>
+        <div class="done-row">
+          <span class="done-id">KG-1037</span>
+          <span class="done-meta">Pickup &middot; Mahin</span>
+          <span class="done-items">1 &times; Ilish Macher Jhol &middot; 3 &times; Butter Naan</span>
+          <span class="done-time tnum">19 min</span>
+          <span class="done-state">Paid</span>
+        </div>
+        <div class="done-row">
+          <span class="done-id">KG-1036</span>
+          <span class="done-meta">Dine-in &middot; Table 1</span>
+          <span class="done-items">2 &times; Vegetable Jhol &middot; 1 &times; Paneer Bhurji &middot; 1 &times; Butter Naan</span>
+          <span class="done-time tnum">16 min</span>
+          <span class="done-state">Paid</span>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/kitchen.js" defer></script>
+</body>
+</html>
