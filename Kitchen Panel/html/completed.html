@@ -33,38 +33,58 @@
       <nav class="nav-group" aria-label="Kitchen sections">
         <p class="nav-label">Service</p>
         <ul class="nav">
-          <li>
-            <a class="nav-link" href="index.html">
+          <li class="nav-cluster">
+            <a class="nav-link nav-parent" href="index.html" data-page-link="dashboard">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3.5" y="4" width="17" height="16" rx="2.5" />
                 <path d="M8 9h8M8 13h8M8 17h5" />
               </svg>
               <span class="nav-main">
                 <span class="nav-text">Kitchen Dashboard</span>
-                <span class="nav-count">7</span>
+                <span class="nav-count" data-nav-active>7</span>
               </span>
             </a>
+            <ul class="nav-sub" aria-label="Order status filters">
+              <li>
+                <a class="nav-link nav-filter" href="index.html#orders" data-status-filter="waiting" aria-current="false">
+                  <span class="nav-status-dot is-pending" aria-hidden="true"></span>
+                  <span class="nav-main">
+                    <span class="nav-text">Pending</span>
+                    <span class="nav-count tnum" data-status-count="waiting">2</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="nav-link nav-filter" href="index.html#orders" data-status-filter="preparing" aria-current="false">
+                  <span class="nav-status-dot is-preparing" aria-hidden="true"></span>
+                  <span class="nav-main">
+                    <span class="nav-text">Preparing</span>
+                    <span class="nav-count tnum" data-status-count="preparing">5</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="nav-link is-active" href="completed.html" aria-current="page">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8.5" />
+                    <path d="m8.6 12.2 2.4 2.4 4.4-4.9" />
+                  </svg>
+                  <span class="nav-main">
+                    <span class="nav-text">Completed</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
           </li>
           <li>
-            <a class="nav-link" href="index.html#menu">
+            <a class="nav-link" href="index.html#menu" data-page-link="menu">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M5 4.5h14v15H5z" />
                 <path d="M8.5 8h7M8.5 11.5h7M8.5 15h4.5" />
               </svg>
               <span class="nav-main">
                 <span class="nav-text">Menu &amp; Sold Out</span>
-                <span class="nav-count">17</span>
-              </span>
-            </a>
-          </li>
-          <li>
-            <a class="nav-link is-active" href="completed.html" aria-current="page">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="8.5" />
-                <path d="m8.6 12.2 2.4 2.4 4.4-4.9" />
-              </svg>
-              <span class="nav-main">
-                <span class="nav-text">Completed</span>
+                <span class="nav-count" data-menu-nav-count>17</span>
               </span>
             </a>
           </li>
@@ -81,16 +101,16 @@
           <p class="service-chef">Chef R. Islam on shift</p>
           <dl class="metrics">
             <div class="metric">
-              <dt>Completed</dt>
-              <dd class="tnum">12</dd>
+              <dt>Active orders</dt>
+              <dd class="tnum" data-metric-active>7</dd>
+            </div>
+            <div class="metric">
+              <dt>Delayed orders</dt>
+              <dd class="tnum is-warn" data-metric-late>3</dd>
             </div>
             <div class="metric">
               <dt>Avg prep</dt>
-              <dd class="tnum">17 min</dd>
-            </div>
-            <div class="metric">
-              <dt>Unpaid</dt>
-              <dd class="tnum is-warn">1</dd>
+              <dd class="tnum">19 min</dd>
             </div>
           </dl>
         </div>

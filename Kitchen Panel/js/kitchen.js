@@ -84,8 +84,8 @@
 
   /* ------------------------------ page switch ------------------------------ */
 
-  var pageLinks = Array.prototype.slice.call(document.querySelectorAll('[data-page-link]'));
   var pages = Array.prototype.slice.call(document.querySelectorAll('[data-page]'));
+  var pageLinks = pages.length ? Array.prototype.slice.call(document.querySelectorAll('[data-page-link]')) : [];
   var live = document.querySelector('[data-live]');
   var menuLive = document.querySelector('[data-menu-live]');
 
@@ -201,93 +201,6 @@
     return formatClock(new Date(placed.getTime() + alertMinutes * 60000));
   }
 
-  var toastHost = null;
-  var announcedAlerts = {};
-
-  function ensureToastHost() {
-    if (!toastHost) {
-      toastHost = document.createElement('div');
-      toastHost.className = 'toast-host';
-      toastHost.setAttribute('aria-live', 'polite');
-      toastHost.setAttribute('aria-atomic', 'false');
-      document.body.appendChild(toastHost);
-    }
-    return toastHost;
-  }
-
-  function dismissToast(el) {
-    if (!el || el.classList.contains('is-out')) return;
-    el.classList.remove('is-in');
-    el.classList.add('is-out');
-    window.setTimeout(function () {
-      if (el.parentNode) el.parentNode.removeChild(el);
-    }, 460);
-  }
-
-  function showAlertToast(alert) {
-    var host = ensureToastHost();
-    var el = document.createElement('article');
-    el.className = 'k-toast';
-    el.setAttribute('role', 'status');
-
-    var icon = document.createElement('span');
-    icon.className = 'k-toast-ic';
-    icon.setAttribute('aria-hidden', 'true');
-    icon.innerHTML = alertIcon();
-
-    var body = document.createElement('div');
-    body.className = 'k-toast-body';
-
-    var eyebrow = document.createElement('span');
-    eyebrow.className = 'k-toast-eyebrow';
-    eyebrow.textContent = 'Delayed order';
-
-    var title = document.createElement('strong');
-    title.className = 'k-toast-title';
-    title.textContent = alert.title;
-
-    var message = document.createElement('span');
-    message.className = 'k-toast-msg';
-    message.textContent = alert.text;
-
-    var time = document.createElement('span');
-    time.className = 'k-toast-time';
-    time.textContent = 'Updated at ' + alert.at;
-
-    var close = document.createElement('button');
-    close.type = 'button';
-    close.className = 'k-toast-x';
-    close.setAttribute('aria-label', 'Dismiss alert');
-    close.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11" /></svg>';
-    close.addEventListener('click', function () { dismissToast(el); });
-
-    body.appendChild(eyebrow);
-    body.appendChild(title);
-    if (alert.text) body.appendChild(message);
-    body.appendChild(time);
-    el.appendChild(icon);
-    el.appendChild(body);
-    el.appendChild(close);
-    host.appendChild(el);
-
-    requestAnimationFrame(function () { el.classList.add('is-in'); });
-    window.setTimeout(function () { dismissToast(el); }, 6500);
-  }
-
-  function announceAlerts(alerts) {
-    var fresh = [];
-    for (var i = 0; i < alerts.length; i += 1) {
-      if (announcedAlerts[alerts[i].id]) continue;
-      announcedAlerts[alerts[i].id] = true;
-      fresh.push(alerts[i]);
-    }
-    for (var f = 0; f < fresh.length; f += 1) {
-      (function (alert, index) {
-        window.setTimeout(function () { showAlertToast(alert); }, 450 + index * 750);
-      }(fresh[f], f));
-    }
-  }
-
   function makeAlertItem(alert) {
     var item = document.createElement('li');
     item.className = 'notif-item' + (alert.read ? '' : ' is-unread');
@@ -340,27 +253,9 @@
   function renderNotifications() {
     if (!notifList) return;
 
-    var hasBoard = !!document.querySelector('[data-board-col]');
-    if (!hasBoard) {
-      var staticUnread = notifList.querySelectorAll('.notif-item.is-unread').length;
-      setNotifBadge(staticUnread);
-
-      var staticAlerts = [];
-      var staticItems = notifList.querySelectorAll('.notif-item');
-      for (var s = 0; s < staticItems.length; s += 1) {
-        var sTitle = staticItems[s].querySelector('.notif-title');
-        if (!sTitle) continue;
-        var sText = staticItems[s].querySelector('.notif-text');
-        var sTime = staticItems[s].querySelector('.notif-time');
-        var sIdMatch = /Order\s+([A-Z0-9-]+)/i.exec(sTitle.textContent);
-        staticAlerts.push({
-          id: sIdMatch ? sIdMatch[1] : 'static-' + s,
-          title: sTitle.textContent.trim(),
-          text: sText ? sText.textContent.trim() : '',
-          at: sTime ? sTime.textContent.replace(/^Updated at\s*/i, '').trim() : formatClock(new Date())
-        });
-      }
-      announceAlerts(staticAlerts);
+    var hasLiveOrders = !!document.querySelector('#view-orders .order[data-order-id]');
+    if (!hasLiveOrders) {
+      setNotifBadge(notifList.querySelectorAll('.notif-item.is-unread').length);
       return;
     }
 
@@ -404,7 +299,6 @@
       if (!alerts[c].read) unreadCount += 1;
     }
     setNotifBadge(unreadCount);
-    announceAlerts(alerts);
   }
 
   /* ------------------------------ order board ------------------------------ */
@@ -412,27 +306,22 @@
   var STATE_LABEL = { waiting: 'Waiting', preparing: 'Preparing', ready: 'Ready' };
 
   function updateBoardCounts() {
-    var counts = { pending: 0, preparing: 0, completed: 0 };
-    var names = ['pending', 'preparing', 'completed'];
+    var counts = { waiting: 0, preparing: 0, ready: 0 };
+    var orders = document.querySelectorAll('#view-orders .order[data-order-state]');
+    if (!orders.length) return;
 
-    for (var n = 0; n < names.length; n += 1) {
-      var name = names[n];
-      var body = document.querySelector('[data-column-body="' + name + '"]');
-      if (!body) continue;
-      counts[name] = name === 'completed'
-        ? body.querySelectorAll('.done-card').length
-        : body.querySelectorAll('.order').length;
+    for (var i = 0; i < orders.length; i += 1) {
+      var state = orders[i].getAttribute('data-order-state');
+      if (Object.prototype.hasOwnProperty.call(counts, state)) counts[state] += 1;
     }
 
-    for (var c = 0; c < names.length; c += 1) {
-      var key = names[c];
-      var colCount = document.querySelector('[data-col-count="' + key + '"]');
-      var tabCount = document.querySelector('[data-tab-count="' + key + '"]');
-      if (colCount) colCount.textContent = counts[key];
-      if (tabCount) tabCount.textContent = counts[key];
-    }
+    var preparingLine = counts.preparing + counts.ready;
+    var waitingCount = document.querySelector('[data-status-count="waiting"]');
+    var preparingCount = document.querySelector('[data-status-count="preparing"]');
+    if (waitingCount) waitingCount.textContent = counts.waiting;
+    if (preparingCount) preparingCount.textContent = preparingLine;
 
-    var active = counts.pending + counts.preparing;
+    var active = counts.waiting + preparingLine;
     var navActive = document.querySelector('[data-nav-active]');
     var metricActive = document.querySelector('[data-metric-active]');
     if (navActive) navActive.textContent = active;
@@ -441,6 +330,7 @@
 
   function applyLateState() {
     var orders = document.querySelectorAll('.order[data-minutes]');
+    if (!orders.length) return;
     var late = 0;
 
     for (var i = 0; i < orders.length; i += 1) {
@@ -454,6 +344,55 @@
 
     var metricLate = document.querySelector('[data-metric-late]');
     if (metricLate) metricLate.textContent = late;
+  }
+
+  /* ------------------------------ sidebar status filters ------------------------------ */
+
+  var statusFilters = document.querySelectorAll('[data-status-filter]');
+  var activeStatusFilter = null;
+
+  function applyStatusFilter(name) {
+    if (!document.querySelector('#view-orders')) return;
+    activeStatusFilter = name || null;
+
+    var dashboardNav = document.querySelector('[data-page-link="dashboard"]');
+    if (dashboardNav) {
+      var dashboardOn = !activeStatusFilter;
+      dashboardNav.classList.toggle('is-active', dashboardOn);
+      if (dashboardOn) dashboardNav.setAttribute('aria-current', 'page');
+      else dashboardNav.removeAttribute('aria-current');
+    }
+
+    var orders = document.querySelectorAll('#view-orders .order[data-order-state]');
+    for (var i = 0; i < orders.length; i += 1) {
+      var state = orders[i].getAttribute('data-order-state');
+      var on = !activeStatusFilter || state === activeStatusFilter || (activeStatusFilter === 'preparing' && state === 'ready');
+      orders[i].classList.toggle('is-filtered', !on);
+    }
+
+    for (var f = 0; f < statusFilters.length; f += 1) {
+      var onFilter = statusFilters[f].getAttribute('data-status-filter') === activeStatusFilter;
+      statusFilters[f].classList.toggle('is-active', onFilter);
+      statusFilters[f].setAttribute('aria-current', onFilter ? 'true' : 'false');
+    }
+  }
+
+  for (var sf = 0; sf < statusFilters.length; sf += 1) {
+    statusFilters[sf].addEventListener('click', function (event) {
+      if (!document.querySelector('#view-orders')) return;
+      event.preventDefault();
+      var name = this.getAttribute('data-status-filter');
+      var next = activeStatusFilter === name ? null : name;
+      showPage('dashboard');
+      applyStatusFilter(next);
+      if (typeof setView === 'function') setView('orders');
+      if (live) live.textContent = next ? 'Showing ' + STATE_LABEL[next] + ' orders.' : 'Showing all active orders.';
+    });
+  }
+
+  var dashboardLinks = document.querySelectorAll('[data-page-link="dashboard"]');
+  for (var dl = 0; dl < dashboardLinks.length; dl += 1) {
+    dashboardLinks[dl].addEventListener('click', function () { applyStatusFilter(null); });
   }
 
   document.addEventListener('click', function (event) {
@@ -475,9 +414,6 @@
       }
       btn.textContent = 'Mark as ready';
 
-      var preparingBody = document.querySelector('[data-column-body="preparing"]');
-      if (preparingBody) preparingBody.appendChild(card);
-
       if (live) live.textContent = orderId + ' moved to preparing.';
     } else if (state === 'preparing') {
       card.setAttribute('data-order-state', 'ready');
@@ -494,6 +430,7 @@
     }
 
     updateBoardCounts();
+    applyStatusFilter(activeStatusFilter);
     applyLateState();
     renderNotifications();
   });
@@ -522,7 +459,9 @@
 
     for (var vb = 0; vb < viewButtons.length; vb += 1) {
       viewButtons[vb].addEventListener('click', function () {
-        setView(this.getAttribute('data-view-btn'));
+        var nextView = this.getAttribute('data-view-btn');
+        if (nextView !== 'orders') applyStatusFilter(null);
+        setView(nextView);
       });
     }
   }
@@ -563,6 +502,7 @@
 
   function updateMenuSummary() {
     var cards = document.querySelectorAll('[data-menu-card]');
+    if (!cards.length) return;
     var total = cards.length;
     var sold = 0;
 
