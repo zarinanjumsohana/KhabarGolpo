@@ -1,5 +1,0 @@
-{
-  "redirects": [
-    { "source": "/(.*)", "destination": "/customer/$1", "permanent": false }
-  ]
-}
