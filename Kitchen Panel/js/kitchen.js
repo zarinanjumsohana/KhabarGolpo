@@ -46,6 +46,21 @@
   }
   applyTheme(getTheme());
 
+  var sidebar = document.getElementById('kitchenSidebar');
+  var sidebarToggle = document.querySelector('[data-sidebar-toggle]');
+  if (sidebar && sidebarToggle) {
+    var setSidebarCollapsed = function (collapsed) {
+      document.body.classList.toggle('is-sidebar-collapsed', collapsed);
+      sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+      sidebarToggle.setAttribute('aria-label', collapsed ? 'Show sidebar' : 'Hide sidebar');
+      sidebar.inert = collapsed;
+    };
+
+    sidebarToggle.addEventListener('click', function () {
+      setSidebarCollapsed(!document.body.classList.contains('is-sidebar-collapsed'));
+    });
+  }
+
   function readStorage(key) {
     try {
       return localStorage.getItem(key);

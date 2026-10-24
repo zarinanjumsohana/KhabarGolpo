@@ -14,7 +14,7 @@
 </head>
 <body>
   <div class="shell">
-    <aside class="sidebar">
+    <aside class="sidebar" id="kitchenSidebar">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -144,6 +144,13 @@
     <main class="main">
       <header class="topbar">
         <div class="topbar-left">
+          <button class="icon-btn sidebar-toggle" type="button" data-sidebar-toggle aria-controls="kitchenSidebar" aria-expanded="true" aria-label="Hide sidebar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
+              <path d="M9 4.5v15" />
+              <path d="m14.5 9-3 3 3 3" />
+            </svg>
+          </button>
           <span class="status-badge">
             <span class="dot" aria-hidden="true"></span>
             Kitchen open
