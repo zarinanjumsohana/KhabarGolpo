@@ -374,6 +374,18 @@ export const Mock = {
     },
   },
 };
+/* Before every admin action, reload the lists from the shared store. */
+for (const group of Object.values(Mock)) {
+  if (!group || typeof group !== 'object') continue;
+  for (const name of Object.keys(group)) {
+    const fn = group[name];
+    if (typeof fn !== 'function') continue;
+    group[name] = (...args) => {
+      db.refresh();
+      return fn.apply(group, args);
+    };
+  }
+}
 
 function validateItem(p) {
   if (!String(p.name || '').trim()) return 'Item name is required.';
@@ -404,10 +416,7 @@ function syncOrders() {
     }
     lastStatus.set(o.id, o.status);
   });
-  if (changed || !primed) {
-    const sorted = fresh.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    db.orders.splice(0, db.orders.length, ...clone(sorted));
-  }
+  if (changed || !primed) db.refresh();   // reload every list, not only orders
   primed = true;
 }
 

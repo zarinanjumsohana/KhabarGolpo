@@ -1,8 +1,7 @@
 // js/mock/mockData.js — deterministic seed data + report math.
 // Shape mirrors the real Postgres tables so the swap to Supabase is a config flip.
 
-import { getStore, saveStore } from '../../../js/shared/store.js';
-
+import { reloadStore, saveStore } from '../../../js/shared/store.js';
 /* ------------------------------ seeded rng ------------------------------ */
 
 function mulberry32(a) {
@@ -575,17 +574,50 @@ export function nextReceipt() {
 
 /* ----------------------- shared store (admin + customer) ----------------------- */
 const copy = (v) => JSON.parse(JSON.stringify(v));
-const shared = getStore();
+const LISTS = { categories, menu_items, gallery_images, orders, reservations, feedback };
 
-categories.splice(0, categories.length, ...copy(shared.categories));
-menu_items.splice(0, menu_items.length, ...copy(shared.menu_items));
-gallery_images.splice(0, gallery_images.length, ...copy(shared.gallery_images));
-orders.splice(0, orders.length, ...copy(shared.orders));
-reservations.splice(0, reservations.length, ...copy(shared.reservations));
-feedback.splice(0, feedback.length, ...copy(shared.feedback));
-Object.assign(settings, copy(shared.settings));
+/* What each record looked like the last time this page loaded or saved it (id -> JSON).
+   Lets the admin tell its own edits apart from edits made by the customer or kitchen. */
+const snap = {};
+const snapshotOf = (rows) => new Map(rows.map((r) => [r.id, JSON.stringify(r)]));
 
-/* Saves the admin's current lists to the shared store. index.js calls this after every change. */
-export function persist() {
-  saveStore({ categories, menu_items, gallery_images, orders, reservations, feedback, settings });
+function replaceList(key, rows) {
+  LISTS[key].splice(0, LISTS[key].length, ...copy(rows));
+  snap[key] = snapshotOf(rows);
 }
+
+/* Loads the latest saved data into the admin's lists. index.js calls this before every admin action. */
+export function refresh() {
+  const shared = reloadStore();
+  for (const key of Object.keys(LISTS)) replaceList(key, shared[key] || []);
+  Object.assign(settings, copy(shared.settings));
+}
+
+/* Combines the admin's changes with what is in the store now. */
+function mergeList(key, rows, latest) {
+  const base = snap[key] || new Map();
+  const latestById = new Map(latest.map((r) => [r.id, r]));
+  const mineIds = new Set();
+  const out = [];
+  for (const rec of rows) {
+    mineIds.add(rec.id);
+    const editedHere = !base.has(rec.id) || JSON.stringify(rec) !== base.get(rec.id);
+    if (editedHere) out.push(rec);                       // the admin changed or added it
+    else if (latestById.has(rec.id)) out.push(latestById.get(rec.id)); // keep the newest copy
+  }
+  for (const rec of latest) {
+    if (!mineIds.has(rec.id) && !base.has(rec.id)) out.push(rec); // created elsewhere since our last load
+  }
+  return out;
+}
+
+/* Saves the admin's changes to the shared store. index.js calls this after every change. */
+export function persist() {
+  const latest = reloadStore();
+  const merged = {};
+  for (const key of Object.keys(LISTS)) merged[key] = mergeList(key, LISTS[key], latest[key] || []);
+  for (const key of Object.keys(LISTS)) replaceList(key, merged[key]);
+  saveStore({ ...merged, settings: copy(settings) });
+}
+
+refresh();
