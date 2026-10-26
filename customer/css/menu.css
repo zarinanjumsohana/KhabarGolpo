@@ -1,0 +1,59 @@
+/* Menu: one row per category (plate and text side by side). Rows are stacked vertically, so they never overlap. */
+
+.mn{
+  --mn-serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --mn-script:'Pinyon Script',cursive;
+  --mn-gold:#e8c98a;
+  position:relative;
+  color:#fff;
+  font-family:var(--mn-serif);
+}
+.mn-track{position:relative}
+.mn-stage{position:sticky;top:0;height:100vh;min-height:560px;overflow:hidden}
+
+/* heading: near the top, with clear space above the first row */
+.mn-head{position:absolute;top:6vh;left:0;right:0;z-index:3;text-align:center;pointer-events:none}
+.mn-discover{margin:0 0 6px;font-family:var(--mn-script);font-size:clamp(36px,4.6vw,60px);line-height:1;color:var(--mn-gold)}
+.mn-head h2{margin:0;font-size:clamp(42px,6vw,88px);font-weight:600;line-height:1;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+
+.mn-units{position:absolute;inset:0;pointer-events:none}
+
+/* one row: plate on one side, text on the other. Centred at 60% of the screen height. */
+.mn-unit{
+  position:absolute;left:50%;top:50%;
+  width:min(1040px,84vw);
+  display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px;
+  will-change:transform,opacity;
+  pointer-events:auto;cursor:pointer;
+}
+
+/* plate: smaller, alternating sides */
+.mn-plate{position:relative;grid-column:1;grid-row:1;justify-self:center;width:min(28vw,40vh,340px);aspect-ratio:1;will-change:transform}
+.mn-unit[data-side="right"] .mn-plate{grid-column:2}
+.mn-plate img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 24px 30px rgba(0,0,0,.45))}
+.mn-disc{position:absolute;inset:0;display:none;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fffdf7,#e7dcc8 70%,#cfc2a8);box-shadow:inset 0 0 0 10px #f7f1e4,0 30px 40px -18px rgba(0,0,0,.6)}
+.mn-plate.no-img .mn-disc{display:block}
+.mn-plate.no-img img{display:none}
+
+/* text: on the background, opposite its plate */
+.mn-text{grid-column:2;grid-row:1;max-width:26em;text-align:left}
+.mn-unit[data-side="right"] .mn-text{grid-column:1;justify-self:end;text-align:right}
+.mn-text h3{margin:0 0 10px;font-family:var(--mn-script);font-weight:400;font-size:clamp(44px,4.6vw,68px);line-height:1.1;color:var(--mn-gold);text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.mn-intro{margin:0;font-size:clamp(15px,1.2vw,18px);line-height:1.6;opacity:.92;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+
+.mn-dots{position:absolute;right:3.2vw;top:50%;transform:translateY(-50%);z-index:4;display:grid;gap:14px}
+.mn-dots button{width:11px;height:11px;padding:0;border-radius:50%;border:1px solid var(--mn-gold);background:transparent;cursor:pointer;transition:background .4s,transform .4s}
+.mn-dots button[aria-current="true"]{background:var(--mn-gold);transform:scale(1.25)}
+.mn-dots button:focus-visible{outline:2px solid var(--mn-gold);outline-offset:3px}
+
+/* phones: plate above the text, both centred */
+@media (max-width:820px){
+  .mn-head{top:5vh}
+  .mn-unit{width:92vw;grid-template-columns:1fr;gap:18px;text-align:center}
+  .mn-plate,.mn-unit[data-side="right"] .mn-plate{grid-column:1;grid-row:1;width:min(56vw,34vh,280px)}
+  .mn-text,.mn-unit[data-side="right"] .mn-text{grid-column:1;grid-row:2;justify-self:center;text-align:center}
+  .mn-dots{right:auto;top:auto;left:50%;bottom:2.4vh;grid-auto-flow:column;transform:translateX(-50%)}
+}
+@media (prefers-reduced-motion:reduce){
+  .mn-dots button{transition:none}
+}

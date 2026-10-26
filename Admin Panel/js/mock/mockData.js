@@ -1,7 +1,9 @@
 // js/mock/mockData.js — deterministic seed data + report math.
 // Shape mirrors the real Postgres tables so the swap to Supabase is a config flip.
 
+import { reloadStore, saveStore } from '../../../js/shared/store.js';
 /* ------------------------------ seeded rng ------------------------------ */
+
 function mulberry32(a) {
   return function () {
     a |= 0;
@@ -569,3 +571,53 @@ export function nextReceipt() {
   const max = orders.reduce((a, o) => Math.max(a, Number(String(o.receipt).replace('KG-', '')) || 0), 1000);
   return `KG-${max + 1}`;
 }
+
+/* ----------------------- shared store (admin + customer) ----------------------- */
+const copy = (v) => JSON.parse(JSON.stringify(v));
+const LISTS = { categories, menu_items, gallery_images, orders, reservations, feedback };
+
+/* What each record looked like the last time this page loaded or saved it (id -> JSON).
+   Lets the admin tell its own edits apart from edits made by the customer or kitchen. */
+const snap = {};
+const snapshotOf = (rows) => new Map(rows.map((r) => [r.id, JSON.stringify(r)]));
+
+function replaceList(key, rows) {
+  LISTS[key].splice(0, LISTS[key].length, ...copy(rows));
+  snap[key] = snapshotOf(rows);
+}
+
+/* Loads the latest saved data into the admin's lists. index.js calls this before every admin action. */
+export function refresh() {
+  const shared = reloadStore();
+  for (const key of Object.keys(LISTS)) replaceList(key, shared[key] || []);
+  Object.assign(settings, copy(shared.settings));
+}
+
+/* Combines the admin's changes with what is in the store now. */
+function mergeList(key, rows, latest) {
+  const base = snap[key] || new Map();
+  const latestById = new Map(latest.map((r) => [r.id, r]));
+  const mineIds = new Set();
+  const out = [];
+  for (const rec of rows) {
+    mineIds.add(rec.id);
+    const editedHere = !base.has(rec.id) || JSON.stringify(rec) !== base.get(rec.id);
+    if (editedHere) out.push(rec);                       // the admin changed or added it
+    else if (latestById.has(rec.id)) out.push(latestById.get(rec.id)); // keep the newest copy
+  }
+  for (const rec of latest) {
+    if (!mineIds.has(rec.id) && !base.has(rec.id)) out.push(rec); // created elsewhere since our last load
+  }
+  return out;
+}
+
+/* Saves the admin's changes to the shared store. index.js calls this after every change. */
+export function persist() {
+  const latest = reloadStore();
+  const merged = {};
+  for (const key of Object.keys(LISTS)) merged[key] = mergeList(key, LISTS[key], latest[key] || []);
+  for (const key of Object.keys(LISTS)) replaceList(key, merged[key]);
+  saveStore({ ...merged, settings: copy(settings) });
+}
+
+refresh();
