@@ -101,6 +101,13 @@ const SEED = {
     created_at: new Date().toISOString(),
   })),
   gallery_images: [],
+
+    // Staff sign-in accounts. Samples for now; they move into the database later.
+  // Accounts cannot be created from the site, only listed here or in the database.
+  staff: [
+    { id: 'staff_admin', email: 'admin@khabargolpo.com', password: 'admin123', role: 'admin', name: 'Khabar Golpo Admin' },
+    { id: 'staff_chef', email: 'chef@khabargolpo.com', password: 'chef123', role: 'chef', name: 'Head Chef' },
+  ],
   orders: [],
   order_seq: 1000,
   reservations: [],
@@ -128,6 +135,14 @@ const SEED = {
     logo: null,
   },
 };
+
+/** Checks a sign-in. Returns { email, role, name } for a valid staff account, otherwise null. */
+export function checkStaffLogin(email, password) {
+  const e = String(email || '').trim().toLowerCase();
+  const p = String(password || '');
+  const account = getStore().staff.find((s) => s.email.toLowerCase() === e && s.password === p);
+  return account ? { email: account.email, role: account.role, name: account.name } : null;
+}
 
 const clone = (v) => JSON.parse(JSON.stringify(v));
 let state = null;
@@ -174,5 +189,6 @@ window.KGStore = {
   reloadStore,
   saveStore,
   resetStore,
+  checkStaffLogin,
   reset: () => { resetStore(); location.reload(); },
 };
