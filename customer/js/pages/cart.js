@@ -10,6 +10,15 @@
   let settings = { tax_rate: 0, delivery_fee: 0, pickup_enabled: true, delivery_enabled: true, prep_time_minutes: 20 };
   let mode = 'pickup';
 
+  /* Table QR links look like /customer/index.html?table=5 */
+  const fromUrl = Number(new URLSearchParams(location.search).get('table'));
+  const remembered = Number(localStorage.getItem('kg-table'));
+  const tableNumber =
+    Number.isInteger(fromUrl) && fromUrl > 0 ? fromUrl
+      : Number.isInteger(remembered) && remembered > 0 ? remembered
+        : 0;
+  if (tableNumber) localStorage.setItem('kg-table', String(tableNumber));
+
   const make = (tag, cls, text) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -83,6 +92,7 @@
     $('#deliveryBox').hidden = m !== 'delivery';
     F('pickup_time').required = m === 'pickup';
     F('address').required = m === 'delivery';
+    F('phone').required = m !== 'dine-in';
     renderTotals();
   }
 
@@ -91,6 +101,15 @@
     const radios = [...form.querySelectorAll('input[name=mode]')];
     radios.find((r) => r.value === 'pickup').disabled = !settings.pickup_enabled;
     radios.find((r) => r.value === 'delivery').disabled = !settings.delivery_enabled;
+
+    /* A guest who scanned a table QR can only order for that table. */
+    if (tableNumber) {
+      $('#dineMode').hidden = false;
+      $('#dineLabel').textContent = 'Dine-in · Table ' + tableNumber;
+      setMode('dine-in');
+      $('#modeNote').textContent = `Ordering for Table ${tableNumber}. We will serve it at your table.`;
+      return;
+    }
 
     const first = settings.pickup_enabled ? 'pickup' : settings.delivery_enabled ? 'delivery' : null;
     if (!first) {
@@ -115,24 +134,36 @@
     const name = F('name').value.trim();
     const phone = F('phone').value.replace(/[\s-]/g, '');
     if (!name) return (err.textContent = 'Please enter your name.');
-    if (!PHONE.test(phone)) return (err.textContent = 'Please enter a valid mobile number, like 01712345678.');
+    if (mode !== 'dine-in' && !PHONE.test(phone))
+      return (err.textContent = 'Please enter a valid mobile number, like 01712345678.');
+    if (mode === 'dine-in' && phone && !PHONE.test(phone))
+      return (err.textContent = 'Please enter a valid mobile number, or leave it empty.');
     if (mode === 'pickup' && !F('pickup_time').value) return (err.textContent = 'Choose a pickup time.');
     if (mode === 'delivery' && F('address').value.trim().length < 5)
       return (err.textContent = 'Please enter your delivery address.');
 
     const btn = $('#placeBtn');
     btn.disabled = true;
-    const res = await KG.placeOrder({
-      lines: KGCart.lines(),
-      order_type: mode,
-      name,
-      phone,
-      pickup_time: F('pickup_time').value,
-      address: F('address').value,
-      address_note: F('address_note').value,
-      note: F('note').value,
-      honeypot: '',
-    });
+    const res = mode === 'dine-in'
+      ? await KG.placeDineinOrder({
+        lines: KGCart.lines(),
+        name,
+        phone,
+        table_number: tableNumber,
+        note: F('note').value,
+        honeypot: '',
+      })
+      : await KG.placeOrder({
+        lines: KGCart.lines(),
+        order_type: mode,
+        name,
+        phone,
+        pickup_time: F('pickup_time').value,
+        address: F('address').value,
+        address_note: F('address_note').value,
+        note: F('note').value,
+        honeypot: '',
+      });
     btn.disabled = false;
     if (res.error) return (err.textContent = res.error.message);
 

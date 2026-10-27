@@ -72,9 +72,10 @@ function card(r, i) {
     <div class="res-meta">
       <span>${icon('clock')} <b>${esc(r.time)}</b></span>
       <span>${icon('user')} <b>${r.guests}</b> guests</span>
-      <span>${icon('calendar')} <b>${esc(fmtDate(`${r.date}T00:00:00`))}</b></span>
+      <span>${icon('qr')} Table <b>${r.tables && r.tables.table_number ? r.tables.table_number : '—'}</b></span>
     </div>
     <div class="res-meta">
+      <span>${icon('calendar')} <b>${esc(fmtDate(`${r.date}T00:00:00`))}</b></span>
       <span>${icon('phone')} <a href="tel:${esc(r.phone)}" style="color:var(--brand)">${esc(r.phone)}</a></span>
     </div>
     ${r.note ? `<div class="res-note">${esc(r.note)}</div>` : ''}

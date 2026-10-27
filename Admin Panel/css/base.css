@@ -380,6 +380,7 @@ ul { list-style: none; padding: 0; }
 .badge.plain::before { display: none; }
 
 .st-new { background: var(--st-new-bg); color: var(--st-new-fg); }
+.st-approved { background: var(--st-prep-bg); color: var(--st-prep-fg); }
 .st-preparing { background: var(--st-prep-bg); color: var(--st-prep-fg); }
 .st-ready { background: var(--st-ready-bg); color: var(--st-ready-fg); }
 .st-out_for_delivery { background: var(--st-out-bg); color: var(--st-out-fg); }

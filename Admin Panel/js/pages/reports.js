@@ -2,14 +2,14 @@
 
 import { requireAdmin } from '../utils/guards.js';
 import { initShell } from './shell.js';
-import { salesReport } from '../api/reports.js';
+import { salesReport, reportRange } from '../api/reports.js';
 import { hydrateIcons, icon } from '../utils/icons.js';
 import { toast, countUp, stagger, reveal, skeleton, esc } from '../utils/ui.js';
 import { money, num } from '../utils/format.js';
 
 const $ = (id) => document.getElementById(id);
 
-const state = { group: 'daily' };
+const state = { group: 'daily', from: null, to: null };
 let report = null;
 
 const TYPE_META = {
@@ -190,7 +190,7 @@ async function load() {
     $('repKpis').classList.add('is-loading');
     $('rowsBody').innerHTML = skeleton(5);
   }
-  const res = await salesReport({ group: state.group });
+  const res = await salesReport({ group: state.group, from: state.from, to: state.to });
   $('repKpis').classList.remove('is-loading');
   if (res.error) {
     toast({ type: 'error', title: 'Could not load report', message: res.error.message });
@@ -215,11 +215,32 @@ async function init() {
   reveal();
   window.addEventListener('resize', moveSeg);
 
+  /* Date window: prefill with a sensible range for the current grouping. */
+  const applyRange = () => {
+    const r = reportRange(state.group);
+    state.from = r.from;
+    state.to = r.to;
+    if ($('repFrom')) $('repFrom').value = r.from;
+    if ($('repTo')) $('repTo').value = r.to;
+  };
+  applyRange();
+
+  ['repFrom', 'repTo'].forEach((id) => {
+    const input = $(id);
+    if (!input) return;
+    input.addEventListener('change', async () => {
+      state.from = $('repFrom').value || null;
+      state.to = $('repTo').value || null;
+      await load();
+    });
+  });
+
   document.querySelectorAll('[data-group]').forEach((b) =>
     b.addEventListener('click', async () => {
       state.group = b.dataset.group;
       document.querySelectorAll('[data-group]').forEach((x) => x.classList.toggle('on', x === b));
       moveSeg();
+      applyRange();
       await load();
     })
   );

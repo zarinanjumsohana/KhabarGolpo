@@ -3,7 +3,7 @@
 import { requireAdmin } from '../utils/guards.js';
 import { initShell } from './shell.js';
 import { listTables, createTable, updateTable, deleteTable } from '../api/adminContent.js';
-import { tableLink, qrUrl } from '../utils/qr.js';
+import { tableLink, qrUrl, resolveQrBase, qrBaseIsLocal } from '../utils/qr.js';
 import { printArea } from '../utils/receipt.js';
 import { hydrateIcons, icon } from '../utils/icons.js';
 import { openModal, confirmDialog, toast, emptyState, esc, buttonLoading, stagger, reveal } from '../utils/ui.js';
@@ -24,7 +24,7 @@ function render() {
       (t) => `
     <article class="t-card ${t.is_active ? '' : 'off'}" data-table="${t.id}">
       <span class="t-no">${t.table_number}</span>
-      <span class="t-seats">${icon('user')} ${t.seats} seats</span>
+      <span class="t-seats">${icon('user')} ${Number(t.seats || t.capacity || 0) ? `${t.seats || t.capacity} seats` : 'Dine-in table'}</span>
       <span class="t-status"><span class="badge ${t.is_active ? 'st-ready' : 'st-cancelled'} plain">${t.is_active ? 'Active' : 'Deactivated'}</span></span>
       <div class="t-actions">
         <button class="btn btn-dark btn-xs" data-qr="${t.id}">${icon('qr')}<span>QR code</span></button>
@@ -160,7 +160,23 @@ async function init() {
   initShell('tables', session);
   hydrateIcons($('page'));
   reveal();
+
+  /* Resolve the address printed inside the QR codes before drawing anything. */
+  const qrBase = await resolveQrBase();
+  if ($('qrBaseHint')) {
+    $('qrBaseHint').textContent = qrBaseIsLocal()
+      ? 'QR links point to this computer — open the panel on its Wi-Fi address'
+      : `QRs open ${qrBase}`;
+  }
   await load();
+
+  if (qrBaseIsLocal()) {
+    toast({
+      type: 'warning',
+      title: 'QR links point to this computer',
+      message: 'A phone cannot open localhost. Start the site with start.bat and open the admin panel on the shown Wi-Fi address (http://<your-ip>:5501).',
+    });
+  }
 
   $('btnAddTable').addEventListener('click', addTableModal);
   $('btnPrintAll').addEventListener('click', () => printQRs(tables.filter((t) => t.is_active)));
