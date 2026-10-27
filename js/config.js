@@ -1,14 +1,18 @@
-// Khabar Golpo — Config
-// SUPABASE_URL and ANON_KEY from your Supabase project dashboard
-// SITE_URL is the deployed site URL (or localhost for dev)
-// MOCK_MODE: true = return mock data (frontend can build before DB is ready)
-// MOCK_MODE: false = call real Supabase RPCs
+// Khabar Golpo — Global Config
 
-// Farjana: import mock data from './js/mock/api.js' in your page scripts
-// when MOCK_MODE=true. The API layer (js/api/*.js) auto-switches based on
-// this flag — no need to manually import in each page.
+export const CONFIG = {
+  SUPABASE_URL: 'https://ewsvwxgoyfbsnhsrxnoo.supabase.co',
+  ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3c3Z3eGdveWZic25oc3J4bm9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3NzA1MzAsImV4cCI6MjEwNzM0NjUzMH0.cayec-Xi35TDqfGvjgGhWtuJO_VRd2jcHnHo-5d5AwY',
+  SITE_URL: 'https://khabargolpo.vercel.app',
+  APP_NAME: 'Khabar Golpo',
+  CURRENCY: '৳',
+  TIMEZONE: 'Asia/Dhaka',
+  MOCK_MODE: false,
+};
 
-export const SUPABASE_URL = "https://<your-project>.supabase.co"
-export const ANON_KEY = "your-anon-key-here"
-export const SITE_URL = "https://khabargolpo.vercel.app" // change to your domain
-export const MOCK_MODE = true // set to false when ready for real data
+export const SUPABASE_URL = CONFIG.SUPABASE_URL;
+export const ANON_KEY = CONFIG.ANON_KEY;
+export const SITE_URL = CONFIG.SITE_URL;
+export const MOCK_MODE = CONFIG.MOCK_MODE;
+
+export const isMock = () => CONFIG.MOCK_MODE === true;

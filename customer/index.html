@@ -36,32 +36,17 @@
     <ul class="links">
       <li><a href="#story">Our Story</a></li>
       <li><a href="#menu">Menu</a></li>
+      <li><a href="#all-menu">All Dishes</a></li>
       <li><a href="#gallery">Galerie</a></li>
       <li><a href="#reservation">Reservation</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
-  <!-- LOGIN: three short lines. Hidden while the menu is on screen (the cart button takes its place) -->
-  <div class="menu-wrap">
-    <button class="menu-btn glass" id="menuBtn" type="button" aria-expanded="false" aria-controls="loginPanel" aria-label="Admin and chef login">
-      <span></span><span></span><span></span>
-    </button>
-
-    <div class="login-panel glass" id="loginPanel" role="dialog" aria-label="Admin and chef login" aria-hidden="true" inert>
-      <h2>Admin / Chef login</h2>
-      <form id="loginForm" novalidate>
-        <label>Email
-          <input type="email" name="email" autocomplete="username" required>
-        </label>
-        <label>Password
-          <input type="password" name="password" autocomplete="current-password" required>
-        </label>
-        <button class="cta" type="submit">Log in</button>
-        <p class="login-note" id="loginNote" role="alert"></p>
-      </form>
-    </div>
-  </div>
+  <!-- STAFF LOGIN: the three-line button goes straight to the login page -->
+  <button class="menu-btn glass" id="menuBtn" type="button" aria-label="Admin and chef login">
+    <span></span><span></span><span></span>
+  </button>
 
   <!-- CART: top right. Replaces the login button while the menu is on screen (see utils/cart.js) -->
   <a class="cart-btn" href="cart.html" aria-label="Open your cart">
@@ -114,6 +99,19 @@
         <nav class="mn-dots" id="mnDots" aria-label="Menu categories"></nav>
       </div>
     </div>
+  </section>
+
+  <!-- 3b. FULL MENU: every dish added in the admin panel, all on the home page. -->
+  <section class="all-menu" id="all-menu" aria-labelledby="allMenuTitle">
+    <div class="all-head">
+      <p class="all-kicker">Every dish</p>
+      <h2 id="allMenuTitle">The full menu</h2>
+      <p class="all-sub">Everything on the menu right now. Filter by category, or tap a dish to open its page.</p>
+    </div>
+
+    <div class="all-chips" id="allChips" aria-label="Filter dishes by category"></div>
+    <div class="all-grid" id="allGrid" aria-live="polite"></div>
+    <p class="all-empty" id="allEmpty" hidden></p>
   </section>
 
   <!-- 4. GALLERY -->
@@ -252,6 +250,7 @@
 <script src="js/pages/hero.js"></script>
 <script src="js/utils/ambient.js"></script>
 <script src="js/pages/menu.js"></script>
+<script src="js/pages/all-dishes.js"></script>
 <script src="js/pages/sections.js"></script>
 </body>
 </html>

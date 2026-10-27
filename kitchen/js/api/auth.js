@@ -1,69 +1,64 @@
-// Khabar Golpo — Auth API layer
-// All functions call Supabase RPC via the anon key
+// Khabar Golpo — Kitchen Auth API layer
 // Role information comes from profiles table (auth.jwt())
 
-import { SUPABASE_URL, ANON_KEY, MOCK_MODE } from "../config.js"
+import { isMock } from "../config.js";
+import { supabase } from "../supabaseClient.js";
 
-const headers = {
-  "apikey": ANON_KEY,
-  "Authorization": `Bearer ${ANON_KEY}`,
-  "Content-Type": "application/json",
-}
-
-// Mock mode returns fixed shapes for frontend development
 const mockLogin = (email, password) => {
-  // Simulate successful login for dev
   return Promise.resolve({
-    data: { user: { id: "mock-user-id", email }, role: "admin" },
+    data: { user: { id: "mock-chef-id", email }, role: "chef" },
     error: null
-  })
-}
+  });
+};
 
 const mockLogout = () => {
-  return Promise.resolve({
-    data: true,
-    error: null
-  })
-}
+  return Promise.resolve({ data: true, error: null });
+};
 
 const mockGetSession = () => {
   return Promise.resolve({
-    data: { user: { id: "mock-user-id", email: "admin@khabargolpo.test" }, role: "admin" },
+    data: { user: { id: "mock-chef-id", email: "chef@khabargolpo.test" }, role: "chef" },
     error: null
-  })
-}
+  });
+};
 
-// Real Supabase RPC calls (uncomment when ready)
-// const supabase = window.supabase || createSupabaseClient(SUPABASE_URL, ANON_KEY)
-
-// export async function login(email, password) {
-//   if (MOCK_MODE) return mockLogin(email, password)
-//   // const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-//   // return { data, error }
-// }
-
-// export async function logout() {
-//   if (MOCK_MODE) return mockLogout()
-//   // const { error } = await supabase.auth.signOut()
-//   // return { error }
-// }
-
-// export async function getSession() {
-//   if (MOCK_MODE) return mockGetSession()
-//   // const { data: { user }, error } = await supabase.auth.getSession()
-//   // return { data: { user, role: user?.user.metadata?.role }, error }
-// }
-
-// Mock implementations for immediate use
 export async function login(email, password) {
-  return mockLogin(email, password)
+  if (isMock()) return mockLogin(email, password);
+  const sb = await supabase();
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) return { data: null, error: { code: 'INVALID_CREDENTIALS', message: error.message } };
+  
+  const { data: profile } = await sb.from('profiles').select('role, full_name').eq('id', data.user.id).single();
+  return {
+    data: {
+      user: data.user,
+      role: profile?.role || 'chef',
+      name: profile?.full_name || data.user.email
+    },
+    error: null
+  };
 }
 
 export async function logout() {
-  return mockLogout()
+  if (isMock()) return mockLogout();
+  const sb = await supabase();
+  const { error } = await sb.auth.signOut();
+  return { data: !error, error: error ? { code: 'SIGNOUT_FAILED', message: error.message } : null };
 }
 
 export async function getSession() {
-  return mockGetSession()
-  // return mockGetSession()
+  if (isMock()) return mockGetSession();
+  const sb = await supabase();
+  const { data: { session }, error } = await sb.auth.getSession();
+  if (error || !session) return { data: null, error: error ? { code: 'NO_SESSION', message: error.message } : null };
+
+  const { data: profile } = await sb.from('profiles').select('role, full_name').eq('id', session.user.id).single();
+  return {
+    data: {
+      user: session.user,
+      role: profile?.role || null,
+      name: profile?.full_name || session.user.email
+    },
+    error: null
+  };
 }

@@ -204,7 +204,10 @@
     if (!dishes.length) return showEmpty('No dishes in this category yet.', true);
 
     drawThumbs();
-    show(0, false);
+    // A dish can be picked from the home page: category.html?id=…&dish=…
+    const wanted = params.get('dish');
+    const at = wanted ? dishes.findIndex((d) => d.id === wanted) : 0;
+    show(at >= 0 ? at : 0, false);
   }
 
   init();

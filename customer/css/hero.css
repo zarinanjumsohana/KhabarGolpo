@@ -50,23 +50,10 @@ section[id]{scroll-margin-top:96px}
 .links a:hover{background:rgba(255,255,255,.14)}
 @media (min-width:768px){.links a{font-size:15px}}
 
-/* login button: glass circle, sized to match the nav box. Three short lines become an X when open */
+/* login button: glass circle, sized to match the nav box */
 .menu-wrap{position:relative;flex:0 0 auto}
-.menu-btn{width:var(--nav-h);height:var(--nav-h);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;cursor:pointer;color:#fff}
-.menu-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:transform .45s var(--ease-in),opacity .3s}
-.menu-btn[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
-.menu-btn[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
-/* login panel: opens under the button */
-.login-panel{position:absolute;top:calc(100% + 12px);right:0;width:min(320px,calc(100vw - 32px));padding:24px;border-radius:24px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .45s var(--ease-in),transform .45s var(--ease-in),visibility .45s}
-.login-panel.open{opacity:1;visibility:visible;transform:none}
-.login-panel h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;margin-bottom:16px}
-.login-panel label{display:grid;gap:6px;font-size:13px;color:rgba(255,255,255,.8);margin-bottom:12px}
-.login-panel input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:11px 12px;color:#fff;font-size:15px;outline:none;transition:border-color .3s}
-.login-panel input:focus{border-color:rgba(255,255,255,.6)}
-.login-panel .cta{width:100%;margin-top:6px}
-.login-note{min-height:1.2em;font-size:13px;color:#ffb4a0;margin-top:10px}
+.menu-btn{flex:0 0 auto;width:var(--nav-h);height:var(--nav-h);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;cursor:pointer;color:#fff}
+.menu-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px}
 
 /* ---------- hero: transparent, so the frame shows through ---------- */
 .hero{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden;background:transparent}

@@ -60,7 +60,7 @@ function renderCats() {
   }
 }
 
-function catModal(cat = null) {
+function catModal(cat = null, opts = {}) {
   let saving = false;
   let imageUrl = cat?.image_url || '';
   let pendingFile = null;
@@ -178,28 +178,9 @@ function catModal(cat = null) {
       toast({ type: 'success', title: cat ? 'Category updated' : 'Category created' });
     }
     await load();
+    if (val === 'save' && saving && opts.thenAddItem) itemModal(null);
   });
 }
-
-  m.result.then(async (val) => {
-    if (val === 'delete' && cat) {
-      const yes = await confirmDialog({
-        title: `Delete “${cat.name}”?`,
-        message: 'Categories with dishes cannot be deleted — move the dishes first.',
-        danger: true,
-        confirmText: 'Delete',
-      });
-      if (yes) {
-        const res = await deleteCategory(cat.id);
-        res.error
-          ? toast({ type: 'error', title: 'Cannot delete', message: res.error.message })
-          : toast({ type: 'success', title: 'Category deleted' });
-      }
-    } else if (val === 'save' && saving) {
-      toast({ type: 'success', title: cat ? 'Category updated' : 'Category created' });
-    }
-    await load();
-  });
 
 
 /* ------------------------------ items ------------------------------ */
@@ -429,7 +410,7 @@ async function init() {
   $('btnAddItem').addEventListener('click', () => {
     if (!cats.length) {
       toast({ type: 'warning', title: 'Create a category first', message: 'Every dish belongs to a category.' });
-      catModal(null);
+      catModal(null, { thenAddItem: true });
       return;
     }
     itemModal(null);

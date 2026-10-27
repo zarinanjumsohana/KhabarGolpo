@@ -1,7 +1,7 @@
 // js/pages/login.js — admin login page.
 
 import { hydrateIcons, icon } from '../utils/icons.js';
-import { login, localSession } from '../utils/guards.js';
+import { login, getSession } from '../utils/guards.js';
 import { toast, buttonLoading, esc } from '../utils/ui.js';
 import { validate, rules, firstError } from '../utils/validate.js';
 import { initTheme, toggleTheme, getTheme } from '../utils/theme.js';
@@ -14,6 +14,11 @@ const QUOTES = [
 ];
 
 let qIndex = 0;
+
+/* The account's role decides which panel opens. Admin -> admin panel, chef -> kitchen panel. */
+const ADMIN_PANEL = './dashboard.html';
+const KITCHEN_PANEL = '../../Kitchen%20Panel/html/index.html';
+const panelFor = (role) => (role === 'chef' ? KITCHEN_PANEL : ADMIN_PANEL);
 
 function rotateQuotes() {
   const el = document.getElementById('quote');
@@ -52,7 +57,7 @@ function fill(value) {
   document.getElementById(isEmail ? 'email' : 'password').value = value;
 }
 
-function init() {
+async function init() {
   initTheme();
   hydrateIcons();
   rotateQuotes();
@@ -68,8 +73,10 @@ function init() {
     themeBtn.addEventListener('click', () => sync(toggleTheme()));
   }
 
-  if (localSession()?.role === 'admin') {
-    location.replace('./dashboard.html');
+  /* already signed in: go straight to the panel that matches this account's role */
+  const existing = await getSession();
+  if (existing?.role) {
+    location.replace(panelFor(existing.role));
     return;
   }
 
@@ -127,15 +134,8 @@ function init() {
       return;
     }
 
-    if (res.data.role !== 'admin') {
-      const msg = 'This account belongs to the kitchen panel, not the admin panel.';
-      setError('fEmail', 'eEmail', msg);
-      shakeForm();
-      return;
-    }
-
     toast({ type: 'success', title: 'Welcome back', message: `Signed in as ${res.data.name}.` });
-    location.href = './dashboard.html';
+    location.href = panelFor(res.data.role);
   });
 }
 

@@ -14,8 +14,8 @@ export async function signIn({ email, password }) {
       if (res.error) return fail('INVALID_CREDENTIALS', friendly(res.error.message));
       const profile = await getProfile();
       if (profile.error) return fail('NO_PROFILE', 'Your account is not set up yet. Ask the owner to create your profile.');
-      if (profile.data.role !== 'admin')
-        return fail('WRONG_ROLE', 'This account cannot open the admin panel. Chef accounts use the kitchen panel.');
+      // The account's role decides which panel opens next (admin panel or kitchen panel),
+      // so both kinds of staff can sign in from this page.
       return ok({
         email: res.data.user.email,
         role: profile.data.role,

@@ -43,7 +43,7 @@
       <h1 class="login-title">Chef sign in</h1>
       <p class="login-sub">Only kitchen accounts can open the display. Admin accounts stay in the admin panel.</p>
 
-      <form action="index.html" method="get">
+      <form id="loginForm" novalidate>
         <div class="field">
           <label for="email">Email</label>
           <input id="email" name="email" type="email" autocomplete="username" placeholder="chef@khabargolpo.com" />
@@ -52,12 +52,14 @@
           <label for="password">Password</label>
           <input id="password" name="password" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
         </div>
-        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        <p class="login-error" id="loginError" role="alert"></p>
+        <button class="btn btn-primary btn-block" id="loginSubmit" type="submit">Sign in</button>
       </form>
 
       <p class="login-foot">Kitchen accounts are created by the restaurant owner - there is no sign-up.</p>
     </section>
   </main>
   <script src="../js/kitchen.js" defer></script>
+  <script type="module" src="../js/login.js"></script>
 </body>
 </html>

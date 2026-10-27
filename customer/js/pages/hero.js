@@ -8,9 +8,6 @@
   const door = $('#door');
   const topbar = $('#topbar');
   const menuBtn = $('#menuBtn');
-  const panel = $('#loginPanel');
-  const form = $('#loginForm');
-  const note = $('#loginNote');
 
   /*
    * Door position, as fractions of the video frame (0 to 1).
@@ -65,34 +62,8 @@
   }, { threshold: [0, 0.35, 1] });
   heroWatch.observe(hero);
 
-  /* login panel: opens from the three-line button */
-  let open = false;
-  function setLogin(v) {
-    open = v;
-    panel.classList.toggle('open', v);
-    panel.setAttribute('aria-hidden', String(!v));
-    panel.inert = !v;
-    menuBtn.setAttribute('aria-expanded', String(v));
-    menuBtn.setAttribute('aria-label', v ? 'Close login' : 'Admin and chef login');
-    if (v) setTimeout(() => form.email.focus(), 300);
-  }
-  menuBtn.addEventListener('click', () => setLogin(!open));
-  document.addEventListener('click', e => {
-    if (open && !panel.contains(e.target) && !menuBtn.contains(e.target)) setLogin(false);
-  });
-  addEventListener('keydown', e => {
-    if (e.key === 'Escape' && open) { setLogin(false); menuBtn.focus(); }
-  });
-
-  /* login submit: until the team's auth code is connected, it goes to the admin login page */
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    note.textContent = '';
-    if (!form.email.value.trim() || !form.password.value) {
-      note.textContent = 'Enter your email and password.';
-      return;
-    }
-    // Connection point: when js/api/auth.js is shared, sign in here instead of redirecting.
+  /* staff login: the three-line button opens the login page directly (no popup) */
+  menuBtn.addEventListener('click', () => {
     location.href = '../Admin%20Panel/admin/login.html';
   });
 })();

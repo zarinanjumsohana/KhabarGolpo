@@ -1,9 +1,8 @@
-(function () {
+﻿(function () {
   'use strict';
 
   var THEME_KEY = 'kg.kitchen.theme';
   var ALERT_KEY = 'kg.kitchen.alertMinutes';
-  var SOLD_KEY = 'kg.kitchen.soldout';
   var DEFAULT_ALERT = 15;
   var MIN_ALERT = 1;
   var MAX_ALERT = 120;
@@ -83,26 +82,13 @@
     return Math.min(MAX_ALERT, Math.max(MIN_ALERT, value));
   }
 
-  function readSoldOut() {
-    var raw = readStorage(SOLD_KEY);
-    if (!raw) return [];
-    try {
-      var parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
   var alertMinutes = readAlertMinutes();
-  var soldOut = {};
 
   /* ------------------------------ page switch ------------------------------ */
 
   var pages = Array.prototype.slice.call(document.querySelectorAll('[data-page]'));
   var pageLinks = pages.length ? Array.prototype.slice.call(document.querySelectorAll('[data-page-link]')) : [];
   var live = document.querySelector('[data-live]');
-  var menuLive = document.querySelector('[data-menu-live]');
 
   function showPage(name) {
     var found = false;
@@ -504,88 +490,6 @@
       }
     });
   }
-
-  /* ------------------------------ menu / sold out ------------------------------ */
-
-  function persistSoldOut() {
-    var list = [];
-    for (var key in soldOut) {
-      if (Object.prototype.hasOwnProperty.call(soldOut, key) && soldOut[key]) list.push(key);
-    }
-    writeStorage(SOLD_KEY, JSON.stringify(list));
-  }
-
-  function updateMenuSummary() {
-    var cards = document.querySelectorAll('[data-menu-card]');
-    if (!cards.length) return;
-    var total = cards.length;
-    var sold = 0;
-
-    for (var i = 0; i < cards.length; i += 1) {
-      var name = cards[i].getAttribute('data-menu-card');
-      if (soldOut[name]) sold += 1;
-    }
-
-    var availableEl = document.querySelector('[data-menu-available]');
-    var soldEl = document.querySelector('[data-menu-soldout]');
-    var navEl = document.querySelector('[data-menu-nav-count]');
-    if (availableEl) availableEl.textContent = Math.max(0, total - sold);
-    if (soldEl) soldEl.textContent = sold;
-    if (navEl) navEl.textContent = Math.max(0, total - sold);
-  }
-
-  function applySoldOutVisual(name) {
-    var sold = !!soldOut[name];
-    var toggles = document.querySelectorAll('[data-soldout-toggle]');
-
-    for (var i = 0; i < toggles.length; i += 1) {
-      if (toggles[i].getAttribute('data-soldout-toggle') !== name) continue;
-      toggles[i].setAttribute('aria-checked', sold ? 'true' : 'false');
-      toggles[i].setAttribute('aria-label', sold ? 'Mark ' + name + ' as available' : 'Mark ' + name + ' as sold out');
-
-      var card = toggles[i].closest ? toggles[i].closest('[data-menu-card]') : null;
-      if (card) card.classList.toggle('is-soldout', sold);
-
-      var label = toggles[i].querySelector('[data-soldout-label]');
-      if (label) label.textContent = sold ? 'Sold out' : 'Available';
-    }
-
-    var items = document.querySelectorAll('[data-item-name]');
-    for (var j = 0; j < items.length; j += 1) {
-      if (items[j].getAttribute('data-item-name') !== name) continue;
-      items[j].classList.toggle('is-soldout', sold);
-    }
-  }
-
-  function setSoldOut(name, sold) {
-    if (sold) soldOut[name] = true;
-    else delete soldOut[name];
-
-    persistSoldOut();
-    applySoldOutVisual(name);
-    updateMenuSummary();
-
-    if (menuLive) menuLive.textContent = name + (sold ? ' marked as sold out.' : ' marked as available.');
-  }
-
-  document.addEventListener('click', function (event) {
-    var btn = event.target.closest ? event.target.closest('[data-soldout-toggle]') : null;
-    if (!btn) return;
-
-    var name = btn.getAttribute('data-soldout-toggle');
-    setSoldOut(name, !soldOut[name]);
-  });
-
-  var storedSoldOut = readSoldOut();
-  for (var so = 0; so < storedSoldOut.length; so += 1) {
-    if (typeof storedSoldOut[so] === 'string') soldOut[storedSoldOut[so]] = true;
-  }
-
-  var soldToggles = document.querySelectorAll('[data-soldout-toggle]');
-  for (var stg = 0; stg < soldToggles.length; stg += 1) {
-    applySoldOutVisual(soldToggles[stg].getAttribute('data-soldout-toggle'));
-  }
-  updateMenuSummary();
 
   /* ------------------------------ alert settings ------------------------------ */
 
