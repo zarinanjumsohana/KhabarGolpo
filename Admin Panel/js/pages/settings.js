@@ -95,7 +95,7 @@ async function init() {
       return;
     }
     toast({ type: 'info', title: 'Uploading logo…', duration: 1600 });
-    const up = await uploadImage(file);
+    const up = await uploadImage(file, 'brand-assets');
     if (up.error) return toast({ type: 'error', title: 'Upload failed', message: up.error.message });
     logoValue = up.data;
     renderLogo();

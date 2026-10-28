@@ -196,8 +196,7 @@
 
     $('#catName').textContent = current.name;
     const desc = $('#catDesc');
-    desc.textContent = current.description || '';
-    desc.hidden = !current.description;
+    if (desc) { desc.textContent = ''; desc.hidden = true; }
     document.title = `KhabarGolpo · ${current.name}`;
 
     drawRail();

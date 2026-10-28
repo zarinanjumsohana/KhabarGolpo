@@ -7,10 +7,10 @@ import { supabase } from './supabaseClient.js';
 import { requireStaff } from './session.js';
 
 const BOARD = '#view-orders';
-const ADVANCE = { approved: 'preparing', preparing: 'ready', ready: 'completed' };
-const LABEL = { approved: 'Waiting', preparing: 'Preparing', ready: 'Ready' };
-const STATE = { approved: 'waiting', preparing: 'preparing', ready: 'ready' };
-const BTN = { approved: 'Start preparing', preparing: 'Mark as ready', ready: 'Mark completed' };
+const ADVANCE = { new: 'preparing', approved: 'preparing', preparing: 'ready', ready: 'completed' };
+const LABEL = { new: 'New', approved: 'Waiting', preparing: 'Preparing', ready: 'Ready' };
+const STATE = { new: 'waiting', approved: 'waiting', preparing: 'preparing', ready: 'ready' };
+const BTN = { new: 'Start preparing', approved: 'Start preparing', preparing: 'Mark as ready', ready: 'Mark completed' };
 
 const esc = (v) =>
   String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -154,7 +154,7 @@ export async function loadOrders(sb) {
   const { data, error } = await sb
     .from('orders')
     .select('*, order_items(*)')
-    .in('status', ['approved', 'preparing', 'ready'])
+    .in('status', ['new', 'approved', 'preparing', 'ready'])
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -164,7 +164,7 @@ export async function loadOrders(sb) {
 
   const rows = data || [];
   if (!rows.length) {
-    host.innerHTML = '<p class="muted" style="padding:24px">No accepted orders right now. New orders appear here as soon as the admin accepts them.</p>';
+    host.innerHTML = '<p class="muted" style="padding:24px">No active orders right now. New customer orders will appear here automatically.</p>';
     refreshCounts();
     renderMatrix(rows);
     document.dispatchEvent(new CustomEvent('kg:orders-changed'));

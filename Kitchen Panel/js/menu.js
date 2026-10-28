@@ -68,10 +68,26 @@ import { requireStaff } from './session.js';
 
     const top = make('div', 'menu-card-top');
     const id = make('div', 'menu-card-id');
-    id.append(make('h3', 'menu-name', item.name));
+
+    const headRow = make('div', 'menu-card-headrow');
+    if (item.image_url) {
+      const thumb = make('div', 'menu-thumb');
+      const img = new Image();
+      img.src = item.image_url;
+      img.alt = item.name;
+      img.loading = 'lazy';
+      img.addEventListener('error', () => thumb.remove());
+      thumb.append(img);
+      headRow.append(thumb);
+    }
+
+    const info = make('div', 'menu-card-info');
+    info.append(make('h3', 'menu-name', item.name));
 
     const catName = (cats.find((c) => c.id === item.category_id) || {}).name || 'Menu';
-    id.append(make('p', 'menu-meta', catName + ' · ' + money(item.price)));
+    info.append(make('p', 'menu-meta', catName + ' · ' + money(item.price)));
+    headRow.append(info);
+    id.append(headRow);
 
     const btn = make('button', 'switch');
     btn.type = 'button';
@@ -200,18 +216,18 @@ import { requireStaff } from './session.js';
 
     let error = null;
     try {
-      const res = await sb.rpc('set_item_availability', { p_item_id: item.id, p_available: next });
-      error = res.error || null;
+      // Direct update to menu_items (same as Admin Panel)
+      const res = await sb
+        .from('menu_items')
+        .update({ is_available: next })
+        .eq('id', item.id)
+        .select('id, is_available')
+        .maybeSingle();
 
-      /* No RPC yet (setup SQL not run): fall back to a plain update, which the
-         admin account is allowed to do through its own policy. */
-      if (error && (error.code === 'PGRST202' || /could not find the function/i.test(error.message || ''))) {
-        const fb = await sb.from('menu_items').update({ is_available: next }).eq('id', item.id).select('id');
-        error = fb.error || null;
-        /* RLS silently drops writes it does not allow: zero rows means "no". */
-        if (!error && (!fb.data || !fb.data.length)) {
-          error = { code: 'RLS_DENIED', message: 'This account is not allowed to change the menu.' };
-        }
+      if (res.error) {
+        // Fallback to RPC if update fails
+        const rpcRes = await sb.rpc('set_availability', { p_item: item.id, p_avail: next });
+        if (rpcRes.error) error = res.error;
       }
     } catch (e) {
       error = { message: String(e && e.message ? e.message : e) };
@@ -224,8 +240,8 @@ import { requireStaff } from './session.js';
       const denied = error.code === '42501' || /permission denied|only staff|not allowed/i.test(error.message || '');
       announce(
         denied
-          ? 'Only staff can change availability. Ask the owner to run the kitchen setup SQL.'
-          : 'Could not save. ' + (error.message || 'Unknown error')
+          ? 'Only staff can change availability. Run the Supabase permission SQL.'
+          : 'Could not save: ' + (error.message || 'Unknown error')
       );
     } else {
       announce(item.name + (next ? ' marked as available again.' : ' marked as sold out.'));
@@ -293,10 +309,16 @@ import { requireStaff } from './session.js';
 
     if (refreshBtn) refreshBtn.addEventListener('click', () => load({ silent: false }));
 
+    /* Realtime sync: if admin adds/edits dishes or categories in Admin Panel, kitchen board updates instantly */
+    sb.channel('kitchen-menu-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => load({ silent: true }))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => load({ silent: true }))
+      .subscribe();
+
     /* keep the board fresh if the admin adds or edits a dish while this tab is open */
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState !== 'visible') return;
-      if (Date.now() - lastFocus < 30000) return;
+      if (Date.now() - lastFocus < 15000) return;
       lastFocus = Date.now();
       load({ silent: true });
     });

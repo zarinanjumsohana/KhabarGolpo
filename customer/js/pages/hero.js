@@ -56,7 +56,8 @@
     body.classList.add('hero-on');
   }
 
-  /* nav box: visible only while the hero is on screen (more than 35% of it), so it never sits over the story */
+  /* nav box: immediately styled for hero, then observed */
+  topbar.classList.add('hero-view');
   const heroWatch = new IntersectionObserver(([entry]) => {
     topbar.classList.toggle('hero-view', entry.intersectionRatio > 0.35);
   }, { threshold: [0, 0.35, 1] });

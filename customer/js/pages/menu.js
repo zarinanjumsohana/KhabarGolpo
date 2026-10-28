@@ -1,16 +1,9 @@
-/* KhabarGolpo menu: one row per category (plate and text side by side). Rows move up and down
-   one at a time as you scroll. No sparkles. Categories come from the shared store through window.KG. */
+/* KhabarGolpo menu: one row per category, alternating left and right, natural vertical scrolling. */
 (() => {
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const MOBILE = matchMedia('(max-width: 820px)');
-
   const section = document.getElementById('menu');
-  const track = document.getElementById('mnTrack');
-  const stage = document.getElementById('mnStage');
   const unitsEl = document.getElementById('mnUnits');
-  const dotsEl = document.getElementById('mnDots');
 
-  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const make = (tag, cls, text) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -18,21 +11,52 @@
     return n;
   };
 
-  let cats = [], N = 0;
-  let STEP = 60;          // how many vh of scrolling each category takes
-  let units = [], dots = [];
-  let P = 0, Pd = 0, shown = -1;
+  const DEFAULT_CATS = [
+    {
+      id: "00e0edce-0910-4c33-bc1a-c19c712b65fd",
+      name: "A First Impression",
+      intro: "Starters & Appetizers.\nThe perfect beginning to a memorable dining experience.",
+      image: "https://ewsvwxgoyfbsnhsrxnoo.supabase.co/storage/v1/object/public/menu-images/1793216974801-kheruq.jpeg"
+    },
+    {
+      id: "cd624018-9523-430d-868e-175f60088f8a",
+      name: "Treasures of the Sea",
+      intro: "Seafood & Ocean Specialties\n\nA premium collection for seafood lovers, inspired by coastal cuisines around the world.",
+      image: "https://ewsvwxgoyfbsnhsrxnoo.supabase.co/storage/v1/object/public/menu-images/1793215183188-mqjjux.jpeg"
+    },
+    {
+      id: "5e1a1a64-6018-45c3-8375-533ae5038d29",
+      name: "Roots & Heritage",
+      intro: "Bengali & South Asian Classics\nCelebrating familiar flavours, traditional recipes, and culinary heritage.",
+      image: "https://ewsvwxgoyfbsnhsrxnoo.supabase.co/storage/v1/object/public/menu-images/1793215274075-gpdgnk.jpeg"
+    },
+    {
+      id: "bb954bc0-b165-4ccc-9313-a8fcfbea395c",
+      name: "A Sweet Ending",
+      intro: "Desserts & Confections.\nAn indulgent final chapter, from European patisserie to Bengali sweets.",
+      image: "https://ewsvwxgoyfbsnhsrxnoo.supabase.co/storage/v1/object/public/menu-images/1793215603177-zh26lh.jpeg"
+    },
+    {
+      id: "e5675b63-c747-493a-acde-8df0891c9a98",
+      name: "The Drinks Atelier",
+      intro: "Beverages & Signature Mixes.\nCrafted refreshments, elegant mocktails, coffees, and teas.",
+      image: "https://ewsvwxgoyfbsnhsrxnoo.supabase.co/storage/v1/object/public/menu-images/1793216831318-k3yyod.jpeg"
+    }
+  ];
 
-  /* Categories come from the shared store. */
   async function loadCategories() {
-    if (!window.KG) return [];
-    const { data, error } = await window.KG.getCategories();
-    return error ? [] : (data || []);
+    if (!window.KG) return DEFAULT_CATS;
+    try {
+      const { data, error } = await window.KG.getCategories();
+      if (error || !data || !data.length) return DEFAULT_CATS;
+      return data;
+    } catch (e) {
+      return DEFAULT_CATS;
+    }
   }
 
-  /* Accepts the database names (description, image_url) and the older mock names (intro, image) */
-   function normalise(raw) {
-    return raw
+  function normalise(raw) {
+    const list = raw
       .map((c) => ({
         id: c.id,
         name: c.name || '',
@@ -40,102 +64,78 @@
         image: c.image_url || c.image || '',
       }))
       .filter((c) => c.name);
+    return list.length ? list : DEFAULT_CATS;
   }
 
-  /* ---------- build one row per category (textContent only) ---------- */
-  function buildDOM() {
+  function renderRows(cats) {
+    if (!unitsEl) return;
+    unitsEl.textContent = '';
+
     cats.forEach((c, i) => {
       const side = i % 2 === 0 ? 'left' : 'right';
 
       const unit = make('div', 'mn-unit');
       unit.dataset.side = side;
+      unit.setAttribute('data-reveal', '');
 
+      // Plate
       const plate = make('div', 'mn-plate');
-      plate.append(make('div', 'mn-disc'));
+      const disc = make('div', 'mn-disc');
+      disc.append(make('span', 'mn-disc-letter', (c.name || 'K').trim().charAt(0).toUpperCase()));
+      plate.append(disc);
       if (c.image) {
         const img = new Image();
-        img.alt = '';
+        img.alt = c.name;
         img.src = c.image;
+        img.loading = 'lazy';
         img.addEventListener('error', () => plate.classList.add('no-img'));
         plate.prepend(img);
       } else {
         plate.classList.add('no-img');
       }
 
+      // Text
       const text = make('div', 'mn-text');
+      text.append(make('p', 'mn-chapter-num', `Chapter ${String(i + 1).padStart(2, '0')}`));
       text.append(make('h3', '', c.name));
       if (c.intro) text.append(make('p', 'mn-intro', c.intro));
 
+      const link = make('a', 'mn-cta', 'Explore Dishes →');
+      link.href = `category.html?id=${encodeURIComponent(c.id)}`;
+      text.append(link);
+
       unit.append(plate, text);
-      unit.addEventListener('click', () => {
-        location.href = `category.html?id=${encodeURIComponent(c.id)}`;
+      unit.addEventListener('click', (e) => {
+        if (!e.target.closest('a')) {
+          location.href = `category.html?id=${encodeURIComponent(c.id)}`;
+        }
       });
+
       unitsEl.append(unit);
-
-      const dot = make('button');
-      dot.type = 'button';
-      dot.setAttribute('aria-label', c.name);
-      dot.addEventListener('click', () => goTo(i));
-      dotsEl.append(dot);
-    });
-    units = [...unitsEl.children];
-    dots = [...dotsEl.children];
-  }
-
-  /* Track height: one screen, plus one step for each extra category, so each step moves one row. */
-  function layout() {
-    STEP = MOBILE.matches ? 72 : 60;
-    track.style.height = `calc(100vh + ${Math.max(0, N - 1) * STEP}vh)`;
-    measure();
-  }
-
-  /* scroll progress: P runs from 0 (first category) to N-1 (last) */
-  function measure() {
-    const total = track.offsetHeight - stage.offsetHeight;
-    const scrolled = total > 0 ? clamp(-track.getBoundingClientRect().top / total) : 0;
-    P = scrolled * Math.max(0, N - 1);
-  }
-
-  function goTo(i) {
-    const total = track.offsetHeight - stage.offsetHeight;
-    const top = track.getBoundingClientRect().top + scrollY + (N > 1 ? i / (N - 1) : 0) * total;
-    window.scrollTo({ top, behavior: RM ? 'auto' : 'smooth' });
-  }
-
-  /* ---------- frame loop ---------- */
-  function frame() {
-    requestAnimationFrame(frame);
-    Pd += (P - Pd) * (RM ? 1 : 0.14);
-
-    units.forEach((u, i) => {
-      const d = i - Pd;
-      const a = Math.abs(d);
-      u.style.opacity = Math.max(0, 1 - a * 1.1).toFixed(3);
-      u.style.transform = `translate3d(-50%, calc(-50% + ${(d * STEP).toFixed(2)}vh), 0)`;
-      u.firstElementChild.style.transform =
-        `rotate(${(RM ? 0 : -d * 90).toFixed(1)}deg) scale(${(1 - 0.1 * Math.min(1, a)).toFixed(3)})`;
     });
 
-    const idx = clamp(Math.round(Pd), 0, N - 1);
-    if (idx !== shown) {
-      shown = idx;
-      dots.forEach((b, j) => b.setAttribute('aria-current', String(j === idx)));
+    // Reveal animations on scroll
+    const reveals = unitsEl.querySelectorAll('[data-reveal]');
+    if (RM || !('IntersectionObserver' in window)) {
+      reveals.forEach(el => el.classList.add('in'));
+    } else {
+      const io = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        }
+      }, { threshold: 0.12 });
+      reveals.forEach(el => io.observe(el));
     }
   }
 
-  /* ---------- boot ---------- */
   async function init() {
-    cats = normalise(await loadCategories());
-    N = cats.length;
-    if (!N) { section.hidden = true; return; }   // no categories yet: hide the section
-
-    buildDOM();
-    layout();
-    Pd = P;
-
-    addEventListener('scroll', measure, { passive: true });
-    addEventListener('resize', layout);
-    requestAnimationFrame(frame);
+    if (!section) return;
+    section.hidden = false;
+    const cats = normalise(await loadCategories());
+    renderRows(cats);
   }
 
   init();

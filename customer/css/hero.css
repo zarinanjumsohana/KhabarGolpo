@@ -28,7 +28,7 @@ section[id]{scroll-margin-top:96px}
 }
 
 /* ---------- top bar: always visible (logo and login button) ---------- */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:12px;padding:14px 16px;opacity:0;transform:translateY(-16px);transition:opacity .7s var(--ease-in),transform .7s var(--ease-in)}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:12px;padding:14px 16px;opacity:1;transform:none}
 @media (min-width:768px){.topbar{padding:20px 32px;gap:20px}}
 .is-mounted .topbar{opacity:1;transform:none}
 
@@ -39,9 +39,26 @@ section[id]{scroll-margin-top:96px}
 .brand-name{font-size:19px;font-weight:600;letter-spacing:-.02em;white-space:nowrap;text-shadow:0 2px 12px rgba(0,0,0,.5)}
 @media (min-width:768px){.brand-name{font-size:22px}}
 
-/* nav box: transparent with a border, no blur. Only shown while the hero is on screen (set by hero.js) */
-.nav-pill{flex:1 1 auto;min-width:0;height:var(--nav-h);border-radius:999px;display:flex;align-items:center;padding:0 6px;background:transparent;border:1px solid rgba(255,255,255,.55);box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:opacity .4s var(--ease-in),visibility .4s}
-.topbar:not(.hero-view) .nav-pill{opacity:0;visibility:hidden;pointer-events:none}
+/* nav box: elegant pill navbar, always visible on all pages */
+.nav-pill{
+  flex:1 1 auto;
+  min-width:0;
+  height:var(--nav-h);
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  padding:0 8px;
+  background:rgba(20, 16, 12, 0.55);
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  transition:background .35s,border-color .35s;
+}
+.hero-view .nav-pill{
+  background:rgba(255,255,255,.05);
+  border-color:rgba(255,255,255,.45);
+}
 
 .links{list-style:none;display:flex;align-items:center;gap:4px;width:100%;overflow-x:auto;scrollbar-width:none;white-space:nowrap}
 @media (min-width:900px){.links{justify-content:center}}
@@ -89,8 +106,8 @@ section[id]{scroll-margin-top:96px}
 .lp-sub{color:rgba(255,255,255,.92);font-size:1rem;margin-bottom:26px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
 @media (min-width:768px){.lp-sub{font-size:1.125rem;margin-bottom:32px}}
 
-/* text entrance: each line rises in with its own delay */
-.fg-item{opacity:0;transform:translateY(32px);transition:opacity .9s var(--ease-in),transform .9s var(--ease-in);transition-delay:var(--d,0ms)}
+/* text entrance: immediately visible from page load */
+.fg-item{opacity:1;transform:none}
 .hero-on .fg-item{opacity:1;transform:none}
 
 .cta{display:inline-block;padding:14px 32px;border-radius:999px;background:var(--glass-bg-strong);border:1px solid var(--glass-border);color:#fff;font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);transition:background-color .3s,transform .3s}

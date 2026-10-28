@@ -70,7 +70,7 @@ async function handleFiles(fileList) {
   if (!files.length) return;
   let added = 0;
   for (const file of files) {
-    const up = await uploadImage(file);
+    const up = await uploadImage(file, 'gallery-images');
     if (up.error) {
       toast({ type: 'error', title: `${file.name} skipped`, message: up.error.message });
       continue;

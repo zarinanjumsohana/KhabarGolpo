@@ -3,7 +3,7 @@
 /* top bar: the cart button sits top right on shop pages and while the menu is on screen */
 .cart-btn{display:none;position:relative;width:var(--nav-h);height:var(--nav-h);margin-left:auto;border-radius:50%;align-items:center;justify-content:center;background:var(--glass-bg);border:1px solid var(--glass-border);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);color:#fff;text-decoration:none;flex:0 0 auto}
 .topbar.shop .cart-btn,.topbar.in-menu .cart-btn{display:flex}
-.topbar.shop .menu-wrap,.topbar.shop .nav-pill,.topbar.in-menu .menu-wrap{display:none}
+.topbar.shop .menu-wrap,.topbar.in-menu .menu-wrap{display:none}
 .cart-count{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:#f2c46d;color:#1a120c;font-size:12px;font-weight:700;display:grid;place-items:center}
 .cart-count[hidden]{display:none}
 .shop-nav{flex:1 1 auto;text-align:center}
@@ -32,8 +32,17 @@
 
 /* category panel and dish */
 .cat-panel{padding:40px 44px 34px;border-radius:32px;min-height:520px}
-.cat-desc{margin-bottom:6px}
-.cat-name{font-family:'Pinyon Script',cursive;font-weight:400;font-size:clamp(48px,6vw,84px);line-height:1.05;color:#e8c98a;margin-bottom:24px}
+.cat-desc{display:none!important}
+.cat-name{
+  text-align:center;
+  font-family:'Pinyon Script',cursive;
+  font-weight:400;
+  font-size:clamp(48px,6vw,84px);
+  line-height:1.05;
+  color:#e8c98a;
+  margin:0 auto 28px;
+  text-shadow:0 2px 20px rgba(0,0,0,.6);
+}
 .dish-stage{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
 .dish-info{transition:opacity .45s var(--ease-in),transform .45s var(--ease-in)}
 .dish-stage.leave .dish-info{opacity:0;transform:translateY(18px)}
@@ -45,7 +54,14 @@
 .add-btn:disabled{opacity:.45;cursor:not-allowed}
 .add-msg{min-height:1.2em;margin-top:12px;font-size:14px;color:#cfeacb}
 .dish-photo{display:grid;place-items:center}
-.dish-photo img{width:min(100%,380px);aspect-ratio:1;object-fit:contain;border-radius:50%;filter:drop-shadow(0 26px 30px rgba(0,0,0,.5));transition:opacity .4s}
+.dish-photo img{
+  width:min(100%,360px);
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:50%;
+  box-shadow:0 20px 42px rgba(0,0,0,.6), 0 0 0 5px rgba(232,201,138,.35);
+  transition:opacity .4s;
+}
 .dish-stage.leave .dish-photo img{opacity:0}
 .dish-photo img.turn{animation:plateTurn 1s var(--ease-in) both}
 @keyframes plateTurn{

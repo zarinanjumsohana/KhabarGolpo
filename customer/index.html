@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KhabarGolpo</title>
 <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
-<link rel="preload" as="video" type="video/mp4" href="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260819_212700_3bb9329b-5c50-4257-a09b-ca85cf3654a3.mp4">
+<link rel="preload" as="video" type="video/mp4" href="assets/video/hero.mp4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Instrument+Serif:ital@0;1&family=Noto+Serif+Bengali:wght@600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="css/sections.css">
 <link rel="stylesheet" href="css/shop.css">
 </head>
-<body>
+<body class="is-mounted hero-on">
 
 <!-- AMBIENT: floral frame behind the pages, then the moving layer on top -->
 <div class="ambient" aria-hidden="true">
@@ -36,9 +36,9 @@
 
   <nav class="nav-pill" aria-label="Main">
     <ul class="links">
+      <li><a href="#top">Home</a></li>
       <li><a href="#story">Our Story</a></li>
       <li><a href="#menu">Menu</a></li>
-      <li><a href="#all-menu">All Dishes</a></li>
       <li><a href="#gallery">Galerie</a></li>
       <li><a href="#reservation">Reservation</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -65,16 +65,18 @@
   <!-- 1. HERO -->
   <section class="hero" id="hero">
     <div class="scene-wrap" id="sceneWrap">
-      <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260819_212700_3bb9329b-5c50-4257-a09b-ca85cf3654a3.mp4"></video>
+      <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto" src="assets/video/hero.mp4">
+        <source src="assets/video/hero.mp4" type="video/mp4">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260819_212700_3bb9329b-5c50-4257-a09b-ca85cf3654a3.mp4" type="video/mp4">
+      </video>
       <a class="door" id="door" href="#story" aria-label="Enter: scroll to our story"></a>
     </div>
 
     <div class="hero-fg">
-      <h1 class="fg-item" style="--d:400ms">Every Bite Tells a Story</h1>
-      <p class="lp-sub fg-item" style="--d:600ms">Grab A Seat &amp; Let Every Flavor Tell a Tale!</p>
-      <div class="fg-item" style="--d:800ms">
-        <a class="cta" href="#reservation">Reserve a table</a>
+      <h1 class="fg-item">Every Bite Tells a Story</h1>
+      <p class="lp-sub fg-item">Grab A Seat &amp; Let Every Flavor Tell a Tale!</p>
+      <div class="fg-item">
+        <a class="cta" href="#menu">Order a Bite</a>
       </div>
     </div>
   </section>
@@ -88,33 +90,18 @@
     </div>
   </section>
 
-  <!-- 3. MENU: one row per category. Clicking a row opens that category's dishes. -->
-  <section class="mn" id="menu" aria-labelledby="mnTitle">
-    <div class="mn-track" id="mnTrack">
-      <div class="mn-stage" id="mnStage">
-        <header class="mn-head">
-          <p class="mn-discover">Discover</p>
-          <h2 id="mnTitle">Our Menu</h2>
-        </header>
+  <!-- 3. MENU: Discover our culinary chapters vertically -->
+  <section class="sec mn" id="menu" aria-labelledby="mnTitle">
+    <div class="sec-wrap">
+      <header class="mn-head">
+        <p class="mn-discover" data-reveal>Discover</p>
+        <h2 class="sec-title" id="mnTitle" data-reveal>Our Menu</h2>
+      </header>
 
-        <div class="mn-units" id="mnUnits"></div>
-        <nav class="mn-dots" id="mnDots" aria-label="Menu categories"></nav>
-      </div>
+      <div class="mn-units" id="mnUnits"></div>
     </div>
   </section>
 
-  <!-- 3b. FULL MENU: every dish added in the admin panel, all on the home page. -->
-  <section class="all-menu" id="all-menu" aria-labelledby="allMenuTitle">
-    <div class="all-head">
-      <p class="all-kicker">Every dish</p>
-      <h2 id="allMenuTitle">The full menu</h2>
-      <p class="all-sub">Everything on the menu right now. Filter by category, or tap a dish to open its page.</p>
-    </div>
-
-    <div class="all-chips" id="allChips" aria-label="Filter dishes by category"></div>
-    <div class="all-grid" id="allGrid" aria-live="polite"></div>
-    <p class="all-empty" id="allEmpty" hidden></p>
-  </section>
 
   <!-- 4. GALLERY -->
   <section class="sec gallery" id="gallery" aria-labelledby="galTitle">
@@ -197,45 +184,49 @@
     </div>
   </section>
 
-  <!-- 6. CONTACT -->
+  <!-- 6. CONTACT & FEEDBACK -->
   <section class="sec contact" id="contact" aria-labelledby="conTitle">
-    <div class="sec-wrap">
-      <p class="kicker" data-reveal>Contact</p>
-      <h2 class="sec-title" id="conTitle" data-reveal>Visit, call or write to us</h2>
-      <div class="contact-grid">
-        <div class="glass card" data-reveal>
-          <dl class="contact-list" id="conList"></dl>
-        </div>
+    <div class="sec-wrap narrow-contact">
+      <div class="contact-top-head" style="text-align:center;margin-bottom:28px">
+        <p class="kicker" data-reveal>Contact &amp; Reviews</p>
+        <h2 class="sec-title" id="conTitle" data-reveal style="margin-bottom:12px">Share Your Experience</h2>
+      </div>
 
-        <form class="glass card" id="fbForm" data-reveal novalidate>
-          <h3 class="sec-title" style="font-size:34px;margin-bottom:20px">Send us a message</h3>
-          <div class="row2">
-            <label>Your name
-              <input name="name" maxlength="80" autocomplete="name" required>
-            </label>
-            <label>Type
-              <select name="type">
-                <option value="review">Review</option>
-                <option value="query">Question</option>
-                <option value="suggestion">Suggestion</option>
-              </select>
-            </label>
-          </div>
+      <!-- Concise Feedback & Rating Box -->
+      <form class="glass card fb-compact" id="fbForm" data-reveal novalidate>
+        <div class="row2">
+          <label>Your name
+            <input name="name" maxlength="80" autocomplete="name" placeholder="Full name" required>
+          </label>
+          <label>Feedback Type
+            <select name="type">
+              <option value="review">Review</option>
+              <option value="query">Question</option>
+              <option value="suggestion">Suggestion</option>
+            </select>
+          </label>
+        </div>
+        <div class="row2">
           <label>Phone (optional)
-            <input name="phone" type="tel" inputmode="tel" maxlength="20">
+            <input name="phone" type="tel" inputmode="tel" maxlength="20" placeholder="+8801...">
           </label>
           <div id="ratingWrap">
             <p style="font-size:14px;color:rgba(255,255,255,.8);margin-bottom:6px">Rating</p>
             <div class="stars" id="stars"></div>
           </div>
-          <label>Message
-            <textarea name="message" rows="4" maxlength="1000" required></textarea>
-          </label>
-          <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <p class="err" id="fbErr" role="alert"></p>
-          <button class="cta" type="submit">Send</button>
-          <p class="ok-msg" id="fbOk" role="status"></p>
-        </form>
+        </div>
+        <label>Message
+          <textarea name="message" rows="3" maxlength="1000" placeholder="Write your words here..." required></textarea>
+        </label>
+        <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="err" id="fbErr" role="alert"></p>
+        <button class="cta" type="submit" style="width:100%;text-align:center">Send Message</button>
+        <p class="ok-msg" id="fbOk" role="status"></p>
+      </form>
+
+      <!-- Plain Text Contact Details (No glass box, cleanly resting over bottom flowers) -->
+      <div class="contact-plain-wrap" data-reveal>
+        <dl class="contact-plain-list" id="conList"></dl>
       </div>
     </div>
   </section>
@@ -256,7 +247,6 @@
 <script src="js/pages/hero.js"></script>
 <script src="js/utils/ambient.js"></script>
 <script src="js/pages/menu.js"></script>
-<script src="js/pages/all-dishes.js"></script>
 <script src="js/pages/sections.js"></script>
 </body>
 </html>

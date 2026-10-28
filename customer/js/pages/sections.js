@@ -39,7 +39,11 @@
     const dl = $('#conList');
     dl.textContent = '';
     [['Address', s.address], ['Phone', s.phone], ['Email', s.email], ['Hours', s.hours]]
-      .forEach(([k, v]) => dl.append(make('dt', '', k), make('dd', '', v || 'To be added')));
+      .forEach(([k, v]) => {
+        const item = make('div', 'con-item');
+        item.append(make('dt', '', k), make('dd', '', v || 'To be added'));
+        dl.append(item);
+      });
 
     const times = field(resForm, 'time');
     times.textContent = '';

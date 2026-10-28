@@ -95,19 +95,24 @@ export const setAvailability = (id, is_available) =>
     }
   );
 
-/** Uploads to Supabase Storage in live mode, returns a data URL in mock mode. */
-export const uploadImage = (file) =>
+/**
+ * Uploads an image to Supabase Storage.
+ * @param {File} file - The image file to upload.
+ * @param {'menu-images'|'gallery-images'|'brand-assets'} [bucket='menu-images'] - Target bucket.
+ */
+export const uploadImage = (file, bucket = 'menu-images') =>
   withMock(
     () => Mock.adminContent.uploadImage(file),
     async () => {
       if (!file) return fail('NO_FILE', 'No file selected.');
       if (!String(file.type || '').startsWith('image/')) return fail('BAD_TYPE', 'Only image files can be uploaded.');
-      if (file.size > 2 * 1024 * 1024) return fail('TOO_LARGE', 'Images must be 2 MB or smaller.');
+      if (file.size > 5 * 1024 * 1024) return fail('TOO_LARGE', 'Images must be 5 MB or smaller.');
       const client = await getSb();
-      const path = `${Date.now()}-${file.name.replace(/[^\w.-]+/g, '_')}`;
-      const res = await client.storage.from('menu-images').upload(path, file, { upsert: false });
+      const ext = file.name.split('.').pop().toLowerCase().replace(/[^\w]/g, '') || 'jpg';
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const res = await client.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type });
       if (res.error) return fail('UPLOAD_FAILED', friendly(res.error.message));
-      const { data } = client.storage.from('menu-images').getPublicUrl(res.data.path);
+      const { data } = client.storage.from(bucket).getPublicUrl(res.data.path);
       return { data: data.publicUrl, error: null };
     }
   );
