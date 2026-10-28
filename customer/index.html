@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KhabarGolpo</title>
+<link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
+<link rel="preload" as="video" type="video/mp4" href="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260819_212700_3bb9329b-5c50-4257-a09b-ca85cf3654a3.mp4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Instrument+Serif:ital@0;1&family=Noto+Serif+Bengali:wght@600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
@@ -152,6 +154,9 @@
           <label>Name for the booking
             <input name="name" maxlength="80" autocomplete="name" required>
           </label>
+          <label>Email address
+            <input name="email" type="email" maxlength="120" autocomplete="email" placeholder="you@example.com" required>
+          </label>
           <label>Phone
             <input name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="01XXXXXXXXX" required>
           </label>
@@ -177,14 +182,9 @@
             </select>
           </label>
         </div>
-        <label>Table
-          <select name="table_id" id="resTable" required disabled>
-            <option value="">Choose a time first</option>
-          </select>
-        </label>
-        <p class="table-hint" id="resTableHint" role="status"></p>
-        <label>Note (optional)
-          <textarea name="note" rows="3" maxlength="300"></textarea>
+
+        <label>Special requests or seating preferences (optional)
+          <textarea name="note" rows="3" maxlength="300" placeholder="e.g. Window side, quiet table, anniversary celebration..."></textarea>
         </label>
         <input class="hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="err" id="resErr" role="alert"></p>

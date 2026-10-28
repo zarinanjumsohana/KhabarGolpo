@@ -6,7 +6,8 @@
 import { supabase } from './supabaseClient.js';
 
 export const ADMIN_DASHBOARD = '../../Admin%20Panel/admin/dashboard.html';
-export const KITCHEN_LOGIN = 'login.html';
+export const STAFF_LOGIN = '../../Admin%20Panel/admin/login.html';
+export const KITCHEN_LOGIN = STAFF_LOGIN;
 
 let clientPromise = null;
 
@@ -56,7 +57,8 @@ export async function signOutNow() {
   Object.keys(localStorage)
     .filter((k) => k.startsWith('sb-') || k.startsWith('kg.'))
     .forEach((k) => localStorage.removeItem(k));
-  location.replace(KITCHEN_LOGIN);
+  sessionStorage.clear();
+  location.replace(STAFF_LOGIN);
 }
 
 /* any link/button marked data-logout signs out instead of just navigating */

@@ -52,8 +52,8 @@
   if (RM) {
     body.classList.add('is-mounted', 'hero-on');
   } else {
-    setTimeout(() => body.classList.add('is-mounted'), 100);
-    setTimeout(() => body.classList.add('hero-on'), 300);
+    body.classList.add('is-mounted');
+    body.classList.add('hero-on');
   }
 
   /* nav box: visible only while the hero is on screen (more than 35% of it), so it never sits over the story */

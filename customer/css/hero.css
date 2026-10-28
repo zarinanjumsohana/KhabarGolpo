@@ -61,8 +61,8 @@ section[id]{scroll-margin-top:96px}
 /* entrance: starts slightly zoomed and transparent, settles to full size.
    The bottom of the video fades out with a mask (not an overlay), so it dissolves into the frame. */
 .scene-wrap{
-  position:absolute;inset:0;transform:scale(1.05);opacity:0;
-  transition:transform 1400ms var(--ease-in),opacity 1400ms var(--ease-in);
+  position:absolute;inset:0;transform:scale(1);opacity:1;
+
   transform-origin:50% 40%;
   -webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 100%);
   mask-image:linear-gradient(to bottom,#000 72%,transparent 100%);

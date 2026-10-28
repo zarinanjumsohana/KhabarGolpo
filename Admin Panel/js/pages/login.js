@@ -18,7 +18,11 @@ let qIndex = 0;
 /* The account's role decides which panel opens. Admin -> admin panel, chef -> kitchen panel. */
 const ADMIN_PANEL = './dashboard.html';
 const KITCHEN_PANEL = '../../Kitchen%20Panel/html/index.html';
-const panelFor = (role) => (role === 'chef' ? KITCHEN_PANEL : ADMIN_PANEL);
+const nextParam = new URLSearchParams(location.search).get('next');
+const safeKitchenNext = nextParam && /^(index|completed)\.html(#[\w-]+)?$/.test(nextParam)
+  ? `../../Kitchen%20Panel/html/${nextParam}`
+  : null;
+const panelFor = (role) => (role === 'chef' ? (safeKitchenNext || KITCHEN_PANEL) : ADMIN_PANEL);
 
 function rotateQuotes() {
   const el = document.getElementById('quote');

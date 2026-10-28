@@ -57,6 +57,7 @@
   function checkReservation(r) {
     const name = String(r.name || '').trim();
     if (!name || name.length > 80) return fail('VALIDATION_ERROR', 'Please enter the name for the booking.');
+    if (r.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(r.email).trim())) return fail('VALIDATION_ERROR', 'Please enter a valid email address.');
     if (!PHONE.test(String(r.phone || ''))) return fail('BAD_PHONE', 'Please enter a valid mobile number.');
     if (!/^\d{4}-\d{2}-\d{2}$/.test(r.date || '')) return fail('VALIDATION_ERROR', 'Please choose a date.');
     const [y, m, d] = r.date.split('-').map(Number);
@@ -69,7 +70,7 @@
     if (!Number.isInteger(g) || g < 1 || g > 50) return fail('VALIDATION_ERROR', 'Guests must be between 1 and 50.');
     if (String(r.note || '').length > 300) return fail('VALIDATION_ERROR', 'The note is too long.');
     if (r.honeypot) return fail('SPAM_DETECTED', 'Your request could not be accepted.');
-    if (!r.table_id) return fail('VALIDATION_ERROR', 'Please choose a table.');
+    // table_id is optional – customers no longer select a table
     return null;
   }
 
@@ -475,20 +476,15 @@
       const sb = await getClient();
       if (!sb) {
         return withStore((S, save) => {
-          const busy = (S.reservations || []).some(
-            (x) => x.table_id === r.table_id && x.date === r.date && x.time === r.time && x.status !== 'cancelled'
-          );
-          if (busy) return fail('TABLE_TAKEN', 'That table is already booked at this time. Please pick another table.');
-
           const rec = {
             id: 'res_' + Date.now(),
             name: String(r.name).trim(),
+            email: String(r.email || '').trim(),
             phone: String(r.phone),
             date: r.date,
             time: r.time,
             guests: Number(r.guests),
-            note: String(r.note || '').trim(),
-            table_id: r.table_id,
+            note: (r.email ? `[Email: ${String(r.email).trim()}] ` : '') + String(r.note || '').trim(),
             status: 'pending',
             created_at: new Date().toISOString(),
           };
@@ -508,8 +504,7 @@
         date: r.date,
         time: r.time,
         guests: Number(r.guests) || 1,
-        note: String(r.note || '').trim(),
-        table_id: r.table_id,
+        note: (r.email ? `[Email: ${String(r.email).trim()}] ` : '') + String(r.note || '').trim(),
       };
 
       const { data, error } = await sb.rpc('book_table', {
@@ -520,7 +515,6 @@
         p_guests: payload.guests,
         p_note: payload.note,
         p_honeypot: r.honeypot || '',
-        p_table_id: payload.table_id,
       });
 
       /* If the function has not been created yet, fall back to a plain insert
