@@ -69,6 +69,7 @@
     if (!Number.isInteger(g) || g < 1 || g > 50) return fail('VALIDATION_ERROR', 'Guests must be between 1 and 50.');
     if (String(r.note || '').length > 300) return fail('VALIDATION_ERROR', 'The note is too long.');
     if (r.honeypot) return fail('SPAM_DETECTED', 'Your request could not be accepted.');
+    if (!r.table_id) return fail('VALIDATION_ERROR', 'Please choose a table.');
     return null;
   }
 
@@ -306,7 +307,7 @@
         });
       }
 
-      const { data, error } = await sb.rpc('place_online_order', {
+      const { data, error } = await sb.rpc('kg_place_online_order', {
         p_type: p.order_type,
         p_lines: p.lines,
         p_name: p.name,
@@ -318,7 +319,86 @@
         p_honeypot: p.honeypot || null,
       });
 
-      if (error) return fail('ORDER_FAILED', error.message);
+      if (error) {
+        if (error.code === 'PGRST202') return fail('ORDER_FAILED', 'Online ordering is not available right now. Please call the restaurant.');
+        return fail('ORDER_FAILED', error.message);
+      }
+      return ok(data);
+    },
+
+    /* Dine-in: the guest scanned the QR code on the table. No pickup time and
+       no address; the kitchen needs the table number. */
+    placeDineinOrder: async (p) => {
+      const lines = Array.isArray(p.lines) ? p.lines : [];
+      if (!lines.length) return fail('VALIDATION_ERROR', 'Your plate is empty.');
+      if (lines.some((l) => !Number.isInteger(l.qty) || l.qty < 1 || l.qty > 20))
+        return fail('BAD_QTY', 'Each dish can be ordered 1 to 20 times.');
+
+      const name = String(p.name || '').trim();
+      if (!name || name.length > 80) return fail('VALIDATION_ERROR', 'Please enter your name.');
+      const phone = String(p.phone || '').replace(/[\s-]/g, '');
+      if (phone && !PHONE.test(phone)) return fail('BAD_PHONE', 'Please enter a valid mobile number.');
+      if (p.honeypot) return fail('SPAM_DETECTED', 'Your order could not be accepted.');
+
+      const table_number = Number(p.table_number);
+      if (!Number.isInteger(table_number) || table_number < 1 || table_number > 500)
+        return fail('VALIDATION_ERROR', 'Scan the QR code on your table again.');
+
+      const sb = await getClient();
+      if (!sb) {
+        return withStore((S, save) => {
+          const items = [];
+          for (const l of lines) {
+            const it = S.menu_items.find((x) => x.id === l.item_id);
+            if (!it) return fail('ITEM_NOT_FOUND', 'One of the dishes is no longer on the menu. Please remove it.');
+            if (it.is_available === false) return fail('SOLD_OUT', `${it.name} is sold out. Please remove it.`);
+            items.push({
+              item_id: it.id, name: it.name, price: Number(it.price),
+              qty: l.qty, line_total: Number(it.price) * l.qty,
+            });
+          }
+          const subtotal = items.reduce((a, i) => a + i.line_total, 0);
+          const tax = Math.round((subtotal * (Number(S.settings.tax_rate) || 0)) / 100);
+          const seq = (Number(S.order_seq) || 1000) + 1;
+          S.order_seq = seq;
+          const rec = {
+            id: `ord_${seq}`,
+            receipt: `KG-${seq}`,
+            order_type: 'dine-in',
+            table_id: null,
+            table_number,
+            customer_name: name,
+            phone: phone || null,
+            note: String(p.note || '').trim(),
+            status: 'new',
+            payment_status: 'unpaid',
+            subtotal,
+            tax,
+            delivery_fee: 0,
+            total: subtotal + tax,
+            items,
+            created_at: new Date().toISOString(),
+            paid_at: null,
+          };
+          S.orders.unshift(rec);
+          save();
+          return ok(rec);
+        });
+      }
+
+      const { data, error } = await sb.rpc('kg_place_dinein_order', {
+        p_table_number: table_number,
+        p_lines: lines.map((l) => ({ item_id: l.item_id, qty: l.qty })),
+        p_name: name,
+        p_phone: phone || null,
+        p_note: String(p.note || '').trim() || null,
+        p_honeypot: '',
+      });
+
+      if (error) {
+        if (error.code === 'PGRST202') return fail('ORDER_FAILED', 'Table ordering is not switched on yet. Please call a waiter.');
+        return fail('ORDER_FAILED', error.message);
+      }
       return ok(data);
     },
 
@@ -333,7 +413,59 @@
 
       const { data, error } = await sb.rpc('track_order', { p_id: id });
       if (error) return fail('NOT_FOUND', error.message);
-      return ok(data);
+
+      /* Normalise the receipt: the database may return the raw row names. */
+      const d = data || {};
+      const items = (d.items || d.order_items || []).map((i) => ({
+        name: i.name || i.item_name || '',
+        qty: i.qty != null ? i.qty : i.quantity,
+        line_total: Number(i.line_total) || 0,
+      }));
+      return ok({
+        ...d,
+        receipt: d.receipt || d.receipt_number || '',
+        tax: Number(d.tax != null ? d.tax : d.tax_amount) || 0,
+        address: d.address || d.delivery_address || '',
+        table_number: d.table_number || null,
+        items,
+      });
+    },
+
+    /* Which of the ten tables are still free for this date + time?
+       The database decides, so two guests can never book the same table. */
+    getAvailableTables: async ({ date, time } = {}) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) return fail('VALIDATION_ERROR', 'Choose a date first.');
+      if (!TIME.test(time || '')) return fail('VALIDATION_ERROR', 'Choose a time first.');
+
+      const sb = await getClient();
+      if (!sb) {
+        return withStore((S) => {
+          const busy = new Set(
+            (S.reservations || [])
+              .filter((x) => x.table_id && x.date === date && x.time === time && x.status !== 'cancelled')
+              .map((x) => x.table_id)
+          );
+          const list = [];
+          for (let n = 1; n <= 10; n++) {
+            const id = 'table_' + n;
+            if (!busy.has(id)) list.push({ id, table_number: n });
+          }
+          return ok(list);
+        });
+      }
+
+      const rpc = await sb.rpc('available_tables', { p_date: date, p_time: time });
+      if (!rpc.error) {
+        return ok((rpc.data || []).map((t) => ({ id: t.id, table_number: Number(t.table_number) })));
+      }
+
+      /* Older database without the function: fall back to the raw table list. */
+      if (rpc.error.code !== 'PGRST202' && !/could not find the function/i.test(rpc.error.message || '')) {
+        return fail('TABLES_FAILED', rpc.error.message);
+      }
+      const fb = await sb.from('tables').select('id, table_number').eq('is_active', true).order('table_number');
+      if (fb.error) return fail('TABLES_FAILED', fb.error.message);
+      return ok((fb.data || []).map((t) => ({ id: t.id, table_number: Number(t.table_number) })));
     },
 
     createReservation: async (r) => {
@@ -343,6 +475,11 @@
       const sb = await getClient();
       if (!sb) {
         return withStore((S, save) => {
+          const busy = (S.reservations || []).some(
+            (x) => x.table_id === r.table_id && x.date === r.date && x.time === r.time && x.status !== 'cancelled'
+          );
+          if (busy) return fail('TABLE_TAKEN', 'That table is already booked at this time. Please pick another table.');
+
           const rec = {
             id: 'res_' + Date.now(),
             name: String(r.name).trim(),
@@ -351,6 +488,7 @@
             time: r.time,
             guests: Number(r.guests),
             note: String(r.note || '').trim(),
+            table_id: r.table_id,
             status: 'pending',
             created_at: new Date().toISOString(),
           };
@@ -360,17 +498,45 @@
         });
       }
 
-      const { data, error } = await sb.from('reservations').insert({
+      /* Bookings go through a database function: the customer may create a
+         pending request but can never mark it confirmed, and the reservations
+         table itself stays closed to anonymous readers. The function also
+         refuses a table that is already taken for that slot. */
+      const payload = {
         name: String(r.name).trim(),
         phone: String(r.phone),
         date: r.date,
         time: r.time,
-        guests: Number(r.guests),
+        guests: Number(r.guests) || 1,
         note: String(r.note || '').trim(),
-      }).select().single();
+        table_id: r.table_id,
+      };
+
+      const { data, error } = await sb.rpc('book_table', {
+        p_name: payload.name,
+        p_phone: payload.phone,
+        p_date: payload.date,
+        p_time: payload.time,
+        p_guests: payload.guests,
+        p_note: payload.note,
+        p_honeypot: r.honeypot || '',
+        p_table_id: payload.table_id,
+      });
+
+      /* If the function has not been created yet, fall back to a plain insert
+         (status defaults to pending and the admin panel approves it). */
+      if (error && (error.code === 'PGRST202' || /could not find the function/i.test(error.message || ''))) {
+        const fb = await sb.from('reservations').insert({ ...payload, status: 'pending' });
+        if (fb.error) return fail('RESERVATION_FAILED', fb.error.message);
+        return ok({ status: 'pending' });
+      }
 
       if (error) return fail('RESERVATION_FAILED', error.message);
-      return ok({ id: data.id, status: data.status });
+      return ok({
+        id: data && data.id,
+        status: (data && data.status) || 'pending',
+        table_number: data && data.table_number,
+      });
     },
 
     submitFeedback: async (f) => {

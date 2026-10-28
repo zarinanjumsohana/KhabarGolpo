@@ -2,7 +2,7 @@
 
 import { requireAdmin } from '../utils/guards.js';
 import { initShell, setNavBadge } from './shell.js';
-import { listOrders, getOrder, cancelOrder, markOutForDelivery, markDelivered, markPickedUp, markPaid, subscribeOrders } from '../api/adminOrders.js';
+import { listOrders, getOrder, cancelOrder, acceptOrder, markOutForDelivery, markDelivered, markPickedUp, markPaid, subscribeOrders } from '../api/adminOrders.js';
 import { listTables } from '../api/adminContent.js';
 import { hydrateIcons, icon } from '../utils/icons.js';
 import { openDrawer, openModal, confirmDialog, toast, emptyState, skeleton, esc, buttonLoading, reveal } from '../utils/ui.js';
@@ -17,7 +17,7 @@ let drawer = null;
 let currentId = null;
 let loading = false;
 
-const TYPE_LABEL = { dine_in: 'Dine-in', pickup: 'Pickup', delivery: 'Delivery' };
+const TYPE_LABEL = { 'dine-in': 'Dine-in', dine_in: 'Dine-in', pickup: 'Pickup', delivery: 'Delivery' };
 const isActive = (o) => !['completed', 'cancelled'].includes(o.status);
 
 /* ------------------------------ rendering ------------------------------ */
@@ -58,6 +58,7 @@ function cardHtml(o, i) {
         <span class="badge st-${o.payment_status}">${o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}</span>
       </span>
       <span class="oc-actions">
+        ${o.status === 'new' ? `<button class="btn btn-success btn-xs" data-act="accepted" data-id="${o.id}">${icon('check')} Accept</button>` : ''}
         ${o.payment_status === 'unpaid' && o.status !== 'cancelled' ? `<button class="btn btn-success btn-xs" data-act="paid" data-id="${o.id}">${icon('check')} Pay</button>` : ''}
         <a class="btn btn-ghost btn-xs" href="./receipt.html?receipt=${encodeURIComponent(o.receipt)}" data-stop>${icon('printer')} Receipt</a>
       </span>
@@ -150,17 +151,26 @@ function timelineHtml(o) {
   const steps = {
     dine_in: [
       ['new', 'Received'],
+      ['approved', 'Accepted'],
+      ['preparing', 'Preparing'],
+      ['ready', 'Ready at table'],
+    ],
+    'dine-in': [
+      ['new', 'Received'],
+      ['approved', 'Accepted'],
       ['preparing', 'Preparing'],
       ['ready', 'Ready at table'],
     ],
     pickup: [
       ['new', 'Received'],
+      ['approved', 'Accepted'],
       ['preparing', 'Preparing'],
       ['ready', 'Ready for pickup'],
       ['completed', 'Picked up'],
     ],
     delivery: [
       ['new', 'Received'],
+      ['approved', 'Accepted'],
       ['preparing', 'Preparing'],
       ['ready', 'Ready'],
       ['out_for_delivery', 'Out for delivery'],
@@ -191,6 +201,8 @@ function detailHtml(o) {
   const sub = items.reduce((a, it) => a + it.line_total, 0);
 
   const actions = [];
+  if (o.status === 'new')
+    actions.push({ act: 'accepted', cls: 'btn-success', ic: 'check', label: 'Accept & send to kitchen' });
   if (o.payment_status === 'unpaid' && o.status !== 'cancelled')
     actions.push({ act: 'paid', cls: 'btn-success', ic: 'wallet', label: 'Mark as paid (cash)' });
   if (o.order_type === 'delivery' && o.status === 'ready')
@@ -308,6 +320,11 @@ function bindDrawerActions(order, dr) {
 }
 
 async function runAction(act, order, btn) {
+  if (act === 'accepted') {
+    if (btn) buttonLoading(btn, true);
+    return finish(acceptOrder(order.id), 'accepted', btn);
+  }
+
   if (act === 'cancel') {
     const yes = await confirmDialog({
       title: `Cancel ${order.receipt}?`,
@@ -368,6 +385,7 @@ async function finish(promise, act, btn) {
     return;
   }
   const msg = {
+    accepted: 'Order accepted. It is now on the kitchen screen.',
     paid: 'Payment recorded. It now counts in revenue.',
     cancel: 'Order cancelled and removed from the kitchen feed.',
     out: 'Order marked out for delivery.',
@@ -451,6 +469,13 @@ function wireFilters() {
 /* ------------------------------ list wiring ------------------------------ */
 function wireList() {
   $('list').addEventListener('click', async (e) => {
+    const accept = e.target.closest('[data-act="accepted"]');
+    if (accept) {
+      e.stopPropagation();
+      buttonLoading(accept, true);
+      await finish(acceptOrder(accept.dataset.id), 'accepted', accept);
+      return;
+    }
     const act = e.target.closest('[data-act="paid"]');
     if (act) {
       e.stopPropagation();

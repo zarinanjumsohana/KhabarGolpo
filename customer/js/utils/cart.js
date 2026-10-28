@@ -104,4 +104,11 @@
 
   document.querySelectorAll('[data-back]').forEach((b) => b.addEventListener('click', goBack));
   recordPage();
+
+  /* Table QR links look like /customer/index.html?table=5. Remember the table for
+     the rest of the visit so the cart can send the order as a dine-in order. */
+  try {
+    const t = Number(new URLSearchParams(location.search).get('table'));
+    if (Number.isInteger(t) && t > 0 && t < 500) localStorage.setItem('kg-table', String(t));
+  } catch (e) { /* ignore */ }
 })();

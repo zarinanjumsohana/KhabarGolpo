@@ -6,11 +6,13 @@
   const money = (n) => '৳' + Math.round(n).toLocaleString('en-US');
 
   const FLOW = {
-    pickup: ['new', 'preparing', 'ready', 'completed'],
-    delivery: ['new', 'preparing', 'ready', 'out_for_delivery', 'completed'],
+    'dine-in': ['new', 'approved', 'preparing', 'ready', 'completed'],
+    pickup: ['new', 'approved', 'preparing', 'ready', 'completed'],
+    delivery: ['new', 'approved', 'preparing', 'ready', 'out_for_delivery', 'completed'],
   };
   const LABEL = {
     new: 'Received',
+    approved: 'Accepted',
     preparing: 'Preparing',
     ready: 'Ready',
     out_for_delivery: 'Out for delivery',
@@ -57,9 +59,11 @@
     $('#ordTotals').textContent = parts.join(' · ');
 
     $('#ordDetail').textContent =
-      o.order_type === 'delivery'
-        ? `Delivery to: ${o.address}`
-        : `Pickup${o.pickup_time ? ' at ' + o.pickup_time : ''}`;
+      o.order_type === 'dine-in'
+        ? `Dine-in at Table ${o.table_number || ''}`
+        : o.order_type === 'delivery'
+          ? `Delivery to: ${o.address}`
+          : `Pickup${o.pickup_time ? ' at ' + o.pickup_time : ''}`;
   }
 
   let timer = null;

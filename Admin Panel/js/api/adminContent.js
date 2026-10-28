@@ -2,6 +2,7 @@
 
 import { supabase } from '../supabaseClient.js';
 import { Mock } from '../mock/index.js';
+import { isMock } from '../config.js';
 import { fromSupabase, withMock, fail, friendly } from './shared.js';
 
 async function getSb() {
@@ -122,12 +123,23 @@ export const listTables = () =>
     }
   );
 
+/* The live tables table stores: id, table_number, is_active, created_at.
+   Older mock data also carries a seat count; drop it before a live write. */
+const tablePayload = (patch) => {
+  const clean = { ...patch };
+  if (!isMock()) {
+    delete clean.seats;
+    delete clean.capacity;
+  }
+  return clean;
+};
+
 export const createTable = (payload) =>
   withMock(
     () => Mock.adminContent.createTable(payload),
     async () => {
       const client = await getSb();
-      return fromSupabase(await client.from('tables').insert(payload).select().single(), { code: 'CREATE_FAILED' });
+      return fromSupabase(await client.from('tables').insert(tablePayload(payload)).select().single(), { code: 'CREATE_FAILED' });
     }
   );
 
@@ -136,7 +148,7 @@ export const updateTable = (id, patch) =>
     () => Mock.adminContent.updateTable(id, patch),
     async () => {
       const client = await getSb();
-      return fromSupabase(await client.from('tables').update(patch).eq('id', id).select().single(), { code: 'UPDATE_FAILED' });
+      return fromSupabase(await client.from('tables').update(tablePayload(patch)).eq('id', id).select().single(), { code: 'UPDATE_FAILED' });
     }
   );
 
@@ -155,7 +167,7 @@ export const listReservations = (filters = {}) =>
     () => Mock.adminContent.listReservations(filters),
     async () => {
       const client = await getSb();
-      let query = client.from('reservations').select('*').order('date').order('time');
+      let query = client.from('reservations').select('*, tables(table_number)').order('date').order('time');
       if (filters.date) query = query.eq('date', filters.date);
       if (filters.status) query = query.eq('status', filters.status);
       return fromSupabase(await query, { code: 'LIST_FAILED' });

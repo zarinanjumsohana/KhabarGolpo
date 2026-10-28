@@ -31,7 +31,7 @@
 
     <div class="type-tabs no-print" id="typeTabs" role="tablist" aria-label="Filter by order type">
       <button class="ttab on" data-type="">All orders</button>
-      <button class="ttab" data-type="dine_in">Dine-in</button>
+      <button class="ttab" data-type="dine-in">Dine-in</button>
       <button class="ttab" data-type="pickup">Pickup</button>
       <button class="ttab" data-type="delivery">Delivery</button>
     </div>
@@ -46,7 +46,7 @@
         <label for="ftype">Order type</label>
         <select id="ftype">
           <option value="">All types</option>
-          <option value="dine_in">Dine-in</option>
+          <option value="dine-in">Dine-in</option>
           <option value="pickup">Pickup</option>
           <option value="delivery">Delivery</option>
         </select>
@@ -56,7 +56,8 @@
         <select id="fstatus">
           <option value="">Any status</option>
           <option value="new">New</option>
-          <option value="preparing">Preparing</option>
+          <option value="approved">Approved</option>
+<option value="preparing">Preparing</option>
           <option value="ready">Ready</option>
           <option value="out_for_delivery">Out for delivery</option>
           <option value="completed">Completed</option>
@@ -88,7 +89,8 @@
     <div class="chips no-print" id="quickChips" style="margin-bottom:18px">
       <button class="chip on" data-quick="">All</button>
       <button class="chip" data-quick="new">New</button>
-      <button class="chip" data-quick="preparing">Preparing</button>
+      <button class="chip" data-quick="approved">Approved</button>
+<button class="chip" data-quick="preparing">Preparing</button>
       <button class="chip" data-quick="ready">Ready</button>
       <button class="chip" data-quick="out_for_delivery">Out for delivery</button>
       <button class="chip" data-quick="completed">Completed</button>

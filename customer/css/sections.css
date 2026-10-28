@@ -67,6 +67,9 @@ input:focus,select:focus,textarea:focus{border-color:rgba(255,255,255,.7)}
 .res-form{margin-top:24px;padding:32px;border-radius:28px}
 .res-form h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:28px;margin-bottom:6px}
 .res-form .picked{font-size:15px;color:rgba(255,255,255,.8);margin-bottom:18px}
+.table-hint{margin:-8px 0 14px;font-size:13px;color:rgba(255,255,255,.65);min-height:18px}
+.table-hint.warn{color:#f2c46d}
+select:disabled{opacity:.55;cursor:not-allowed}
 
 /* contact */
 .contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}

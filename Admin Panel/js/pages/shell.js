@@ -260,7 +260,7 @@ function initNotifications() {
     last = total;
     const feed = [
       ...orders.map((x) => ({ href: `./orders.html?receipt=${encodeURIComponent(x.receipt)}`, title: `New order ${x.receipt}`, meta: `${titleCase(x.order_type)} · ${money(x.total)}`, at: x.created_at })),
-      ...bookings.slice(0, 6).map((x) => ({ href: './reservations.html', title: `Booking: ${x.name}`, meta: `${x.guests} guests · ${x.date} at ${x.time}`, at: x.created_at })),
+      ...bookings.slice(0, 6).map((x) => ({ href: './reservations.html', title: `Booking: ${x.name}`, meta: `${x.guests} guests · Table ${x.tables && x.tables.table_number ? x.tables.table_number : '—'} · ${x.date} at ${x.time}`, at: x.created_at })),
       ...notes.slice(0, 6).map((x) => ({ href: './feedback.html', title: `${titleCase(x.type || 'feedback')} from ${x.name || 'a guest'}`, meta: String(x.message || '').slice(0, 60), at: x.created_at })),
     ].sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0));
     panel.innerHTML = feed.length

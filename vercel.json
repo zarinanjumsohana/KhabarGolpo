@@ -1,5 +1,10 @@
 {
   "redirects": [
-    { "source": "/(.*)", "destination": "/customer/$1", "permanent": false }
+    { "source": "/", "destination": "/customer/", "permanent": false },
+    { "source": "/index.html", "destination": "/customer/index.html", "permanent": false },
+    { "source": "/category.html", "destination": "/customer/category.html", "permanent": false },
+    { "source": "/cart.html", "destination": "/customer/cart.html", "permanent": false },
+    { "source": "/order.html", "destination": "/customer/order.html", "permanent": false },
+    { "source": "/order", "destination": "/customer/index.html", "permanent": false }
   ]
 }

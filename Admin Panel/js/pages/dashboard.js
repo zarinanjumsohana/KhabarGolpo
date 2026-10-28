@@ -3,7 +3,7 @@
 import { requireAdmin, saveLocalSession, login } from '../utils/guards.js';
 import { isMock } from '../config.js';
 import { initShell, setNavBadge } from './shell.js';
-import { revenueSummary, salesReport } from '../api/reports.js';
+import { revenueSummary } from '../api/reports.js';
 import { listOrders, subscribeOrders } from '../api/adminOrders.js';
 import { hydrateIcons, icon } from '../utils/icons.js';
 import { countUp, stagger, reveal, setupTilt, toast, emptyState, esc } from '../utils/ui.js';
@@ -14,6 +14,7 @@ const DAY = 86400000;
 
 const STATUS_META = [
   ['new', 'New', 'var(--st-new-fg)'],
+  ['approved', 'Approved', 'var(--st-prep-fg)'],
   ['preparing', 'Preparing', 'var(--st-prep-fg)'],
   ['ready', 'Ready', 'var(--st-ready-fg)'],
   ['out_for_delivery', 'Out for delivery', 'var(--st-out-fg)'],
@@ -329,10 +330,10 @@ function renderTypes(counts) {
 function drawFlow(orders) {
   const today = dayKeyOf(new Date());
   const live = orders.filter((o) => o.status !== 'cancelled' && dayKeyOf(new Date(o.created_at)) === today);
-  const types = [['dine_in', 'Dine-in', '#f0a500'], ['pickup', 'Pickup', '#d9542b'], ['delivery', 'Delivery', '#38b2ac']];
+  const types = [['dine-in', 'Dine-in', '#f0a500'], ['pickup', 'Pickup', '#d9542b'], ['delivery', 'Delivery', '#38b2ac']];
   const g = {};
   types.forEach(([k]) => {
-    const l = live.filter((o) => o.order_type === k);
+    const l = live.filter((o) => (o.order_type === 'dine_in' ? 'dine-in' : o.order_type) === k);
     g[k] = { n: l.length, v: l.reduce((s, o) => s + Number(o.total || 0), 0) };
   });
   const total = types.reduce((s, [k]) => s + g[k].v, 0);
@@ -417,9 +418,8 @@ async function autoSignIn() {
 
 /* ---------------- load ---------------- */
 async function load() {
-  const [sumRes, salesRes, ordersRes] = await Promise.all([
+  const [sumRes, ordersRes] = await Promise.all([
     revenueSummary(),
-    salesReport({ group: 'daily' }),
     listOrders({ perPage: 500, page: 1 }),
   ]);
 
@@ -427,33 +427,80 @@ async function load() {
     toast({ type: 'error', title: 'Could not load dashboard', message: sumRes.error.message });
     return;
   }
-  const s = sumRes.data;
-  const rows = salesRes.error ? [] : salesRes.data.rows || [];
+  const s = sumRes.data || {};
   const orders = ordersRes.error ? [] : ordersRes.data.rows || [];
+  const now = Date.now();
+  const inside = (o, ms) => now - new Date(o.created_at).getTime() <= ms;
+  const sumOf = (rows) => rows.reduce((a, o) => a + Number(o.total || 0), 0);
+  const paidCount = (rows) => rows.filter((o) => o.payment_status === 'paid').length;
 
-  const pw = (id, d) => {
-    countUp($(id), d.revenue, { prefix: '৳ ' });
-    $(id + 'Sub').textContent = `${num(d.orders || 0)} paid orders`;
+  const weekOrders = orders.filter((o) => inside(o, 7 * DAY));
+  const monthOrders = orders.filter((o) => {
+    const d = new Date(o.created_at);
+    const n = new Date();
+    return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear();
+  });
+  const yearOrders = orders.filter((o) => new Date(o.created_at).getFullYear() === new Date().getFullYear());
+
+  /* revenue_summary in the live database returns plain amounts; the mock
+     returns richer objects. Accept both. */
+  const pw = (id, revenue, count) => {
+    countUp($(id), Number(revenue) || 0, { prefix: '৳ ' });
+    $(id + 'Sub').textContent = `${num(count)} paid orders`;
   };
-  pw('pWeek', s.week);
-  pw('pMonth', s.month);
-  pw('pYear', s.year);
-  const best = s.topItems[0];
+  pw('pWeek', s.week_mon_sun ?? s.week ?? sumOf(weekOrders), paidCount(weekOrders));
+  pw('pMonth', s.month ?? sumOf(monthOrders), paidCount(monthOrders));
+  pw('pYear', s.year ?? sumOf(yearOrders), paidCount(yearOrders));
+
+  /* Top sellers: from the RPC if present, otherwise from today's order rows. */
+  const topMap = new Map();
+  orders
+    .filter((o) => o.status !== 'cancelled' && inside(o, 7 * DAY))
+    .forEach((o) =>
+      (o.items || []).forEach((it) => {
+        topMap.set(it.name, (topMap.get(it.name) || 0) + Number(it.qty || 0));
+      })
+    );
+  const topItems =
+    Array.isArray(s.topItems) && s.topItems.length
+      ? s.topItems
+      : [...topMap.entries()]
+          .map(([name, qty]) => ({ name, qty }))
+          .sort((a, b) => b.qty - a.qty)
+          .slice(0, 8);
+
+  const series =
+    Array.isArray(s.series) && s.series.length
+      ? s.series
+      : Array.from({ length: 14 }, (_, i) => {
+          const d = new Date(now - (13 - i) * DAY);
+          const key = dayKeyOf(d);
+          return {
+            label: d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
+            value: Math.round(
+              orders
+                .filter((o) => o.status !== 'cancelled' && dayKeyOf(new Date(o.created_at)) === key)
+                .reduce((a, o) => a + Number(o.total || 0), 0)
+            ),
+          };
+        });
+
+  const best = topItems[0];
   $('pBest').textContent = best ? best.name : '—';
   $('pBestSub').textContent = best ? `${num(best.qty)} sold in 7 days` : 'No sales yet';
 
   drawFlow(orders);
-  drawLineChart(s.series);
+  drawLineChart(series);
   renderDonut(
     STATUS_META.reduce((acc, [key]) => {
       acc[key] = orders.filter((o) => o.status === key && dayKeyOf(new Date(o.created_at)) === dayKeyOf(new Date())).length;
       return acc;
     }, {})
   );
-  renderRecent(s.recent);
-  renderTop(s.topItems);
+  renderRecent(Array.isArray(s.recent) && s.recent.length ? s.recent : orders.slice(0, 5));
+  renderTop(topItems);
   hydrateIcons($('page'));
-  setNavBadge('orders', s.pending);
+  setNavBadge('orders', s.pending != null ? s.pending : orders.filter((o) => o.status === 'new').length);
 }
 
 async function init() {

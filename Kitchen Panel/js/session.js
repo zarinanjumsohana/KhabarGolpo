@@ -3,7 +3,7 @@
    admin login page, which sends chefs here). This file keeps the guard and
    the logout link in one place. */
 
-import { supabase } from '../../kitchen/js/supabaseClient.js';
+import { supabase } from './supabaseClient.js';
 
 export const ADMIN_DASHBOARD = '../../Admin%20Panel/admin/dashboard.html';
 export const KITCHEN_LOGIN = 'login.html';

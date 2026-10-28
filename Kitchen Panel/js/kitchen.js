@@ -254,12 +254,6 @@
   function renderNotifications() {
     if (!notifList) return;
 
-    var hasLiveOrders = !!document.querySelector('#view-orders .order[data-order-id]');
-    if (!hasLiveOrders) {
-      setNotifBadge(notifList.querySelectorAll('.notif-item.is-unread').length);
-      return;
-    }
-
     var orders = document.querySelectorAll('.order[data-order-id]');
     var alerts = [];
 
@@ -402,6 +396,7 @@
 
     var card = btn.closest('.order');
     if (!card) return;
+    if (card.getAttribute('data-live') === '1') return;   // live orders are handled by orders.js
 
     var state = card.getAttribute('data-order-state');
     var chip = card.querySelector('[data-state-chip]');
@@ -582,6 +577,13 @@
         notifBtn.focus();
       }
     }
+  });
+
+  /* orders.js re-renders the board; refresh the badges and delayed alerts too. */
+  document.addEventListener('kg:orders-changed', function () {
+    updateBoardCounts();
+    applyLateState();
+    renderNotifications();
   });
 
   /* ------------------------------ initial paint ------------------------------ */

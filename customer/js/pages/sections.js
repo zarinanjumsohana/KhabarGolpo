@@ -85,6 +85,51 @@
   today.setHours(0, 0, 0, 0);
   const view = new Date(today.getFullYear(), today.getMonth(), 1);
   let selected = '';
+  const tableSel = $('#resTable');
+  const tableHint = $('#resTableHint');
+  let tableToken = 0;
+
+  /* A table can only host one booking per slot: ask the database which of the
+     ten tables are still free for the chosen date + time. */
+  async function refreshTables() {
+    const mine = ++tableToken;
+    const time = field(resForm, 'time').value;
+
+    tableSel.textContent = '';
+    tableSel.disabled = true;
+    tableHint.textContent = '';
+    tableHint.classList.remove('warn');
+
+    if (!selected || !time) {
+      tableSel.append(new Option('Choose a time first', ''));
+      return;
+    }
+
+    tableSel.append(new Option('Checking free tables…', ''));
+    const { data, error } = await KG.getAvailableTables({ date: selected, time });
+    if (mine !== tableToken) return;                    // a newer request won
+
+    tableSel.textContent = '';
+
+    if (error) {
+      tableSel.append(new Option('Could not load tables', ''));
+      tableHint.textContent = error.message;
+      tableHint.classList.add('warn');
+      return;
+    }
+
+    if (!data || !data.length) {
+      tableSel.append(new Option('No table free at this time', ''));
+      tableHint.textContent = 'Every table is already booked around ' + time + '. Please choose another time.';
+      tableHint.classList.add('warn');
+      return;
+    }
+
+    tableSel.append(new Option('Choose a table', ''));
+    data.forEach(t => tableSel.append(new Option('Table ' + t.table_number, t.id)));
+    tableSel.disabled = false;
+    tableHint.textContent = data.length + (data.length === 1 ? ' table' : ' tables') + ' free at ' + time + '.';
+  }
 
   const isoOf = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const prettyDate = key => {
@@ -121,6 +166,11 @@
     drawCalendar();
     resBtn.disabled = false;
     resHint.textContent = 'Selected: ' + prettyDate(key);
+    if (!resForm.hidden) {                                // date changed while the form is open
+      field(resForm, 'date').value = key;
+      resForm.querySelector('.picked').textContent = 'Booking for ' + prettyDate(key) + '.';
+      refreshTables();
+    }
   }
 
   $('#calPrev').addEventListener('click', () => { view.setMonth(view.getMonth() - 1); drawCalendar(); });
@@ -134,6 +184,7 @@
     resForm.querySelector('.picked').textContent = 'Booking for ' + prettyDate(selected) + '.';
     resForm.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'center' });
     field(resForm, 'name').focus();
+    refreshTables();
   }
 
   function closeForm() {
@@ -142,7 +193,10 @@
     resForm.reset();
     $('#resErr').textContent = '';
     $('#resOk').textContent = '';
+    refreshTables();
   }
+
+  field(resForm, 'time').addEventListener('change', refreshTables);
 
   resBtn.addEventListener('click', () => { if (selected) openForm(); });
   $('#resCancel').addEventListener('click', closeForm);
@@ -159,19 +213,29 @@
     const time = field(resForm, 'time').value;
     const guests = Number(field(resForm, 'guests').value);
     const note = field(resForm, 'note').value.trim();
+    const table_id = tableSel.value;
+    const tableLabel = tableSel.selectedIndex > -1 ? tableSel.options[tableSel.selectedIndex].textContent : 'A table';
 
     if (!name) return (err.textContent = 'Please enter the name for the booking.');
     if (!PHONE.test(phone)) return (err.textContent = 'Please enter a valid mobile number.');
     if (!time) return (err.textContent = 'Please choose a time.');
+    if (!table_id) return (err.textContent = 'Please choose a free table.');
 
     btn.disabled = true;
-    const { error } = await KG.createReservation({ name, phone, date: selected, time, guests, note, honeypot: '' });
+    const { error } = await KG.createReservation({ name, phone, date: selected, time, guests, note, table_id, honeypot: '' });
     btn.disabled = false;
-    if (error) { err.textContent = error.message; return; }
 
-    ok.textContent = `Thank you, ${name}. Your table for ${guests} on ${prettyDate(selected)} at ${time} is requested. We will confirm by phone.`;
+    if (error) {
+      err.textContent = error.message;
+      /* somebody else may have taken the table while the form was open */
+      if (/booked|taken|not available/i.test(error.message)) refreshTables();
+      return;
+    }
+
+    ok.textContent = `Thank you, ${name}. ${tableLabel} for ${guests} on ${prettyDate(selected)} at ${time} is requested. We will confirm by phone.`;
     resForm.reset();
     field(resForm, 'date').value = selected;
+    refreshTables();
   });
 
   /* ---------- feedback form ---------- */

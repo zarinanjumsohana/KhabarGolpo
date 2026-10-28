@@ -21,7 +21,7 @@ export async function listOrders(filters = {}) {
       if (from) query = query.gte('created_at', new Date(from).toISOString());
       if (to) query = query.lte('created_at', new Date(`${String(to).slice(0, 10)}T23:59:59`).toISOString());
       if (q) {
-        query = query.or(`receipt.ilike.%${q}%,customer_name.ilike.%${q}%,phone.ilike.%${q}%`);
+        query = query.or(`receipt_number.ilike.%${q}%,customer_name.ilike.%${q}%,customer_phone.ilike.%${q}%`);
       }
 
       const fromRow = (page - 1) * perPage;
@@ -30,13 +30,32 @@ export async function listOrders(filters = {}) {
         .range(fromRow, fromRow + perPage - 1);
 
       if (res.error) return fail('LIST_FAILED', friendly(res.error.message));
-      const rows = (res.data || []).map((o) => ({
-        ...o,
-        items: (o.order_items || []).map(({ order_id, ...rest }) => rest),
-      }));
+      const rows = (res.data || []).map(mapOrder);
       return ok({ rows, total: res.count ?? rows.length, page, perPage });
     }
   );
+}
+
+/* The live tables use receipt_number / customer_phone / item_name / quantity.
+   The panel was written against the short names, so normalise here once. */
+function mapOrder(o) {
+  const { order_items, ...rest } = o;
+  const items = (order_items || o.items || []).map((i) => ({
+    id: i.id,
+    name: i.item_name || i.name || '',
+    qty: i.quantity != null ? i.quantity : i.qty,
+    price: Number(i.unit_price != null ? i.unit_price : i.price) || 0,
+    line_total: Number(i.line_total) || 0,
+  }));
+  return {
+    ...rest,
+    receipt: o.receipt_number || o.receipt || '',
+    phone: o.customer_phone || o.phone || '',
+    address: o.delivery_address || o.address || '',
+    address_note: o.address_note || '',
+    tax: Number(o.tax_amount != null ? o.tax_amount : o.tax) || 0,
+    items,
+  };
 }
 
 export async function getOrder(id) {
@@ -46,8 +65,7 @@ export async function getOrder(id) {
       const sb = await supabase();
       const res = await sb.from('orders').select('*, order_items(*)').eq('id', id).single();
       if (res.error) return fail('NOT_FOUND', 'That order could not be found.');
-      const { order_items, ...order } = res.data;
-      return ok({ ...order, items: order_items || [] });
+      return ok(mapOrder(res.data));
     }
   );
 }
@@ -65,6 +83,9 @@ async function transition(id, status, note) {
 
 export const cancelOrder = (id) =>
   withMock(() => Mock.adminOrders.cancelOrder(id), () => transition(id, 'cancelled'));
+
+export const acceptOrder = (id) =>
+  withMock(() => ok({ id, status: 'approved' }), () => transition(id, 'approved'));
 
 export const markOutForDelivery = (id, note) =>
   withMock(() => Mock.adminOrders.markOutForDelivery(id, note), () => transition(id, 'out_for_delivery', note));
@@ -112,6 +133,8 @@ export async function markTablePaid(tableId) {
 }
 
 /** Live order feed. Returns an unsubscribe function. */
+let channelSeq = 0;
+
 export function subscribeOrders(cb) {
   if (isMock()) return mockRealtime.subscribe(cb);
 
@@ -119,12 +142,15 @@ export function subscribeOrders(cb) {
   let polling = null;
   supabase().then((sb) => {
     if (!sb) return;
+    /* Every caller gets its own topic: reusing one name means the second
+       .on() runs after subscribe() and Supabase throws. */
+    const topic = `admin-orders-${++channelSeq}`;
     channel = sb
-      .channel('admin-orders')
+      .channel(topic)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'orders' },
-        (payload) => cb({ type: payload.eventType, new: payload.new, old: payload.old })
+        (payload) => cb({ type: payload.eventType, new: mapOrder(payload.new || {}), old: payload.old })
       )
       .subscribe((status) => {
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
@@ -135,7 +161,7 @@ export function subscribeOrders(cb) {
               .select('*')
               .order('created_at', { ascending: false })
               .limit(1);
-            if (res.data?.[0]) cb({ type: 'POLL', new: res.data[0] });
+            if (res.data?.[0]) cb({ type: 'POLL', new: mapOrder(res.data[0]) });
           }, 12000);
         }
       });
