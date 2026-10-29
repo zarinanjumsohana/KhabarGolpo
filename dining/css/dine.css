@@ -1,492 +1,153 @@
-/* Dine-in menu (dining/). Table-wise QR: the QR on table 5 opens dine.html?table=5 and the table is fixed.
-   Flow: scan QR -> menu (categories on top, dishes below) -> Add to plate -> plate drawer -> place order -> live status.
-   The drawer slides in from the right on the first Add to plate; the cart button hides or shows it.
-   Data comes from window.KG (customer/js/mock/content.js). Orders are saved to the SAME shared store the admin
-   panel and kitchen read, as 'dine-in' orders, so each order shows up as its own ticket.
-   LATER (database): swap saveDineInOrder() for placeDineInOrder() and loadOrders() for the live-orders call. */
-(() => {
-  const $ = (s) => document.querySelector(s);
-  const money = (n) => '৳' + Math.round(n).toLocaleString('en-US');
-  const make = (tag, cls, text) => {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
-    return n;
-  };
+/* Dine-in menu: styles for dining/dine.html. Builds on the customer site's hero.css, sections.css and shop.css (same glass look). */
 
-  const STORE_PATH = '../../js/shared/store.js';      // dining/js/dine.js -> repo-root/js/shared/store.js
-  const PLATE_KEY = 'kg-dine-plate';
-  const TABLE_KEY = 'kg-dine-table';
-  const RECENT_KEY = 'kg-dine-recent';
-  const MAX_TABLE = 99;
-  const TABLE_COUNT = 12;                              // tables offered when a guest opens the page without a table QR
-  const ORDER_TYPE = 'dine-in';                        // same spelling as docs/Database.md, the customer API and the kitchen API
-  const FLOW = ['new', 'preparing', 'ready'];
-  const LABEL = { new: 'Received', preparing: 'Preparing', ready: 'Ready' };
-  const POLL_MS = 5000;
+/* ---------- page ---------- */
+.dn-main{width:min(1360px,95vw);padding-top:120px;padding-bottom:120px;transition:margin .45s var(--ease-in),width .45s var(--ease-in)}
+.dn-head{text-align:center;margin-bottom:10px}
+.dn-main .shop-title{font-size:clamp(46px,6vw,84px);margin-bottom:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-  let table = null;        // 1..99 or null
-  let tableLocked = false; // true when the table came from the QR link (?table=N)
-  let cats = [];
-  let menu = [];
-  let settings = { tax_rate: 0 };
-  let filter = 'all';      // all | <category id>
-  let query = '';
-  let plate = [];          // [{ item_id, qty }]
-  let picked = null;
-  let pickedQty = 1;
-  let autoOpened = false;  // the drawer opens by itself only on the first Add to plate
-  let freshReceipt = '';   // the order just placed, highlighted for a moment
-  let pollTimer = null;
+/* table chip in the middle of the top bar */
+.dn-table{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:8px 18px;border-radius:999px;border:1px solid var(--glass-border);background:var(--glass-bg);color:#f2c46d;font-size:15px;letter-spacing:.06em;white-space:nowrap;-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.dn-table[hidden]{display:none}
 
-  /* ---------- small storage helpers (session only, so the next guest starts fresh) ---------- */
-  const save = (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) { /* storage may be blocked */ } };
-  const load = (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
-  const validTable = (v) => {
-    const n = Number(v);
-    return v !== '' && v != null && Number.isInteger(n) && n >= 1 && n <= MAX_TABLE ? n : null;
-  };
-  const sum = (list) => list.reduce((a, l) => a + l.qty, 0);
-  const clampQty = (n) => Math.max(1, Math.min(20, n));
-  const findItem = (id) => menu.find((m) => m.id === id);
+/* top right: cart button */
+.dn-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.dn-actions .cart-btn{margin-left:0;display:flex;border:1px solid var(--glass-border);cursor:pointer}
 
-  /* ---------- table: chip at the top + table box in the drawer ---------- */
-  function fillTableSelect() {
-    const sel = $('#plForm').elements.namedItem('table');
-    const max = Math.max(TABLE_COUNT, table || 0);
-    sel.textContent = '';
-    sel.append(new Option('Select your table', ''));
-    for (let n = 1; n <= max; n += 1) sel.append(new Option(`Table ${n}`, String(n)));
-  }
-  function showTable() {
-    const chip = $('#tableChip');
-    chip.hidden = !table;
-    chip.textContent = table ? `Table ${table}` : '';
-    const sel = $('#plForm').elements.namedItem('table');
-    sel.value = table ? String(table) : '';
-    sel.disabled = tableLocked;
-    $('#tableHint').hidden = !tableLocked;
-  }
-  $('#plForm').elements.namedItem('table').addEventListener('change', (e) => {
-    table = validTable(e.target.value);
-    if (table) save(TABLE_KEY, String(table));
-    showTable();
-    loadOrders();
-  });
+/* ---------- category circles: 7 at a time, arrows slide to the rest ---------- */
+.dn-rail{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.dn-cats{flex:1;min-width:0;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:6px;scroll-behavior:smooth;padding:10px 6px 16px;scrollbar-width:none}
+.dn-cats::-webkit-scrollbar{display:none}
+.dn-cat{flex:0 0 calc((100% - 6 * 14px) / 7);scroll-snap-align:start;display:grid;justify-items:center;align-content:start;gap:10px;background:none;border:0;color:#fff;cursor:pointer;font:inherit;font-size:14px;line-height:1.2;text-align:center;opacity:.78;transition:opacity .3s,transform .3s}
+.dn-cat:hover{opacity:1;transform:translateY(-2px)}
+.dn-circle{width:100%;max-width:112px;aspect-ratio:1;border-radius:50%;overflow:hidden;display:grid;place-items:center;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.06);font-family:'Instrument Serif',serif;font-size:34px}
+.dn-circle.small{font-size:26px}
+.dn-circle img{width:100%;height:100%;object-fit:cover}
+.dn-cat[aria-current="true"]{opacity:1}
+.dn-cat[aria-current="true"] .dn-circle{border-color:#f2c46d;box-shadow:0 0 0 3px rgba(242,196,109,.3)}
+.dn-arrow{flex:0 0 48px;width:48px;height:48px;margin-top:34px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:28px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0 0 3px;-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.dn-arrow:hover:not(:disabled){background:var(--glass-bg-strong);border-color:#f2c46d}
+.dn-arrow:disabled{opacity:.3;cursor:default}
+.dn-arrow[hidden]{display:none}
 
-  /* ---------- drawer ---------- */
-  const drawer = $('#drawer');
-  const isOpen = () => drawer.classList.contains('open');
-  function setDrawer(open) {
-    drawer.classList.toggle('open', open);
-    drawer.setAttribute('aria-hidden', String(!open));
-    document.body.classList.toggle('drawer-open', open);
-    $('#plateBtn').setAttribute('aria-expanded', String(open));
-    setTimeout(updateArrows, 480);
-  }
-  $('#plateBtn').addEventListener('click', () => setDrawer(!isOpen()));
-  $('#drawerClose').addEventListener('click', () => setDrawer(false));
-  addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isOpen() && !$('#itemDlg').open) setDrawer(false);
-  });
+/* search */
+.dn-tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.dn-search{flex:1 1 240px;margin:0}
+.dn-search input{width:100%;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid var(--glass-border);background:var(--glass-bg);color:#fff;font:inherit;-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.dn-search input::placeholder{color:rgba(255,255,255,.55)}
 
-  /* ---------- plate ---------- */
-  function readPlate() {
-    try {
-      const v = JSON.parse(load(PLATE_KEY) || '[]');
-      return Array.isArray(v) ? v.filter((l) => l && l.item_id && Number.isInteger(l.qty) && l.qty > 0) : [];
-    } catch (e) { return []; }
-  }
-  function writePlate() {
-    save(PLATE_KEY, JSON.stringify(plate));
-    const n = sum(plate);
-    const badge = $('#plateCount');
-    badge.textContent = String(n);
-    badge.hidden = n === 0;
-    drawPlate();
-  }
-  function bump() {
-    const b = $('#plateBtn');
-    b.classList.remove('bump');
-    void b.offsetWidth;
-    b.classList.add('bump');
-  }
-  function addToPlate(id, qty) {
-    const line = plate.find((l) => l.item_id === id);
-    if (line) line.qty = clampQty(line.qty + qty);
-    else if (plate.length < 30) plate.push({ item_id: id, qty: clampQty(qty) });
-    else return false;
-    writePlate();
-    bump();
-    if (!autoOpened) { autoOpened = true; setDrawer(true); }   // first add: the drawer opens by itself
-    return true;
-  }
+/* ---------- dish cards (each has its own Add to plate button underneath) ---------- */
+.dn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:22px}
+.dn-card{position:relative;display:grid;gap:12px;align-content:start;padding:14px 14px 16px;color:#fff;border-radius:24px;border:1px solid var(--glass-border);background:var(--glass-bg);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--glass-shadow);transition:transform .35s var(--ease-in),background .35s}
+.dn-card:hover{transform:translateY(-4px);background:var(--glass-bg-strong)}
+.dn-card.out{opacity:.55}
+.dn-card.out:hover{transform:none;background:var(--glass-bg)}
+.dn-open{display:grid;gap:10px;width:100%;padding:0;border:0;background:none;color:#fff;font:inherit;text-align:left;cursor:pointer}
+.dn-open:disabled{cursor:not-allowed}
+.dn-thumb{aspect-ratio:1;border-radius:18px;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.06);font-family:'Instrument Serif',serif;font-size:44px}
+.dn-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.dn-open h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:24px;line-height:1.1}
+.dn-row{display:flex;align-items:center;gap:10px}
+.dn-price{color:#e8c98a;font-size:18px}
+.dn-sold{position:absolute;top:22px;left:22px;padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.65);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.dn-addcart{width:100%;min-height:44px;border-radius:999px;border:1px solid #f2c46d;background:rgba(242,196,109,.16);color:#f2c46d;font:inherit;font-size:15px;cursor:pointer;transition:background .25s,transform .25s}
+.dn-addcart:hover{background:rgba(242,196,109,.3);transform:translateY(-1px)}
+.dn-addcart.added{background:#8fd18a;border-color:#8fd18a;color:#14210f}
+.dn-soldline{display:block;text-align:center;min-height:44px;line-height:44px;color:rgba(255,255,255,.55);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
 
-  function totals() {
-    const subtotal = plate.reduce((a, l) => {
-      const it = findItem(l.item_id);
-      return a + (it && it.is_available ? it.price * l.qty : 0);
-    }, 0);
-    const tax = Math.round((subtotal * (Number(settings.tax_rate) || 0)) / 100);
-    return { subtotal, tax, total: subtotal + tax };
-  }
+/* ---------- dish dialog ---------- */
+.dn-dlg{position:fixed;inset:0;margin:auto;width:min(480px,92vw);max-height:90vh;overflow:auto;padding:30px 28px 26px;border-radius:30px;color:#fff;border:1px solid var(--glass-border);background:rgba(28,18,12,.82)}
+.dn-dlg::backdrop{background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.dn-dlg[open]{animation:dnPop .35s var(--ease-in)}
+@keyframes dnPop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.dn-dlg h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(32px,5vw,44px);line-height:1.05;margin-bottom:8px}
+.dn-x{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+.dn-dlg .dn-x{position:absolute;top:12px;right:14px}
+.dn-dish-photo{display:grid;place-items:center;margin-bottom:14px}
+.dn-dish-photo img{width:min(100%,260px);aspect-ratio:1;object-fit:cover;border-radius:50%;filter:drop-shadow(0 20px 24px rgba(0,0,0,.5))}
+.dn-dish-photo img[hidden]{display:none}
+.dn-qty-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
-  function drawPlate() {
-    const empty = plate.length === 0;
-    $('#plEmpty').hidden = !empty;
-    $('#plTotals').hidden = empty;
-    $('#plFields').hidden = empty;
-    $('#plFoot').hidden = empty;
-    const list = $('#plLines');
-    list.textContent = '';
+/* ---------- plate drawer: slides in from the right, hide or show with the cart button ---------- */
+.dn-drawer{position:fixed;top:76px;right:0;bottom:0;z-index:40;width:min(430px,100vw);color:#fff;border:1px solid var(--glass-border);border-right:0;border-radius:28px 0 0 0;background:rgba(28,18,12,.9);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);box-shadow:var(--glass-shadow);transform:translateX(105%);visibility:hidden;transition:transform .45s var(--ease-in),visibility 0s .45s}
+.dn-drawer.open{transform:none;visibility:visible;transition:transform .45s var(--ease-in),visibility 0s}
+@media (min-width:768px){.dn-drawer{top:88px}}
+.dn-form{height:100%;display:flex;flex-direction:column;margin:0}
+.dn-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:24px 24px 18px}
+.dn-sec-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+.dn-drawer h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(32px,5vw,42px);line-height:1.05;margin-bottom:6px}
+.dn-drawer .cart-line{grid-template-columns:48px 1fr auto auto auto}
+.dn-drawer .cart-line img{width:48px;height:48px}
+.dn-drawer .cart-line .ghost{grid-column:2 / 5;justify-self:start}
+.dn-drawer .cart-info h3{font-size:20px}
+/* qty stepper inside the cart drawer */
+.dn-line-qty{display:flex;align-items:center;gap:6px;flex:none}
+.dn-line-qty .qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0;transition:background .2s}
+.dn-line-qty .qty-btn:hover{background:rgba(242,196,109,.25);border-color:#f2c46d}
+.dn-line-qty .qty-val{min-width:22px;text-align:center;color:#f2c46d;font-size:16px;white-space:nowrap}
+.dn-qtytag{color:#f2c46d;font-size:16px;white-space:nowrap}
+.dn-drawer .totals{margin-bottom:18px}
+.dn-drawer .totals[hidden]{display:none}
+.dn-hint{margin:-6px 0 14px;font-size:13px;color:rgba(255,255,255,.6)}
+.dn-hint[hidden]{display:none}
+.dn-form select:disabled{opacity:.8;cursor:not-allowed}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ghost{background:none;border:0;color:rgba(255,255,255,.7);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:0}
+.ghost:hover{color:#f2c46d}
 
-    plate.forEach((l) => {
-      const it = findItem(l.item_id);
-      if (!it) return;
-      const li = make('li', 'cart-line');
-      const img = new Image();
-      img.alt = '';
-      img.src = it.image_url || '';
-      img.addEventListener('error', () => img.remove());
+/* the Place order button stays at the bottom of the drawer while the rest scrolls */
+.dn-foot{flex:none;display:grid;gap:10px;padding:14px 24px calc(16px + env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.15);background:rgba(28,18,12,.96)}
+.dn-foot[hidden]{display:none}
+.dn-foot-total{display:flex;justify-content:space-between;align-items:baseline;color:rgba(255,255,255,.8)}
+.dn-foot-total b{color:#e8c98a;font-size:22px;font-weight:400}
+.dn-foot .cta{width:100%;text-align:center}
 
-      const info = make('div', 'cart-info');
-      info.append(make('h3', '', it.name), make('p', 'muted', `${money(it.price)} each${it.is_available ? '' : ' · sold out'}`));
+/* orders of this table, with live status */
+.dn-orders{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.15)}
+.dn-orders[hidden]{display:none}
+.dn-orders h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:26px;margin-bottom:10px}
+.dn-order{padding:14px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);margin-bottom:12px}
+.dn-order.fresh{border-color:#f2c46d}
+.dn-order-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.dn-order-top b{font-weight:500}
+.dn-order-top span{font-size:13px;color:rgba(255,255,255,.6)}
+.dn-order .steps{margin:12px 0 8px;gap:6px}
+.dn-order .step{padding:5px 12px;font-size:12px}
+.dn-order ul{list-style:none;display:grid;gap:3px;font-size:14px;color:rgba(255,255,255,.8)}
+.dn-order-note{margin-top:8px;font-size:13px;color:#e8c98a}
+.dn-order-bad{margin:10px 0 4px;color:#ffb4a0;font-size:14px}
 
-      const remove = make('button', 'ghost', 'Remove');
-      remove.type = 'button';
-      remove.addEventListener('click', () => { plate = plate.filter((x) => x.item_id !== l.item_id); writePlate(); });
+/* ---------- confirmation pulse on the cart button ---------- */
+.dn-plate-btn.bump{animation:dnBumpBtn .5s var(--ease-in)}
+@keyframes dnBumpBtn{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
 
-      li.append(img, info, make('span', 'dn-qtytag', `× ${l.qty}`), make('span', 'line-total', money(it.price * l.qty)), remove);
-      list.append(li);
-    });
+/* ---------- wide screens: when the drawer is open the menu moves over so nothing is hidden ---------- */
+@media (min-width:1100px){
+  body.drawer-open .dn-main{width:auto;margin-left:2.5vw;margin-right:460px}
+}
 
-    const t = totals();
-    const box = $('#plTotals');
-    box.textContent = '';
-    box.append(make('p', '', `Subtotal: ${money(t.subtotal)}`), make('p', '', `Tax: ${money(t.tax)}`), make('p', 'grand', `Total: ${money(t.total)}`));
-    $('#footCount').textContent = `${sum(plate)} ${sum(plate) === 1 ? 'item' : 'items'}`;
-    $('#footTotal').textContent = money(t.total);
-  }
-
-  /* ---------- categories: one row of circles (All first) ---------- */
-  function drawCats() {
-    const box = $('#dnCats');
-    box.textContent = '';
-    [{ id: 'all', name: 'All' }, ...cats].forEach((c) => {
-      const b = make('button', 'dn-cat');
-      b.type = 'button';
-      b.setAttribute('aria-current', String(c.id === filter));
-      const circle = make('span', 'dn-circle');
-      if (c.id === 'all') {
-        circle.classList.add('small');
-        circle.textContent = 'All';
-      } else if (c.image_url) {
-        const img = new Image();
-        img.alt = '';
-        img.src = c.image_url;
-        img.addEventListener('error', () => { img.remove(); circle.textContent = c.name.charAt(0).toUpperCase(); });
-        circle.append(img);
-      } else {
-        circle.textContent = c.name.charAt(0).toUpperCase();
-      }
-      b.append(circle, make('span', '', c.name));
-      b.addEventListener('click', () => { filter = c.id; drawCats(); drawGrid(); });
-      box.append(b);
-    });
-    updateArrows();
-  }
-
-  /* < and > slide the row by one window (7 circles at a time on a wide screen) */
-  function updateArrows() {
-    const box = $('#dnCats');
-    const max = box.scrollWidth - box.clientWidth;
-    const more = max > 4;
-    $('#catPrev').hidden = !more;
-    $('#catNext').hidden = !more;
-    $('#catPrev').disabled = box.scrollLeft <= 2;
-    $('#catNext').disabled = box.scrollLeft >= max - 2;
-  }
-  $('#catPrev').addEventListener('click', () => $('#dnCats').scrollBy({ left: -$('#dnCats').clientWidth, behavior: 'smooth' }));
-  $('#catNext').addEventListener('click', () => $('#dnCats').scrollBy({ left: $('#dnCats').clientWidth, behavior: 'smooth' }));
-  $('#dnCats').addEventListener('scroll', updateArrows, { passive: true });
-  addEventListener('resize', updateArrows);
-
-  /* ---------- dishes: available first, sold-out dishes always at the end ---------- */
-  function drawGrid() {
-    const grid = $('#dnGrid');
-    grid.textContent = '';
-    const q = query.trim().toLowerCase();
-    const items = menu
-      .filter((m) => {
-        if (filter !== 'all' && m.category_id !== filter) return false;
-        return !q || m.name.toLowerCase().includes(q) || (m.description || '').toLowerCase().includes(q);
-      })
-      .sort((a, b) => (b.is_available ? 1 : 0) - (a.is_available ? 1 : 0));
-    $('#dnEmpty').hidden = items.length > 0;
-    $('#dnEmpty').textContent = q ? 'No dish matches your search.' : 'No dishes here yet.';
-
-    items.forEach((it) => {
-      const card = make('article', 'dn-card' + (it.is_available ? '' : ' out'));
-
-      const open = make('button', 'dn-open');
-      open.type = 'button';
-      open.disabled = !it.is_available;
-      const thumb = make('div', 'dn-thumb');
-      if (it.image_url) {
-        const img = new Image();
-        img.alt = '';
-        img.src = it.image_url;
-        img.addEventListener('error', () => { img.remove(); thumb.textContent = it.name.charAt(0).toUpperCase(); });
-        thumb.append(img);
-      } else {
-        thumb.textContent = it.name.charAt(0).toUpperCase();
-      }
-      const row = make('div', 'dn-row');
-      row.append(make('span', 'dn-price', money(it.price)));
-      open.append(thumb, make('h3', '', it.name), row);
-      open.addEventListener('click', () => openDish(it));
-      card.append(open);
-
-      if (it.is_available) {
-        const add = make('button', 'dn-addcart', 'Add to plate');
-        add.type = 'button';
-        add.setAttribute('aria-label', `Add ${it.name} to plate`);
-        add.addEventListener('click', () => {
-          if (!addToPlate(it.id, 1)) return;
-          add.textContent = '✓ Added';
-          add.classList.add('added');
-          setTimeout(() => { add.textContent = 'Add to plate'; add.classList.remove('added'); }, 900);
-        });
-        card.append(add);
-      } else {
-        card.append(make('span', 'dn-soldline', 'Sold out'));
-        card.append(make('span', 'dn-sold', 'Sold out'));
-      }
-      grid.append(card);
-    });
-  }
-
-  /* ---------- dish card: photo, description, price (all from the admin menu data) ---------- */
-  function openDish(it) {
-    picked = it;
-    pickedQty = 1;
-    const img = $('#idImg');
-    img.hidden = !it.image_url;
-    img.src = it.image_url || '';
-    $('#idName').textContent = it.name;
-    $('#idTags').textContent = '';
-    $('#idDesc').textContent = it.description;
-    $('#idPrice').textContent = money(it.price);
-    $('#idQty').textContent = '1';
-    $('#idMsg').textContent = '';
-    $('#itemDlg').showModal();
-  }
-  $('#idMinus').addEventListener('click', () => { pickedQty = clampQty(pickedQty - 1); $('#idQty').textContent = String(pickedQty); });
-  $('#idPlus').addEventListener('click', () => { pickedQty = clampQty(pickedQty + 1); $('#idQty').textContent = String(pickedQty); });
-  $('#idAdd').addEventListener('click', () => {
-    if (!picked) return;
-    const okAdd = addToPlate(picked.id, pickedQty);
-    $('#idMsg').textContent = okAdd ? `Added ${pickedQty} × ${picked.name} to your plate.` : 'Your plate is full (30 dishes).';
-    if (okAdd) setTimeout(() => $('#itemDlg').close(), 700);
-  });
-  $('#itemClose').addEventListener('click', () => $('#itemDlg').close());
-
-  /* ---------- save the dine-in order into the shared store (prices always come from the store) ---------- */
-  const recentOrders = () => {
-    try { return JSON.parse(load(RECENT_KEY) || '[]').filter((t) => Date.now() - t < 5 * 60000); } catch (e) { return []; }
-  };
-
-  async function saveDineInOrder(p) {
-    const lines = p.lines;
-    if (!lines.length) return { error: { message: 'Your plate is empty.' } };
-    if (!p.table) return { error: { message: 'Please select your table.' } };
-    if (lines.length > 30) return { error: { message: 'An order can have up to 30 different dishes.' } };
-    if (lines.some((l) => !Number.isInteger(l.qty) || l.qty < 1 || l.qty > 20))
-      return { error: { message: 'Each dish can be ordered 1 to 20 times.' } };
-    if (p.honeypot) return { error: { message: 'Your order could not be accepted.' } };
-    if (recentOrders().length >= 5) return { error: { message: 'Too many orders just now. Please ask the waiter.' } };
-
-    const { reloadStore, saveStore } = await import(STORE_PATH);
-    const S = reloadStore();
-
-    const items = [];
-    for (const l of lines) {
-      const it = S.menu_items.find((x) => x.id === l.item_id);
-      if (!it) return { error: { message: 'One of the dishes is no longer on the menu. Please remove it.' } };
-      if (it.is_available === false) return { error: { message: `${it.name} is sold out. Please remove it.` } };
-      const price = Number(it.price);
-      items.push({ item_id: it.id, name: it.name, price, qty: l.qty, line_total: price * l.qty });
-    }
-    const subtotal = items.reduce((a, i) => a + i.line_total, 0);
-    const tax = Math.round((subtotal * (Number(S.settings.tax_rate) || 0)) / 100);
-
-    const seq = (Number(S.order_seq) || 1000) + 1;
-    S.order_seq = seq;
-    const rec = {
-      id: `ord_${seq}`,
-      receipt: `KG-${seq}`,
-      order_type: ORDER_TYPE,
-      table_id: `tbl_${p.table}`,                   // the admin's combined table bill groups orders by this id
-      table_number: p.table,
-      customer_name: String(p.name || '').trim().slice(0, 80) || `Table ${p.table}`,
-      phone: '',
-      address: null,
-      address_note: null,
-      pickup_time: null,
-      note: String(p.note || '').trim().slice(0, 200),
-      status: 'new',
-      payment_status: 'unpaid',
-      subtotal,
-      tax,
-      delivery_fee: 0,
-      total: subtotal + tax,
-      delivery_agency_note: null,
-      items,
-      created_at: new Date().toISOString(),
-      paid_at: null,
-    };
-    S.orders.unshift(rec);
-    saveStore();
-    save(RECENT_KEY, JSON.stringify([...recentOrders(), Date.now()]));
-    return { data: rec };
-  }
-
-  $('#plForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = e.target;
-    const err = $('#plErr');
-    err.textContent = '';
-    if (!plate.length) return;
-
-    const tableNo = validTable(f.elements.namedItem('table').value);
-    if (!tableNo) { err.textContent = 'Please select your table so we know where to serve.'; return; }
-
-    const btn = $('#plPlace');
-    btn.disabled = true;
-    const res = await saveDineInOrder({
-      table: tableNo,
-      lines: plate.map((l) => ({ item_id: l.item_id, qty: l.qty })),
-      name: f.elements.namedItem('name').value,
-      note: f.elements.namedItem('note').value,
-      honeypot: f.elements.namedItem('company').value,
-    });
-    btn.disabled = false;
-    if (res.error) { err.textContent = res.error.message; return; }
-
-    table = tableNo;
-    save(TABLE_KEY, String(tableNo));
-    freshReceipt = res.data.receipt;
-    plate = [];
-    f.elements.namedItem('note').value = '';
-    showTable();
-    writePlate();
-    await loadOrders();
-    $('#ordersSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-
-  /* ---------- orders of this table with live status (checks every 5 seconds) ---------- */
-  const timeOf = (iso) => {
-    const d = new Date(iso);
-    return Number.isNaN(d.getTime()) ? '' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
-  async function loadOrders() {
-    const sec = $('#ordersSec');
-    if (!table) { sec.hidden = true; return; }
-    let rows = [];
-    try {
-      const { reloadStore } = await import(STORE_PATH);
-      const now = Date.now();
-      rows = (reloadStore().orders || [])
-        .filter((o) => o.order_type === ORDER_TYPE && Number(o.table_number) === table && o.payment_status !== 'paid')
-        .filter((o) => {
-          const age = now - new Date(o.created_at).getTime();
-          if (o.status === 'cancelled') return age < 60 * 60000;       // cancelled orders stay for an hour
-          return FLOW.includes(o.status) && age < 8 * 3600000;          // chalu orders only
-        })
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        .slice(0, 10);
-    } catch (e) { rows = []; }
-
-    sec.hidden = rows.length === 0;
-    $('#ordersTitle').textContent = `Orders for Table ${table}`;
-    const list = $('#ordersList');
-    list.textContent = '';
-
-    rows.forEach((o) => {
-      const card = make('article', 'dn-order' + (o.receipt === freshReceipt ? ' fresh' : ''));
-      const top = make('div', 'dn-order-top');
-      top.append(make('b', '', `Order ${o.receipt}`), make('span', '', timeOf(o.created_at)));
-      card.append(top);
-
-      if (o.status === 'cancelled') {
-        card.append(make('p', 'dn-order-bad', 'This order was cancelled. Please ask the waiter.'));
-      } else {
-        const steps = make('ol', 'steps');
-        const at = Math.max(0, FLOW.indexOf(o.status));
-        FLOW.forEach((s, i) => steps.append(make('li', 'step' + (i < at ? ' done' : i === at ? ' current' : ''), LABEL[s])));
-        card.append(steps);
-      }
-
-      const items = make('ul');
-      (o.items || []).forEach((i) => items.append(make('li', '', `${i.qty} × ${i.name}`)));
-      card.append(items);
-      if (o.note) card.append(make('p', 'dn-order-note', `Note: ${o.note}`));
-      list.append(card);
-    });
-  }
-
-  function startPolling() {
-    clearInterval(pollTimer);
-    pollTimer = setInterval(loadOrders, POLL_MS);
-    addEventListener('storage', loadOrders);                         // another tab changed an order
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) loadOrders(); });
-  }
-
-  /* ---------- logo: back to the first page of this dining menu ---------- */
-  $('#homeLink').addEventListener('click', (e) => {
-    e.preventDefault();
-    filter = 'all';
-    query = '';
-    $('#dnSearch').value = '';
-    if ($('#itemDlg').open) $('#itemDlg').close();
-    drawCats();
-    drawGrid();
-    $('#dnCats').scrollTo({ left: 0 });
-    scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  /* ---------- search ---------- */
-  $('#dnSearch').addEventListener('input', (e) => { query = e.target.value; drawGrid(); });
-
-  /* ---------- boot ---------- */
-  async function init() {
-    // the table QR opens ...dine.html?table=5, so the table is fixed; without it the guest selects a table
-    const fromLink = validTable(new URLSearchParams(location.search).get('table'));
-    tableLocked = !!fromLink;
-    table = fromLink || validTable(load(TABLE_KEY));
-    if (table) save(TABLE_KEY, String(table));
-    fillTableSelect();
-    showTable();
-
-    plate = readPlate();
-    writePlate();
-
-    const [c, m, s] = await Promise.all([KG.getCategories(), KG.getMenu(), KG.getSettings()]);
-    cats = (c.data || []).filter((x) => x && x.name);
-    menu = m.data || [];
-    if (s.data) settings = { ...settings, ...s.data };
-    if (s.data && s.data.restaurant_name) document.title = `${s.data.restaurant_name} · Dine-in Menu`;
-
-    drawCats();
-    drawGrid();
-    drawPlate();
-    await loadOrders();
-    startPolling();
-  }
-
-  init();
-})();
-
-
-Html  
+/* ---------- tablets and phones ---------- */
+@media (max-width:900px){
+  .dn-cat{flex-basis:calc((100% - 4 * 14px) / 5)}
+}
+@media (max-width:640px){
+  .dn-main{padding-top:104px}
+  .dn-table{left:auto;right:74px;transform:translateY(-50%);padding:6px 12px;font-size:13px}
+  .dn-rail{gap:6px}
+  .dn-cats{gap:10px}
+  .dn-cat{flex-basis:calc((100% - 3 * 10px) / 4);font-size:12px}
+  .dn-circle{font-size:26px}
+  .dn-circle.small{font-size:20px}
+  .dn-arrow{flex-basis:36px;width:36px;height:36px;margin-top:22px;font-size:22px}
+  .dn-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .dn-card{padding:10px 10px 12px;border-radius:20px}
+  .dn-open h3{font-size:20px}
+  .dn-addcart{font-size:13px;min-height:40px}
+  .dn-dlg{padding:26px 20px 22px}
+  .dn-scroll{padding:20px 18px 14px}
+  .dn-foot{padding:12px 18px calc(14px + env(safe-area-inset-bottom))}
+}
+@media (prefers-reduced-motion:reduce){
+  .dn-drawer,.dn-main{transition:none}
+  .dn-dlg[open],.dn-plate-btn.bump{animation:none}
+}
