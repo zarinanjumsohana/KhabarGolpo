@@ -45,7 +45,7 @@ export function qrBaseIsLocal() {
 
 export function tableLink(tableNumber) {
   const base = (QR_BASE || location.origin || CONFIG.SITE_URL || '').replace(/\/$/, '');
-  return `${base}/customer/index.html?table=${encodeURIComponent(tableNumber)}`;
+  return `${base}/dining/dine.html?table=${encodeURIComponent(tableNumber)}`;
 }
 
 export function qrUrl(text, size = 320) {

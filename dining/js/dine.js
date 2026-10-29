@@ -16,6 +16,7 @@
 
   const PLATE_KEY = 'kg-dine-plate';
   const TABLE_KEY = 'kg-dine-table';
+  const ORDERS_KEY = 'kg-dine-orders'; // stores [{ id, receipt, created_at }] for this session
   const MAX_TABLE = 99;
   const TABLE_COUNT = 12;                              // tables offered when a guest opens the page without a table QR
   const ORDER_TYPE = 'dine-in';
@@ -314,6 +315,24 @@
   });
   $('#itemClose').addEventListener('click', () => $('#itemDlg').close());
 
+  /* ---------- success banner shown after a successful order ---------- */
+  function showOrderSuccess(receipt) {
+    const banner = make('div', 'dn-success');
+    const icon = make('span', 'dn-success-icon', '✓');
+    const text = make('div', 'dn-success-text');
+    text.append(
+      make('strong', '', 'Order placed!'),
+      make('p', '', receipt ? `Receipt: ${receipt}` : 'Your order is on its way to the kitchen.')
+    );
+    const sub = make('p', 'dn-success-sub', 'Scroll down to track your order status.');
+    text.append(sub);
+    banner.append(icon, text);
+
+    const plEmpty = $('#plEmpty');
+    plEmpty.parentNode.insertBefore(banner, plEmpty.nextSibling);
+    setTimeout(() => banner.remove(), 6000);  // auto-remove after 6 s
+  }
+
   /* ---------- place the dine-in order via KG.placeDineinOrder() ----------
      This routes through content.js which uses Supabase (live) or localStorage (mock),
      so the order shows up in the admin panel and the kitchen panel. */
@@ -348,12 +367,24 @@
     table = tableNo;
     save(TABLE_KEY, String(tableNo));
     freshReceipt = res.data.receipt || '';
+
+    /* save this order id so loadOrders can track it via KG.getOrder() */
+    const orderId = res.data.id || '';
+    if (orderId) {
+      const prev = JSON.parse(load(ORDERS_KEY) || '[]');
+      prev.unshift({ id: orderId, receipt: freshReceipt, created_at: new Date().toISOString() });
+      save(ORDERS_KEY, JSON.stringify(prev.slice(0, 10)));
+    }
+
     plate = [];
     f.elements.namedItem('note').value = '';
     showTable();
     writePlate();
     await loadOrders();
-    $('#ordersSec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    /* ---- success banner: replaces the empty-plate message briefly ---- */
+    showOrderSuccess(freshReceipt);
+    $('#drawerScroll').scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   /* ---------- orders of this table with live status (checks every 5 seconds) ---------- */
@@ -367,32 +398,25 @@
     if (!table) { sec.hidden = true; return; }
     let rows = [];
     try {
-      const sb = await KG._getClient ? KG._getClient() : null;
-      if (sb) {
-        /* Live Supabase path: fetch this table's recent dine-in orders */
-        const { data } = await sb
-          .from('orders')
-          .select('id, receipt, status, created_at, note, items:order_items(name, qty)')
-          .eq('order_type', ORDER_TYPE)
-          .eq('table_number', table)
-          .neq('payment_status', 'paid')
-          .order('created_at', { ascending: false })
-          .limit(10);
-        rows = data || [];
-      } else {
-        /* Mock path: read from localStorage store */
-        const { reloadStore } = await import('../../js/shared/store.js');
-        const now = Date.now();
-        rows = (reloadStore().orders || [])
-          .filter((o) => o.order_type === ORDER_TYPE && Number(o.table_number) === table && o.payment_status !== 'paid')
-          .filter((o) => {
-            const age = now - new Date(o.created_at).getTime();
-            if (o.status === 'cancelled') return age < 60 * 60000;
-            return FLOW.includes(o.status) && age < 8 * 3600000;
-          })
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-          .slice(0, 10);
-      }
+      /* Read the order ids placed in this session */
+      const stored = JSON.parse(load(ORDERS_KEY) || '[]');
+      if (!stored.length) { sec.hidden = true; return; }
+
+      /* Fetch fresh status for each order via KG.getOrder() (works for both mock & Supabase) */
+      const results = await Promise.all(stored.map((s) => KG.getOrder(s.id)));
+      const now = Date.now();
+      rows = results
+        .filter((r) => r.data)
+        .map((r) => r.data)
+        .filter((o) => {
+          /* only show orders that belong to this table */
+          if (Number(o.table_number) !== table) return false;
+          const age = now - new Date(o.created_at).getTime();
+          if (o.status === 'cancelled') return age < 60 * 60000;
+          return FLOW.includes(o.status) && age < 8 * 3600000;
+        })
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 10);
     } catch (e) { rows = []; }
 
     sec.hidden = rows.length === 0;
