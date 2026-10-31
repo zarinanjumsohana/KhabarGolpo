@@ -67,7 +67,33 @@
     <p class="kicker">Your details</p>
     <div class="row2">
       <label>Your name <input name="name" maxlength="80" autocomplete="name" required></label>
-      <label>Mobile number <input name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="01XXXXXXXXX" required></label>
+      <label>Mobile number <input name="phone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="01XXXXXXXXX" title="11-digit Bangladeshi mobile number, e.g. 01712345678" required></label>
+    </div>
+
+    <div class="row2" id="emailRow">
+      <label id="emailField">Email address <input name="email" type="email" maxlength="120" autocomplete="email" placeholder="you@example.com"></label>
+    </div>
+
+    <div id="otpBox" class="otp-box" hidden>
+      <div class="otp-head">
+        <span class="otp-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+        </span>
+        <div>
+          <p class="otp-title">Verify your email</p>
+          <p class="otp-hint" id="otpHint">Send a 6-digit code to <span id="otpTarget">your inbox</span>. It stays valid for 5 minutes.</p>
+        </div>
+      </div>
+      <label class="otp-code-label">6-digit code
+        <input id="otpInput" name="otp" inputmode="numeric" maxlength="6" pattern="[0-9]*" autocomplete="one-time-code" placeholder="000000">
+      </label>
+      <button type="button" id="btnSendOtp" class="otp-send">
+        <span class="otp-send-ico" aria-hidden="true">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </span>
+        <span id="btnSendOtpText">Email me the code</span>
+      </button>
+      <p class="otp-msg" id="otpMsg" role="alert"></p>
     </div>
 
     <p class="kicker">How would you like it?</p>

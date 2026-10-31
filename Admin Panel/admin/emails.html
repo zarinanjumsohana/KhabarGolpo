@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emails · Khabar Golpo Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <script>(function(){try{var t=localStorage.getItem('kg.admin.theme')||(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/animations.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+<body data-page="emails">
+  <div id="shell-root"></div>
+
+  <main id="page" class="page">
+    <div class="page-head">
+      <div>
+        <span hidden class="kicker">Inbox</span>
+        <h1 class="page-title">Emails <em>&amp; guests</em></h1>
+        <p hidden class="page-desc">Every guest who placed a pickup or delivery order — name, phone and email land here for confirmation.</p>
+      </div>
+      <div class="head-actions">
+        <span class="chip" id="chipCount"><span data-icon="mail"></span><span id="chipCountNum">0</span> with email</span>
+      </div>
+    </div>
+
+    <div class="fb-grid" id="emailGrid"></div>
+  </main>
+
+  <script type="module" src="../js/pages/emails.js"></script>
+</body>
+</html>

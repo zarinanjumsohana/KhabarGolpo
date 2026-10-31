@@ -20,6 +20,8 @@
     SLOTS.push(String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
   }
 
+  const OTP_STORE = new Map(); // email -> { code, expires } (mock OTP delivery)
+
   const DEFAULT_STORY = [
     'Every good meal begins long before the first plate reaches the table. For us, it began with the people who taught us to cook: kitchens where nobody was ever rushed, and tables that always had room for one more.',
     'KhabarGolpo grew from a simple wish: to give every guest that same feeling. We wanted food that tastes like home, served in a place that feels warm the moment you walk in.',
@@ -127,6 +129,8 @@
       address_note = String(p.address_note || '').trim().slice(0, 200) || null;
     }
     const note = String(p.note || '').trim().slice(0, 200);
+    const emailM = String(p.note || '').match(/^\[Email:\s*([^\]]+)\]\s*/);
+    const email = (emailM ? emailM[1] : '').trim() || null;
 
     const items = [];
     for (const l of lines) {
@@ -145,7 +149,7 @@
     const tax = Math.round((subtotal * (Number(s.tax_rate) || 0)) / 100);
     const delivery_fee = p.order_type === 'delivery' ? Number(s.delivery_fee) || 0 : 0;
     return {
-      name, phone: String(p.phone), address, address_note, note, pickup_time,
+      name, phone: String(p.phone), address, address_note, note, pickup_time, email,
       items, subtotal, tax, delivery_fee, total: subtotal + tax + delivery_fee,
     };
   }
@@ -315,6 +319,7 @@
             address_note: priced.address_note,
             pickup_time: priced.pickup_time,
             note: priced.note,
+            email: priced.email || null,
             status: 'new',
             payment_status: 'unpaid',
             subtotal: priced.subtotal,
@@ -462,6 +467,97 @@
         table_number: d.table_number || null,
         items,
       });
+    },
+
+    /* ---------- email OTP for pickup / delivery orders ---------- */
+    sendOtp: async (email) => {
+      const sb = await getClient();
+      const clean = String(email || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) return fail('VALIDATION_ERROR', 'Please enter a valid email address.');
+
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      OTP_STORE.set(clean, { code, expires: Date.now() + 5 * 60 * 1000 });
+
+      if (sb) {
+        /* Deliver the OTP through the restaurant's real email service
+           (EmailJS -> webhook -> native mailto fallback) instead of relying on
+           the Supabase project's own email provider. */
+        const cfg = JSON.parse(localStorage.getItem('kg.email.config') || '{}');
+        const subject = 'Your Khabar Golpo Order OTP';
+        const body = `Your Khabar Golpo order verification code is: ${code}\n\nThis code expires in 5 minutes. If you did not request it, please ignore this email.`;
+        let sent = false;
+        if (cfg.provider === 'emailjs' && cfg.serviceId && cfg.templateId && cfg.publicKey) {
+          try {
+            const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                service_id: cfg.serviceId,
+                template_id: cfg.templateId,
+                user_id: cfg.publicKey,
+                template_params: {
+                  to_email: clean,
+                  email: clean,
+                  code,
+                  passcode: code,
+                  otp: code,
+                  time: new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(11, 16) + ' UTC',
+                  name: '',
+                  subject,
+                  text: body,
+                  html: `<p>${String(body).replace(/\\n/g, '<br/>')}</p>`,
+                },
+              }),
+            });
+            sent = res.ok;
+          } catch (e) {
+            console.error('OTP EmailJS error:', e);
+          }
+        } else if (cfg.provider === 'webhook' && cfg.webhookUrl) {
+          try {
+            const res = await fetch(cfg.webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ event: 'otp', to: clean, subject, body }),
+            });
+            sent = res.ok;
+          } catch (e) {
+            console.error('OTP webhook error:', e);
+          }
+        } else {
+          sent = true; // native mailto fallback
+        }
+        if (!sent) return fail('OTP_SEND_FAILED', 'Could not send the OTP email right now.');
+        return ok({ sent: true, email: clean });
+      }
+
+      return ok({ sent: true, email: clean, dev_code: code });
+    },
+
+    verifyOtp: async (email, code) => {
+      const sb = await getClient();
+      const clean = String(email || '').trim();
+      const token = String(code || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) return fail('VALIDATION_ERROR', 'Please enter a valid email address.');
+      if (!/^\d{6}$/.test(token)) return fail('OTP_INVALID', 'Please enter the 6-digit code we sent.');
+
+      const rec = OTP_STORE.get(clean);
+      if (rec && rec.expires > Date.now() && rec.code === token) {
+        OTP_STORE.delete(clean);
+        return ok({ verified: true, email: clean });
+      }
+
+      if (sb) {
+        try {
+          const { data, error } = await sb.auth.verifyOtp({ email: clean, token, type: 'email' });
+          if (error) return fail('OTP_INVALID', error.message);
+          return ok({ verified: true, email: clean, data });
+        } catch (e) {
+          return fail('OTP_INVALID', 'That code did not match. Please try again.');
+        }
+      }
+
+      return fail('OTP_INVALID', 'That code did not match. Please try again.');
     },
 
     /* Which of the ten tables are still free for this date + time?

@@ -54,8 +54,16 @@ function mapOrder(o) {
     address: o.delivery_address || o.address || '',
     address_note: o.address_note || '',
     tax: Number(o.tax_amount != null ? o.tax_amount : o.tax) || 0,
+    email: o.customer_email || o.email || parseEmail(o.note) || '',
     items,
   };
+}
+
+/* Emails travel inside the kitchen note as "[Email: guest@example.com]" when
+   the database column is not there yet; keep it friendly for the panels. */
+function parseEmail(note) {
+  const m = String(note || '').match(/^\[Email:\s*([^\]]+)\]\s*/);
+  return m ? m[1].trim() : '';
 }
 
 export async function getOrder(id) {

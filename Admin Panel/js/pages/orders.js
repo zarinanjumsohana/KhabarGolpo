@@ -43,6 +43,7 @@ function cardHtml(o, i) {
         <b>${esc(who)}</b>
         ${o.customer_name ? `<span class="sep">·</span><span class="muted">${esc(o.customer_name)}</span>` : ''}
         ${o.phone ? `<span class="sep">·</span><span class="muted">${esc(o.phone)}</span>` : ''}
+        ${o.email ? `<span class="sep">·</span><span class="muted">${esc(o.email)}</span>` : ''}
         ${o.status === 'out_for_delivery' ? '<span class="sep">·</span><span class="muted">On the way</span>' : ''}
       </span>
       <span class="oc-items">
@@ -225,6 +226,7 @@ function detailHtml(o) {
       ${o.table_number ? `<div class="dt-row"><span>Table</span><b>#${o.table_number}</b></div>` : ''}
       ${o.customer_name ? `<div class="dt-row"><span>Customer</span><b>${esc(o.customer_name)}</b></div>` : ''}
       ${o.phone ? `<div class="dt-row"><span>Phone</span><b><a href="tel:${esc(o.phone)}" style="color:var(--brand)">${esc(o.phone)}</a></b></div>` : ''}
+      ${o.email ? `<div class="dt-row"><span>Email</span><b>${esc(o.email)}</b></div>` : ''}
       ${o.address ? `<div class="dt-row"><span>Address</span><b>${esc(o.address)}${o.address_note ? `<br><span class="muted xsmall">${esc(o.address_note)}</span>` : ''}</b></div>` : ''}
       ${o.pickup_time ? `<div class="dt-row"><span>Preferred pickup</span><b>${esc(o.pickup_time)}</b></div>` : ''}
       ${o.delivery_agency_note ? `<div class="dt-row"><span>Agency note</span><b>${esc(o.delivery_agency_note)}</b></div>` : ''}

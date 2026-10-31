@@ -54,11 +54,14 @@ input:focus,select:focus,textarea:focus{border-color:rgba(255,255,255,.7)}
 .cal-nav:disabled{opacity:.3;cursor:default}
 .cal-week,.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
 .cal-week span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6);padding:6px 0}
-.cal-day{aspect-ratio:1;border-radius:50%;border:1px solid transparent;background:transparent;color:#fff;font-size:15px;cursor:pointer;transition:background-color .3s,color .3s,border-color .3s}
+.cal-day{aspect-ratio:1;border-radius:50%;border:1px solid transparent;background:transparent;color:#fff;font-size:15px;cursor:pointer;transition:background-color .3s,color .3s,border-color .3s,transform .25s,box-shadow .25s}
 .cal-day:hover:not(:disabled){background:rgba(255,255,255,.14)}
 .cal-day.today{border-color:rgba(255,255,255,.5)}
-.cal-day.selected{background:#fff;color:#1a120c;font-weight:600}
+.cal-day.selected{background:#e8c98a;color:#1a120c;font-weight:700;border-color:#e8c98a;box-shadow:0 0 0 4px rgba(232,201,138,.30),0 8px 18px rgba(0,0,0,.35);transform:scale(1.08);animation:calPick .25s var(--ease-in)}
+.cal-day.selected:hover:not(:disabled){background:#e8c98a}
 .cal-day:disabled{color:rgba(255,255,255,.25);cursor:default}
+.cal-day.past{color:rgba(255,255,255,.25);cursor:default}
+@keyframes calPick{from{transform:scale(.88)}to{transform:scale(1.08)}}
 
 /* reservation: button and form */
 .res-hint{text-align:center;color:rgba(255,255,255,.75);margin:20px 0 14px;font-size:15px}

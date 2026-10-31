@@ -20,8 +20,14 @@
   const MAX_TABLE = 99;
   const TABLE_COUNT = 12;                              // tables offered when a guest opens the page without a table QR
   const ORDER_TYPE = 'dine-in';
-  const FLOW = ['new', 'preparing', 'ready'];
-  const LABEL = { new: 'Received', preparing: 'Preparing', ready: 'Ready' };
+  const FLOW = ['new', 'approved', 'preparing', 'ready', 'completed'];
+  const LABEL = {
+    new: 'Received',
+    approved: 'Accepted',
+    preparing: 'Preparing',
+    ready: 'Ready',
+    completed: 'Completed',
+  };
   const POLL_MS = 5000;
 
   let table = null;        // 1..99 or null

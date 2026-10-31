@@ -111,9 +111,13 @@
       const key = isoOf(date);
       const b = make('button', 'cal-day', String(d));
       b.type = 'button';
-      b.disabled = date < today;
+      const past = date < today;
+      b.classList.toggle('past', past);
+      b.setAttribute('aria-disabled', past ? 'true' : 'false');
+      b.tabIndex = past ? -1 : 0;
       b.classList.toggle('today', date.getTime() === today.getTime());
       b.classList.toggle('selected', key === selected);
+      b.setAttribute('aria-pressed', key === selected ? 'true' : 'false');
       b.setAttribute('aria-label', prettyDate(key));
       b.addEventListener('click', () => choose(key));
       days.append(b);
@@ -121,6 +125,10 @@
   }
 
   function choose(key) {
+    if (key < isoOf(today)) {
+      resHint.textContent = 'That date has passed — please pick today or a later date.';
+      return;
+    }
     selected = key;
     drawCalendar();
     resBtn.disabled = false;
