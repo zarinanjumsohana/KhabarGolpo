@@ -44,6 +44,15 @@
     clear() {
       write([]);
     },
+    /* Drop lines whose dish is no longer on the menu (old ids after a menu change),
+       so the badge never counts dishes that cannot be shown or ordered. */
+    prune(validIds) {
+      const keep = new Set(validIds || []);
+      const lines = read();
+      const next = lines.filter((l) => keep.has(l.item_id));
+      if (next.length !== lines.length) write(next);
+      return next.length;
+    },
   };
 
   /* Number badge on every cart button */

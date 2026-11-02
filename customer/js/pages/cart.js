@@ -324,6 +324,7 @@
     renderLines();
     const [m, s] = await Promise.all([KG.getMenu(), KG.getSettings()]);
     menu = m.data || [];
+    if (window.KGCart && menu.length) window.KGCart.prune(menu.map((d) => d.id));
     if (s.data) applySettings(s.data);
     renderLines();
   }
