@@ -108,7 +108,9 @@
     const badge = $('#plateCount');
     badge.textContent = String(n);
     badge.hidden = n === 0;
+    $('#plateBtn').classList.toggle('has-items', n > 0);
     drawPlate();
+    syncCardButtons();
   }
   function bump() {
     const b = $('#plateBtn');
@@ -123,8 +125,37 @@
     else return false;
     writePlate();
     bump();
-    if (!autoOpened) { autoOpened = true; setDrawer(true); }   // first add: the drawer opens by itself
+    setDrawer(true);   // ensure cart box is present on screen
     return true;
+  }
+
+  function syncCardButtons() {
+    document.querySelectorAll('.dn-addcart').forEach((btn) => {
+      const id = btn.dataset.itemId;
+      if (!id) return;
+      const line = plate.find((l) => l.item_id === id);
+      if (line && line.qty > 0) {
+        btn.classList.add('added');
+        btn.textContent = `✓ Added (${line.qty})`;
+        btn.setAttribute('aria-label', `${btn.dataset.itemName || 'Dish'} is on your plate (${line.qty}). Tap to add more`);
+      } else {
+        btn.classList.remove('added');
+        btn.textContent = 'Add to plate';
+        btn.setAttribute('aria-label', `Add ${btn.dataset.itemName || 'dish'} to plate`);
+      }
+    });
+
+    if ($('#itemDlg').open && picked) {
+      const line = plate.find((l) => l.item_id === picked.id);
+      const idAdd = $('#idAdd');
+      if (line && line.qty > 0) {
+        idAdd.classList.add('added');
+        idAdd.textContent = `✓ In plate (${line.qty}) · Add more`;
+      } else {
+        idAdd.classList.remove('added');
+        idAdd.textContent = 'Add to plate';
+      }
+    }
   }
 
   function totals() {
@@ -182,7 +213,7 @@
       });
       qtyWrap.append(btnMinus, qtySpan, btnPlus);
 
-      const remove = make('button', 'ghost', 'Remove');
+      const remove = make('button', 'ghost dn-remove', '✕ Remove');
       remove.type = 'button';
       remove.addEventListener('click', () => { plate = plate.filter((x) => x.item_id !== l.item_id); writePlate(); });
 
@@ -280,12 +311,11 @@
       if (it.is_available) {
         const add = make('button', 'dn-addcart', 'Add to plate');
         add.type = 'button';
+        add.dataset.itemId = it.id;
+        add.dataset.itemName = it.name;
         add.setAttribute('aria-label', `Add ${it.name} to plate`);
         add.addEventListener('click', () => {
-          if (!addToPlate(it.id, 1)) return;
-          add.textContent = '✓ Added';
-          add.classList.add('added');
-          setTimeout(() => { add.textContent = 'Add to plate'; add.classList.remove('added'); }, 900);
+          addToPlate(it.id, 1);
         });
         card.append(add);
       } else {
@@ -294,6 +324,7 @@
       }
       grid.append(card);
     });
+    syncCardButtons();
   }
 
   /* ---------- dish card: photo, description, price (all from the admin menu data) ---------- */
@@ -309,6 +340,17 @@
     $('#idPrice').textContent = money(it.price);
     $('#idQty').textContent = '1';
     $('#idMsg').textContent = '';
+
+    const line = plate.find((l) => l.item_id === it.id);
+    const idAdd = $('#idAdd');
+    if (line && line.qty > 0) {
+      idAdd.classList.add('added');
+      idAdd.textContent = `✓ In plate (${line.qty}) · Add more`;
+    } else {
+      idAdd.classList.remove('added');
+      idAdd.textContent = 'Add to plate';
+    }
+
     $('#itemDlg').showModal();
   }
   $('#idMinus').addEventListener('click', () => { pickedQty = clampQty(pickedQty - 1); $('#idQty').textContent = String(pickedQty); });
@@ -317,7 +359,8 @@
     if (!picked) return;
     const okAdd = addToPlate(picked.id, pickedQty);
     $('#idMsg').textContent = okAdd ? `Added ${pickedQty} × ${picked.name} to your plate.` : 'Your plate is full (30 dishes).';
-    if (okAdd) setTimeout(() => $('#itemDlg').close(), 700);
+    syncCardButtons();
+    if (okAdd) setTimeout(() => $('#itemDlg').close(), 600);
   });
   $('#itemClose').addEventListener('click', () => $('#itemDlg').close());
 

@@ -31,10 +31,11 @@
   <!-- top right: cart. Click to show or hide the plate drawer. -->
   <div class="dn-actions">
     <button class="cart-btn dn-plate-btn" id="plateBtn" type="button" aria-label="Show or hide your plate" aria-expanded="false" aria-controls="drawer">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="dn-plate-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z"/>
         <path d="M9 8a3 3 0 0 1 6 0"/>
       </svg>
+      <span class="dn-plate-label">Your Plate</span>
       <span class="cart-count" id="plateCount" hidden>0</span>
     </button>
   </div>
@@ -68,14 +69,26 @@
   <form class="dn-form" id="plForm" novalidate>
     <div class="dn-scroll" id="drawerScroll">
       <div class="dn-sec-head">
-        <div>
-          <p class="kicker">Your order</p>
-          <h2 id="plTitle">Your plate</h2>
+        <div class="dn-sec-head-info">
+          <div class="dn-sec-badge" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8z"/>
+              <path d="M9 8a3 3 0 0 1 6 0"/>
+            </svg>
+          </div>
+          <div>
+            <p class="kicker">Dine-in Order</p>
+            <h2 id="plTitle">Your plate</h2>
+          </div>
         </div>
         <button class="dn-x" id="drawerClose" type="button" aria-label="Hide the plate">›</button>
       </div>
 
-      <p class="muted" id="plEmpty">Your plate is empty. Tap "Add to plate" under a dish.</p>
+      <div class="dn-empty-box" id="plEmpty">
+        <div class="dn-empty-icon" aria-hidden="true">🍽️</div>
+        <h3>Your plate is empty</h3>
+        <p>Explore our menu and tap <strong>Add to plate</strong> on any dish to begin.</p>
+      </div>
       <ul class="cart-lines" id="plLines"></ul>
       <div class="totals" id="plTotals"></div>
 
@@ -127,6 +140,7 @@
 </dialog>
 
 <script src="../customer/js/mock/content.js"></script>
+<script src="../customer/js/utils/ambient.js"></script>
 <script src="js/dine.js"></script>
 </body>
 </html>

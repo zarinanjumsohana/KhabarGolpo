@@ -961,25 +961,72 @@ body.app {
 .logo-preview img { width: 100%; height: 100%; object-fit: cover; }
 
 .save-bar {
-  position: sticky;
-  bottom: 20px;
-  z-index: 40;
+  position: fixed;
+  bottom: 24px;
+  left: calc(var(--sb-w, 266px) + (100% - var(--sb-w, 266px)) / 2);
+  transform: translate(-50%, 160%);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px 14px 22px;
+  gap: 20px;
+  min-width: 440px;
+  max-width: calc(100vw - var(--sb-w, 266px) - 64px);
+  padding: 12px 18px 12px 22px;
   background: var(--solid);
   color: #fff;
   border-radius: 999px;
-  box-shadow: 0 26px 50px -26px rgba(0, 0, 0, 0.8);
-  transform: translateY(160%);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.12);
   opacity: 0;
-  transition: transform 0.55s var(--spring), opacity 0.4s;
+  pointer-events: none;
+  transition: transform 0.45s var(--spring), opacity 0.3s;
 }
-.save-bar.show { transform: none; opacity: 1; }
+.save-bar.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
 .save-bar span { font-size: 14.5px; display: flex; align-items: center; gap: 10px; }
 .save-bar .dot-live { background: var(--brand-2); }
+.save-bar .sb-dot {
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  border-radius: 50%;
+  background: var(--brand-2, #f0a500);
+  box-shadow: 0 0 10px var(--brand-2, #f0a500);
+  display: inline-block;
+  flex: none;
+}
+.save-bar .sb-msg {
+  flex: 1;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.save-bar .sb-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.save-bar .btn-ghost {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.save-bar .btn-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .save-bar {
+    left: 50%;
+    min-width: min(440px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+  }
+}
 
 /* ============================== LOGIN ============================== */
 .login {

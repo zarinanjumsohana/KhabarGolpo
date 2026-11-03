@@ -2,14 +2,19 @@
 
 import { supabase } from '../supabaseClient.js';
 import { Mock } from '../mock/index.js';
-import { fromSupabase, withMock } from './shared.js';
+import { fromSupabase, withMock, normalizeSettings, ok } from './shared.js';
 
 export async function getSettings() {
   return withMock(
-    () => Mock.public.getSettings(),
+    async () => {
+      const res = await Mock.public.getSettings();
+      return res.error ? res : ok(normalizeSettings(res.data));
+    },
     async () => {
       const sb = await supabase();
-      return fromSupabase(await sb.from('settings').select('*').limit(1).maybeSingle(), { code: 'SETTINGS_FAILED' });
+      const res = fromSupabase(await sb.from('settings').select('*').limit(1).maybeSingle(), { code: 'SETTINGS_FAILED' });
+      if (res.error) return res;
+      return ok(normalizeSettings(res.data));
     }
   );
 }

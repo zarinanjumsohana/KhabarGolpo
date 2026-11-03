@@ -3,7 +3,7 @@
 import { supabase } from '../supabaseClient.js';
 import { Mock } from '../mock/index.js';
 import { isMock } from '../config.js';
-import { fromSupabase, withMock, fail, friendly } from './shared.js';
+import { fromSupabase, withMock, fail, friendly, normalizeSettings, toDatabaseSettings, ok } from './shared.js';
 
 async function getSb() {
   const client = await supabase();
@@ -269,9 +269,17 @@ export const deleteGalleryImage = (id) =>
 /* ------------------------------ settings ------------------------------ */
 export const updateSettings = (patch) =>
   withMock(
-    () => Mock.adminContent.updateSettings(patch),
+    async () => {
+      const norm = normalizeSettings(patch);
+      await Mock.adminContent.updateSettings(norm);
+      return ok(norm);
+    },
     async () => {
       const client = await getSb();
-      return fromSupabase(await client.from('settings').update(patch).eq('id', 1).select().single(), { code: 'SAVE_FAILED' });
+      const dbPatch = toDatabaseSettings(patch);
+      const res = await client.from('settings').update(dbPatch).eq('id', 1).select().single();
+      const fromSb = fromSupabase(res, { code: 'SAVE_FAILED' });
+      if (fromSb.error) return fromSb;
+      return ok(normalizeSettings(fromSb.data));
     }
   );

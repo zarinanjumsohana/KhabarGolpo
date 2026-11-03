@@ -37,14 +37,36 @@ function renderLogo() {
 }
 
 function fill(s) {
+  if (!s) return;
   saved = s;
+
+  // Resolve with schema fallbacks in case raw DB object was passed
+  const values = {
+    name: s.name ?? s.restaurant_name ?? '',
+    tagline: s.tagline ?? '',
+    address: s.address ?? '',
+    phone: s.phone ?? '',
+    email: s.email ?? '',
+    hours_week: s.hours_week ?? s.hours ?? '',
+    hours_weekend: s.hours_weekend ?? s.hours ?? '',
+    pickup_hours: s.pickup_hours ?? '',
+    tax_rate: s.tax_rate ?? s.tax_percent ?? '',
+    timezone: s.timezone ?? 'Asia/Dhaka',
+    pickup_enabled: s.pickup_enabled !== false,
+    delivery_enabled: s.delivery_enabled !== false,
+    delivery_fee: s.delivery_fee ?? 0,
+    min_delivery_order: s.min_delivery_order ?? s.min_delivery_amount ?? 0,
+    delivery_note: s.delivery_note ?? s.delivery_area_note ?? '',
+    prep_time_minutes: s.prep_time_minutes ?? 25,
+  };
+
   for (const f of FIELDS) {
     const el = $(`s_${f}`);
     if (!el) continue;
-    if (BOOLS.includes(f)) el.checked = Boolean(s[f]);
-    else el.value = s[f] ?? '';
+    if (BOOLS.includes(f)) el.checked = Boolean(values[f]);
+    else el.value = values[f] ?? '';
   }
-  logoValue = s.logo || null;
+  logoValue = s.logo || s.logo_url || null;
   renderLogo();
 }
 
@@ -58,6 +80,7 @@ function collect() {
     else patch[f] = el.value.trim();
   }
   patch.logo = logoValue;
+  patch.logo_url = logoValue;
   return patch;
 }
 
@@ -77,6 +100,10 @@ async function init() {
   hydrateIcons($('page'));
   reveal();
 
+  $('setForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    $('btnSave').click();
+  });
   $('setForm').addEventListener('input', () => setDirty(true));
   $('setForm').addEventListener('change', () => setDirty(true));
 
@@ -115,12 +142,20 @@ async function init() {
       return toast({ type: 'warning', title: 'Name required', message: 'The restaurant needs a name.' });
     }
     buttonLoading($('btnSave'), true);
-    const res = await updateSettings(collect());
-    buttonLoading($('btnSave'), false);
-    if (res.error) return toast({ type: 'error', title: 'Could not save', message: res.error.message });
-    fill(res.data);
-    setDirty(false);
-    toast({ type: 'success', title: 'Settings saved', message: 'The website picks this up immediately.' });
+    try {
+      const res = await updateSettings(collect());
+      if (res.error) {
+        toast({ type: 'error', title: 'Could not save', message: res.error.message });
+        return;
+      }
+      fill(res.data);
+      setDirty(false);
+      toast({ type: 'success', title: 'Settings saved', message: 'The website picks this up immediately.' });
+    } catch (err) {
+      toast({ type: 'error', title: 'Could not save', message: err?.message || 'Unexpected error' });
+    } finally {
+      buttonLoading($('btnSave'), false);
+    }
   });
 
   window.addEventListener('beforeunload', (e) => {
