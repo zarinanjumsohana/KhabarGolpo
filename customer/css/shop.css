@@ -215,3 +215,47 @@ body.cat-page .topbar .cart-btn{display:none}
 .otp-send-ico{display:inline-flex;transform:rotate(-8deg)}
 .otp-msg{margin:0;font-size:13.5px;line-height:1.45;color:#ffb4a0;min-height:1.1em}
 .otp-msg.ok{color:#cfeacb}
+
+/* ---------- pickup time: clear, tappable gold clock ---------- */
+.time-field > input[type="time"]{
+  position:relative;
+  min-height:50px;
+  padding:11px 54px 11px 14px;
+  font-size:16px;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.05em;
+  cursor:pointer;
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f0d49b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.7'/%3E%3Cpath d='M12 7.4V12l3.1 2'/%3E%3C/svg%3E"),
+    radial-gradient(circle at center, rgba(232,201,138,.22) 0 19px, rgba(232,201,138,.10) 19.5px 22px, transparent 22.5px);
+  background-repeat:no-repeat,no-repeat;
+  background-position:right 15px center,right 2px center;
+  background-size:22px 22px,46px 46px;
+  transition:border-color .3s,box-shadow .3s,background-color .3s;
+}
+.time-field > input[type="time"]:hover{
+  border-color:rgba(232,201,138,.6);
+  background-color:rgba(255,255,255,.11);
+}
+.time-field > input[type="time"]:focus{
+  border-color:#e8c98a;
+  box-shadow:0 0 0 3px rgba(232,201,138,.18);
+}
+/* the native picker stays clickable but invisible, so only our gold clock shows */
+.time-field > input[type="time"]::-webkit-calendar-picker-indicator{
+  position:absolute;
+  top:0;
+  right:0;
+  width:54px;
+  height:100%;
+  margin:0;
+  padding:0;
+  opacity:0;
+  cursor:pointer;
+}
+.time-field > input[type="time"]::-webkit-datetime-edit-fields-wrapper{color:#fff}
+.time-field > input[type="time"]::-webkit-datetime-edit-text{color:rgba(255,255,255,.55);padding:0 2px}
+.time-field > input[type="time"]::-webkit-inner-spin-button,
+.time-field > input[type="time"]::-webkit-clear-button{display:none}
+@media (max-width:600px){
+  .time-field > input[type="time"]{min-height:54px;font-size:16px}
+}

@@ -12,6 +12,21 @@
   const fail = (code, message) => ({ data: null, error: { code, message } });
   const PHONE = /^(\+8801|01)[3-9]\d{8}$/;
   const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+  /* EmailJS keys are public by design and ship with the site, so a fresh
+     browser (or a restarted one) can still send the OTP. Admin → Settings →
+     Email Setup can override them through localStorage when needed. */
+  const EMAIL_DEFAULTS = {
+    provider: 'emailjs',
+    serviceId: 'service_6ecpr39',
+    templateId: 'template_4jz3lhk',
+    publicKey: 'M9fORzo-jfq5LKw97',
+  };
+  const emailConfig = () => {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('kg.email.config') || '{}') || {}; } catch (e) { saved = {}; }
+    return { ...EMAIL_DEFAULTS, ...saved };
+  };
   const clone = (v) => JSON.parse(JSON.stringify(v));
   const byOrder = (a, b) => (a.sort_order || 0) - (b.sort_order || 0);
 
@@ -482,7 +497,7 @@
         /* Deliver the OTP through the restaurant's real email service
            (EmailJS -> webhook -> native mailto fallback) instead of relying on
            the Supabase project's own email provider. */
-        const cfg = JSON.parse(localStorage.getItem('kg.email.config') || '{}');
+        const cfg = emailConfig();
         const subject = 'Your Khabar Golpo Order OTP';
         const body = `Your Khabar Golpo order verification code is: ${code}\n\nThis code expires in 5 minutes. If you did not request it, please ignore this email.`;
         let sent = false;

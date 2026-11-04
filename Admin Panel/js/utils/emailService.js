@@ -2,12 +2,24 @@
 
 const STORAGE_KEY = 'kg.email.config';
 
+/* EmailJS public keys ship with the client, so OTP/confirmation mail keeps
+   working even when a browser has no saved settings. Admin → Settings →
+   Email Setup still overrides them through localStorage. */
+const EMAIL_DEFAULTS = {
+  provider: 'emailjs',
+  serviceId: 'service_6ecpr39',
+  templateId: 'template_4jz3lhk',
+  publicKey: 'M9fORzo-jfq5LKw97',
+};
+
 export function getEmailConfig() {
+  let saved = {};
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
   } catch {
-    return {};
+    saved = {};
   }
+  return { ...EMAIL_DEFAULTS, ...saved };
 }
 
 export function saveEmailConfig(cfg) {
@@ -38,7 +50,14 @@ async function sendEmail({ email, subject, body, templateParams }) {
           template_id: cfg.templateId,
           user_id: cfg.publicKey,
           template_params: Object.assign(
-            { to_name: '', to_email: email, subject, body },
+            {
+              to_name: '',
+              to_email: email,
+              email,
+              subject,
+              text: body,
+              html: `<p>${String(body).replace(/\n/g, '<br/>')}</p>`,
+            },
             templateParams || {}
           ),
         }),
